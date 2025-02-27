@@ -24,7 +24,7 @@ const Exercise = sequelize.define("Exercise", {
     allowNull: false,
     validate: {
       min: 1,
-      max: 4, 
+      max: 4,
     },
   },
   VideoGuide: {
@@ -33,7 +33,7 @@ const Exercise = sequelize.define("Exercise", {
   },
   ExerciseName: {
     type: DataTypes.STRING(255),
-    allowNull: true, 
+    allowNull: true,
   },
 });
 

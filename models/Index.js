@@ -6,20 +6,20 @@ const Exercise = require("./Exercise");
 const ExerciseCompletion = require("./ExerciseCompletion");
 
 // Define relationships
-User.hasMany(RecoveryPlan, { foreignKey: "user_id" });
-RecoveryPlan.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(RecoveryPlan, { foreignKey: "UserId" });
+RecoveryPlan.belongsTo(User, { foreignKey: "UserId" });
 
-RecoveryPlan.hasMany(ExerciseCompletion, { foreignKey: "plan_id" });
-ExerciseCompletion.belongsTo(RecoveryPlan, { foreignKey: "plan_id" });
+RecoveryPlan.hasMany(ExerciseCompletion, { foreignKey: "PlanId" });
+ExerciseCompletion.belongsTo(RecoveryPlan, { foreignKey: "PlanId" });
 
-Injury.hasMany(RecoveryPlan, { foreignKey: "injury_id" });
-RecoveryPlan.belongsTo(Injury, { foreignKey: "injury_id" });
+Injury.hasMany(RecoveryPlan, { foreignKey: "InjuryId" });
+RecoveryPlan.belongsTo(Injury, { foreignKey: "InjuryId" });
 
-Exercise.hasMany(ExerciseCompletion, { foreignKey: "exercise_id" });
-ExerciseCompletion.belongsTo(Exercise, { foreignKey: "exercise_id" });
+Exercise.hasMany(ExerciseCompletion, { foreignKey: "ExerciseId" });
+ExerciseCompletion.belongsTo(Exercise, { foreignKey: "ExerciseId" });
 
-sequelize.sync({ alter: true })  // Creates tables if not exist / updates structure
-    .then(() => console.log("Database synced"))
-    .catch((err) => console.error("Error syncing database:", err));
+//sequelize.sync({ alter: true })  // Creates tables if not exist / updates structure
+//    .then(() => console.log("Database synced"))
+//    .catch((err) => console.error("Error syncing database:", err));
 
-module.exports = { User, RecoveryPlan, Injury, Exercise, ExerciseCompletion };
+module.exports = { sequelize, User, RecoveryPlan, Injury, Exercise, ExerciseCompletion };

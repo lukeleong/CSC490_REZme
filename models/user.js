@@ -49,10 +49,10 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
-  IsAdmin: {  
+  IsAdmin: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: false, 
+    defaultValue: false,
   },
 });
 

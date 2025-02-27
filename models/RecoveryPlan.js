@@ -16,10 +16,10 @@ const RecoveryPlan = sequelize.define('RecoveryPlan', {
         },
     },
     InjuryId: {
-        type: DataTypes, INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Injuries',
+            model: 'Injury',
             key: 'InjuryId',
         },
     },
@@ -47,4 +47,4 @@ const RecoveryPlan = sequelize.define('RecoveryPlan', {
     },
 });
 
-model.exports = RecoveryPlan;
+module.exports = RecoveryPlan;
