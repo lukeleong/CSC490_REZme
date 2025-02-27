@@ -2,54 +2,54 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const User = sequelize.define("User", {
-  user_id: {
+  UserId: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  email: {
+  Email: {
     type: DataTypes.STRING(255),
     allowNull: false,
     unique: true,
   },
-  password: {
+  Password: {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-  termsAgreed: {
+  TermsAgreed: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
   },
-  firstName: {
+  FirstName: {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
-  lastName: {
+  LastName: {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
-  date_of_birth: {
+  DateOfBirth: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  unit_preference: {
+  UnitPreference: {
     type: DataTypes.STRING(50),
     allowNull: true,
   },
-  registration_date: {
+  RegistrationDate: {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: Sequelize.NOW,
   },
-  lastLogin: {
+  LastLogin: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  profile_picture: {
+  ProfilePicture: {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
-  is_admin: {  
+  IsAdmin: {  
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false, 
