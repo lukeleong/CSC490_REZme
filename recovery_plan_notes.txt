@@ -1,0 +1,57 @@
+Recovery Plan Table (Stores High-Level Recovery Progress)
+This table keeps track of overall recovery progress, feedback, and plan adjustments.
+Field Name	Data Type	Description
+plan_id	INT (PK)	Unique identifier for the recovery plan.
+user_id	INT (FK)	Links to the user who owns this plan.
+injury_id	INT (FK)	Links to the injury that this plan is for.
+start_date	DATE	The date the recovery plan begins.
+end_date	DATE (NULL)	The planned end date (can be adjusted).
+progress_status	INT	High-level percentage or stage (e.g., 0-100%).
+last_update	TIMESTAMP	Last modification timestamp.
+progress_feedback	TEXT	Stores general feedback about recovery progress.
+is_active	BOOLEAN	Whether the recovery plan is currently active.
+
+Exercise Completion Table (Tracks Individual Exercise Progress)
+Rather than having a separate progress table, this table now tracks per-exercise progress.
+Field Name	Data Type	Description
+completion_id	INT (PK)	Unique identifier for the completion record.
+plan_id	INT (FK)	Links to the recovery plan.
+exercise_id	INT (FK)	Identifies the specific exercise.
+sets_completed	INT	Number of sets completed.
+reps_completed	INT	Number of reps completed.
+time_taken	INT	Time spent (seconds or minutes).
+post_pain_level	INT (0-10)	Pain level reported after completion.
+post_mobility_level	INT (0-10)	Mobility level reported after completion.
+difficulty_rating	INT (1-4)	User rating of the exercise difficulty.
+progress_value	FLOAT	Numerical score of improvement (e.g., reps vs. baseline).
+progress_feedback	TEXT	User feedback on exercise experience.
+modified_at	TIMESTAMP	Last update timestamp.
+
+Injury Table (Keeps Injury and Associated Recovery Data)
+This table remains mostly unchanged but ensures recovery plans directly link to injuries.
+Field Name	Data Type	Description
+injury_id	INT (PK)	Unique identifier for the injury.
+user_id	INT (FK)	Links to the user.
+injury_type	VARCHAR(50)	Type of injury (e.g., sprain, fracture).
+injury_location	VARCHAR(50)	Body part affected.
+injury_severity	INT (1-10)	Severity score.
+pain_level	INT (0-10)	Initial pain level at injury.
+mobility_level	INT (0-10)	Initial mobility level.
+start_date	DATE	When the injury was logged.
+last_update	TIMESTAMP	Last update timestamp.
+is_active	BOOLEAN	Whether the injury is still active.
+
+Exercise Table (Stores Available Exercises)
+Field Name	Data Type	Description
+exercise_id	INT (PK)	Unique identifier for the exercise.
+exercise_name	VARCHAR(50)	Exercise title.
+injury_id	INT (FK)	Injury type associated with this exercise.
+difficulty	INT (1-5)	Difficulty level.
+video_guide	VARCHAR(255)	Link to an instructional video.
+exercise_image	VARCHAR(255)	Path to an image for demonstration.
+
+GET http://localhost:3000/users
+GET http://localhost:3000/injuries
+GET http://localhost:3000/recovery-plans
+GET http://localhost:3000/exercises
+GET http://localhost:3000/exercise-completions
