@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Exercise</title>
+</head>
+<body>
+    <h2>Complete Your Exercise</h2>
+    
+    <form id="exerciseForm">
+        <label for="exercise">Select an Exercise:</label>
+        <select id="exercise" name="exercise_id" required>
+            <option value="1">Stretching Routine</option>
+            <option value="2">Strength Training</option>
+            <option value="3">Cardio Recovery</option>
+        </select>
+
+        <input type="hidden" name="userID" value="1">  <!-- Replace dynamically -->
+        <input type="hidden" name="plan_id" value="101"> <!-- Example plan_id -->
+
+        <label>
+            <input type="checkbox" id="completed" name="completed"> Mark as Completed
+        </label>
+
+        <button type="submit">Save Progress</button>
+    </form>
+
+    <p id="message"></p>
+
+    <script>
+        document.getElementById("exerciseForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            data.completed = document.getElementById("completed").checked ? 1 : 0;
+
+            const response = await fetch("/complete-exercise", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: { "Content-Type": "application/json" }
+            });
+
+            const result = await response.json();
+            document.getElementById("message").innerText = result.message;
+        });
+    </script>
+</body>
+</html>
