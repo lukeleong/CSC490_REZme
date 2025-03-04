@@ -3,15 +3,39 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// POST a new User
-router.post('/', async (req, res) => {
+// Signup New User
+router.post("/signup", async (req, res) => {
   try {
-    const user = await User.create(req.body);
-    res.status(201).json(user);
+    const { email, password, confirmPassword, firstName, lastName, dob, terms } = req.body;
+
+    // Email dupe check
+    const existingUser = await User.findOne({ where: { Email: email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already exists!" });
+    }
+
+    // Password match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match!" });
+    }
+
+    // Create a new user
+    const newUser = await User.create({
+      Email: email,
+      Password: password,
+      FirstName: firstName,
+      LastName: lastName,
+      DateOfBirth: dob,
+      TermsAgreed: terms,
+      IsAdmin: false, 
+    });
+
+    res.status(201).json({ message: "User created successfully!", user: newUser });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
+
 
 // GET all users
 router.get("/", async (req, res) => {
@@ -67,4 +91,4 @@ router.delete("/:UserId", async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

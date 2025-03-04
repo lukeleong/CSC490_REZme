@@ -6,11 +6,18 @@ const app = express();
 app.use(express.json());
 const UserRoutes = require('./routes/UserRoutes');
 app.use('/users', UserRoutes);
+const path = require('path');
 
 // Home route
 app.get('/', (req, res) => {
   res.send('Server is working');
 });
+
+//Signup
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'signup.html'));  
+});
+
 
 // GET all Users
 app.get('/users', async (req, res) => {
