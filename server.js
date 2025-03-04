@@ -4,6 +4,8 @@ const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
 const app = express();
 app.use(express.json());
+const UserRoutes = require('./routes/UserRoutes');
+app.use('/users', UserRoutes);
 
 // Home route
 app.get('/', (req, res) => {
