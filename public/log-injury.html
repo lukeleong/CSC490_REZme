@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
+
         .container {
             max-width: 600px;
             margin: auto;
@@ -19,22 +21,27 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
         }
+
         .input-group {
             margin: 15px 0;
         }
+
         .input-group label {
             display: block;
             margin-bottom: 5px;
         }
+
         .input-group input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
         .button {
             display: block;
             width: 100%;
@@ -50,63 +57,74 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Log Your Injury</h1>
         <form id="injuryForm">
             <input type="hidden" name="user_id" value="1"> <!-- Replace dynamically -->
-            
+
             <div class="input-group">
                 <label for="injury_type">Injury Type:</label>
                 <input type="text" id="injury_type" name="injury_type" required>
             </div>
-            
+
             <div class="input-group">
                 <label for="injury_location">Injury Location:</label>
                 <input type="text" id="injury_location" name="injury_location" required>
             </div>
-            
+
             <div class="input-group">
                 <label for="injury_severity">Injury Severity (1-10):</label>
                 <input type="number" id="injury_severity" name="injury_severity" min="1" max="10" required>
             </div>
-            
+
             <div class="input-group">
                 <label for="pain_level">Initial Pain Level (0-10):</label>
                 <input type="number" id="pain_level" name="pain_level" min="0" max="10" required>
             </div>
-            
+
             <div class="input-group">
                 <label for="mobility_level">Initial Mobility Level (0-10):</label>
                 <input type="number" id="mobility_level" name="mobility_level" min="0" max="10" required>
             </div>
-            
+
             <div class="input-group">
                 <label for="start_date">Start Date:</label>
                 <input type="date" id="start_date" name="start_date" required>
             </div>
-            
+
             <button type="submit" class="button">Submit Injury</button>
         </form>
         <p id="message"></p>
     </div>
-    
+
     <script>
-        document.getElementById("injuryForm").addEventListener("submit", async function(event) {
+        document.getElementById("injuryForm").addEventListener("submit", async function (event) {
             event.preventDefault();
-            
+
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
-            
+
             const response = await fetch("/log-injury", {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" }
             });
-            
+
             const result = await response.json();
             document.getElementById("message").innerText = result.message;
+
+            if (response.ok) {
+                // Generate a recovery plan automatically
+                await fetch("/api/generate-recovery-plan", {
+                    method: "POST",
+                    body: JSON.stringify({ user_id: data.user_id, injury_id: result.injury_id }),
+                    headers: { "Content-Type": "application/json" }
+                });
+            }
         });
     </script>
 </body>
+
 </html>

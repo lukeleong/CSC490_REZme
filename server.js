@@ -2,7 +2,6 @@
 const express = require('express');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
-
 const app = express();
 app.use(express.json());
 
@@ -66,6 +65,6 @@ sequelize.sync()
   .then(() => console.log('Database synced'))
   .catch((err) => console.error('Failed to sync database:', err));
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
