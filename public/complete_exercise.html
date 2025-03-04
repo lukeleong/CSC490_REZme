@@ -3,30 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Exercise</title>
+    <title>Exercise Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .exercise-details {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #fff;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Complete Your Exercise</h2>
-    
-    <form id="exerciseForm">
-        <label for="exercise">Select an Exercise:</label>
-        <select id="exercise" name="exercise_id" required>
-            <option value="1">Stretching Routine</option>
-            <option value="2">Strength Training</option>
-            <option value="3">Cardio Recovery</option>
-        </select>
-
-        <input type="hidden" name="userID" value="1">  <!-- Replace dynamically -->
-        <input type="hidden" name="plan_id" value="101"> <!-- Example plan_id -->
-
-        <label>
-            <input type="checkbox" id="completed" name="completed"> Mark as Completed
-        </label>
-
-        <button type="submit">Save Progress</button>
-    </form>
-
-    <p id="message"></p>
+    <div class="container">
+        <h1>Exercise Detail</h1>
+        <div class="exercise-details">
+            <h2>Leg Raises</h2>
+            <p>Sets: 3 | Reps: 15</p>
+            <img src="exercise-placeholder.jpg" alt="Exercise Image" width="100%">
+        </div>
+        
+        <h2>Log Progress</h2>
+        <form id="exerciseForm">
+            <div class="input-group">
+                <label for="setsCompleted">Sets Completed:</label>
+                <input type="number" id="setsCompleted" name="sets_completed" placeholder="Enter sets completed">
+            </div>
+            <div class="input-group">
+                <label for="repsCompleted">Reps Completed:</label>
+                <input type="number" id="repsCompleted" name="reps_completed" placeholder="Enter reps completed">
+            </div>
+            <div class="input-group">
+                <label for="timeTaken">Time Taken (seconds):</label>
+                <input type="number" id="timeTaken" name="time_taken" placeholder="Enter time spent">
+            </div>
+            <div class="input-group">
+                <label for="painLevel">Pain Level (0-10):</label>
+                <input type="number" id="painLevel" name="post_pain_level" min="0" max="10" placeholder="Enter pain level">
+            </div>
+            <div class="input-group">
+                <label for="mobilityLevel">Post Mobility Level (0-10):</label>
+                <input type="number" id="mobilityLevel" name="post_mobility_level" min="0" max="10" placeholder="Enter mobility level">
+            </div>
+            <div class="input-group">
+                <label for="difficultyRating">Difficulty Rating (1-4):</label>
+                <input type="number" id="difficultyRating" name="difficulty_rating" min="1" max="4" placeholder="Enter difficulty rating">
+            </div>
+            <button type="submit" class="button">Complete</button>
+        </form>
+        <p id="message"></p>
+    </div>
 
     <script>
         document.getElementById("exerciseForm").addEventListener("submit", async function(event) {
@@ -34,7 +101,6 @@
 
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
-            data.completed = document.getElementById("completed").checked ? 1 : 0;
 
             const response = await fetch("/complete-exercise", {
                 method: "POST",
