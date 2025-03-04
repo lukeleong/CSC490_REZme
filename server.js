@@ -1,12 +1,25 @@
 // server.js
 const express = require('express');
+const session = require('express-session');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
+const UserRoutes = require('./routes/UserRoutes');
+const path = require('path');
 const app = express();
 app.use(express.json());
-const UserRoutes = require('./routes/UserRoutes');
+
+
+// Set up session management
+app.use(session({
+  secret: 'key', 
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
+
+app.use(express.static(path.join(__dirname, 'public'))); 
 app.use('/users', UserRoutes);
-const path = require('path');
+
 
 // Home route
 app.get('/', (req, res) => {
@@ -18,6 +31,9 @@ app.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'signup.html'));  
 });
 
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));  
+});
 
 // GET all Users
 app.get('/users', async (req, res) => {

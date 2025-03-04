@@ -93,14 +93,13 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
     
-            // Check if passwords match (client-side validation)
             if (data.password !== data.confirmPassword) {
                 alert("Passwords do not match!");
                 return;
             }
     
             // Send to /users/signup route
-            const response = await fetch("/users/signup", {  <!-- Change this to /users/signup -->
+            const response = await fetch("/users/signup", {  
                 method: "POST",
                 body: JSON.stringify({
                     email: data.email,
@@ -109,7 +108,7 @@
                     firstName: data.firstName,
                     lastName: data.lastName,
                     dob: data.dob,
-                    terms: data.terms === "on"  // Convert checkbox value to boolean
+                    terms: data.terms === "on"  
                 }),
                 headers: { "Content-Type": "application/json" }
             });

@@ -36,6 +36,29 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// Login
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { Email: email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.Password === password) {
+      req.session.userId = user.UserId;  
+      return res.status(200).json({ message: "Login successful", userId: user.UserId });
+    } else {
+      return res.status(400).json({ message: "Incorrect password" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 // GET all users
 router.get("/", async (req, res) => {
