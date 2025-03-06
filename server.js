@@ -1,14 +1,38 @@
 // server.js
 const express = require('express');
+const session = require('express-session');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
-
+const UserRoutes = require('./routes/UserRoutes');
+const path = require('path');
 const app = express();
 app.use(express.json());
+
+
+// Set up session management
+app.use(session({
+  secret: 'key', 
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
+
+app.use(express.static(path.join(__dirname, 'public'))); 
+app.use('/users', UserRoutes);
+
 
 // Home route
 app.get('/', (req, res) => {
   res.send('Server is working');
+});
+
+//Signup
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'signup.html'));  
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));  
 });
 
 // GET all Users
@@ -66,6 +90,6 @@ sequelize.sync()
   .then(() => console.log('Database synced'))
   .catch((err) => console.error('Failed to sync database:', err));
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

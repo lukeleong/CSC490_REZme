@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recovery Plan Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .plan {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #fff;
+            cursor: pointer;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Recovery Plans</h1>
+        <div class="plan" onclick="location.href='recovery_plan.html';">
+            <h2>Knee Injury Recovery</h2>
+            <p>Progress: 40%</p>
+        </div>
+        <div class="plan" onclick="location.href='recovery_plan.html';">
+            <h2>Shoulder Recovery</h2>
+            <p>Progress: 20%</p>
+        </div>
+        <a href="#" class="button">Log New Injury</a>
+    </div>
+</body>
+</html>
