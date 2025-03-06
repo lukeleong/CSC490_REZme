@@ -35,6 +35,7 @@ const RecoveryPlan = sequelize.define('RecoveryPlan', {
     StartDate: {
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: Sequelize.NOW,
     },
     EndDate: {
         type: DataTypes.DATE,

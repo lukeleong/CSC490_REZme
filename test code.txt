@@ -1,0 +1,25 @@
+CRUD RecoveryPlan-
+curl -X POST http://localhost:3000/api/recovery-plans \
+     -H "Content-Type: application/json" \
+     -d '{
+          "user_id": 1,
+          "injury_id": 2,
+          "start_date": "2024-03-01",
+          "end_date": "2024-06-01",
+          "progress_status": 20,
+          "progress_feedback": "Recovering well",
+          "is_active": true
+      }'
+
+
+curl -X PUT http://localhost:3000/api/recovery-plans/1 \
+     -H "Content-Type: application/json" \
+     -d '{
+          "progress_status": 50,
+          "progress_feedback": "Feeling better!",
+          "is_active": true
+      }'
+
+curl -X GET http://localhost:3000/api/recovery-plans
+
+curl -X DELETE http://localhost:3000/api/recovery-plans/1

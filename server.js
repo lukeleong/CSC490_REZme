@@ -4,6 +4,7 @@ const session = require('express-session');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
 const UserRoutes = require('./routes/UserRoutes');
+const recoveryPlanRoutes = require("./routes/recoveryPlanRoutes");
 const path = require('path');
 const app = express();
 app.use(express.json());
@@ -19,7 +20,7 @@ app.use(session({
 
 app.use(express.static(path.join(__dirname, 'public'))); 
 app.use('/users', UserRoutes);
-
+app.use("/api", recoveryPlanRoutes);
 
 // Home route
 app.get('/', (req, res) => {
