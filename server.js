@@ -4,10 +4,25 @@ const session = require('express-session');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
 const UserRoutes = require('./routes/UserRoutes');
+const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
 const path = require('path');
-const app = express();
-app.use(express.json());
+const cors = require("cors");
 
+const app = express();
+
+app.use(express.json());
+app.use(cors());
+
+app.use((req, res, next) => {
+  console.log(`➡️ Received request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
+console.log("Loading recovery plan routes..."); // Debugging log
+app.use("/api", recoveryPlanRoutes);
+console.log("Recovery plan routes loaded!"); // Debugging log
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // Set up session management
 app.use(session({
@@ -17,9 +32,7 @@ app.use(session({
   cookie: { secure: false } 
 }));
 
-app.use(express.static(path.join(__dirname, 'public'))); 
 app.use('/users', UserRoutes);
-
 
 // Home route
 app.get('/', (req, res) => {
@@ -33,56 +46,6 @@ app.get('/signup', (req, res) => {
 
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));  
-});
-
-// GET all Users
-app.get('/users', async (req, res) => {
-  try {
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// GET all Injuries
-app.get('/injuries', async (req, res) => {
-  try {
-    const injuries = await Injury.findAll();
-    res.json(injuries);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// GET all Recovery Plans
-app.get('/recovery-plans', async (req, res) => {
-  try {
-    const plans = await RecoveryPlan.findAll();
-    res.json(plans);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// GET all Exercises
-app.get('/exercises', async (req, res) => {
-  try {
-    const exercises = await Exercise.findAll();
-    res.json(exercises);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// GET all Exercise Completions
-app.get('/exercise-completions', async (req, res) => {
-  try {
-    const completions = await ExerciseCompletion.findAll();
-    res.json(completions);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
 
 // Sync database and start server
