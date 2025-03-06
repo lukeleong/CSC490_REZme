@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recovery Plan</title>
+    <title>Recovery Plans</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,64 +12,90 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
+
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h1, h2 {
+
+        h1 {
             text-align: center;
         }
-        .plan-details {
-            padding: 10px;
+
+        .plan {
+            padding: 15px;
             border: 1px solid #ddd;
             margin: 10px 0;
             border-radius: 5px;
             background: #fff;
         }
-        .exercise {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: #f9f9f9;
-        }
+
         .button {
             display: block;
             width: 100%;
             padding: 10px;
-            margin-top: 20px;
+            margin-top: 10px;
             text-align: center;
             background: #007bff;
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>Recovery Plan Details</h1>
-        <div class="plan-details">
-            <h2>Knee Injury Recovery</h2>
-            <p>Start Date: 2024-03-01</p>
-            <p>Progress: 40%</p>
+        <h1>Your Recovery Plans</h1>
+        <div id="plansContainer">
+            <p>Loading recovery plans...</p>
         </div>
-        
-        <h2>Assigned Exercises</h2>
-        <div class="exercise" onclick="location.href='exercise.html';">
-            <h3>Leg Raises</h3>
-            <p>Sets: 3 | Reps: 15</p>
-        </div>
-        <div class="exercise" onclick="location.href='exercise.html';">
-            <h3>Knee Extensions</h3>
-            <p>Sets: 3 | Reps: 12</p>
-        </div>
-        
-        <a href="dashboard.html" class="button">Back to Dashboard</a>
     </div>
+
+    <script>
+        async function fetchRecoveryPlans() {
+            try {
+                const userId = 2; // Replace with dynamic user ID
+                const response = await fetch(`/api/recovery-plans?user_id=${userId}`);
+                const plans = await response.json();
+                const container = document.getElementById("plansContainer");
+                container.innerHTML = ""; // Clear loading text
+
+                if (plans.length === 0) {
+                    container.innerHTML = "<p>No recovery plans found.</p>";
+                    return;
+                }
+
+                plans.forEach(plan => {
+                    const planElement = document.createElement("div");
+                    planElement.classList.add("plan");
+                    planElement.innerHTML = `
+                        <h2>Recovery Plan #${plan.PlanId}</h2>
+                        <p><strong>Start Date:</strong> ${new Date(plan.StartDate).toDateString()}</p>
+                        <p><strong>Progress:</strong> ${plan.ProgressStatus}%</p>
+                        <p><strong>Status:</strong> ${plan.IsActive ? "Active" : "Completed"}</p>
+                        <button class="button" onclick="viewPlan(${plan.PlanId})">View Details</button>
+                    `;
+                    container.appendChild(planElement);
+                });
+            } catch (error) {
+                document.getElementById("plansContainer").innerHTML = "<p>Failed to load recovery plans.</p>";
+                console.error("Error fetching recovery plans:", error);
+            }
+        }
+
+        function viewPlan(planId) {
+            window.location.href = `/recovery-plan.html?planId=${planId}`;
+        }
+
+        fetchRecoveryPlans();
+    </script>
 </body>
+
 </html>
