@@ -4,7 +4,7 @@ const session = require('express-session');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
 const UserRoutes = require('./routes/UserRoutes');
-const recoveryPlanRoutes = require("./routes/recoveryPlanRoutes");
+const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
 const path = require('path');
 const cors = require("cors");
 
