@@ -2,15 +2,18 @@
 const express = require('express');
 const session = require('express-session');
 const sequelize = require('./config/database');
-const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion } = require('./models');
+const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion,ProgressTracker } = require('./models');
 const UserRoutes = require('./routes/UserRoutes');
 const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
+const ProgressRoutes = require("./routes/ProgressRoutes")
 const path = require('path');
 const cors = require("cors");
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
+
 app.use(cors());
 
 app.use((req, res, next) => {
@@ -21,6 +24,12 @@ app.use((req, res, next) => {
 console.log("Loading recovery plan routes..."); // Debugging log
 app.use("/api", recoveryPlanRoutes);
 console.log("Recovery plan routes loaded!"); // Debugging log
+
+console.log("Progress Tracking");
+app.use("/api", ProgressRoutes);
+
+
+
 
 app.use(express.static(path.join(__dirname, "public")));
 

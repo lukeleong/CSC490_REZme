@@ -4,6 +4,7 @@ const RecoveryPlan = require("./RecoveryPlan");
 const Injury = require("./Injury");
 const Exercise = require("./Exercise");
 const ExerciseCompletion = require("./ExerciseCompletion");
+const ProgressTracker = require("./ProgressTracker");
 
 // Define relationships
 User.hasMany(RecoveryPlan, { foreignKey: "UserId" });
@@ -18,8 +19,14 @@ RecoveryPlan.belongsTo(Injury, { foreignKey: "InjuryId" });
 Exercise.hasMany(ExerciseCompletion, { foreignKey: "ExerciseId" });
 ExerciseCompletion.belongsTo(Exercise, { foreignKey: "ExerciseId" });
 
+User.hasMany(ProgressTracker, { foreignKey: "UserId" });
+ProgressTracker.belongsTo(User, { foreignKey: "UserId" });
+
+Injury.hasMany(ProgressTracker, { foreignKey: "InjuryId" });
+ProgressTracker.belongsTo(Injury, { foreignKey: "InjuryId" });
+
 //sequelize.sync({ alter: true })  // Creates tables if not exist / updates structure
 //    .then(() => console.log("Database synced"))
 //    .catch((err) => console.error("Error syncing database:", err));
 
-module.exports = { sequelize, User, RecoveryPlan, Injury, Exercise, ExerciseCompletion };
+module.exports = { sequelize, User, RecoveryPlan, Injury, Exercise, ExerciseCompletion,ProgressTracker};

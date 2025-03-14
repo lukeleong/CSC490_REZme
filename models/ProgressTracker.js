@@ -1,65 +1,61 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Progress = sequelize.define('Progress', {
-    progressID: {
+const ProgressTracker = sequelize.define('ProgressTracker', {
+    ProgressId: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
-    userID: {
+    UserId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'User', // Reference your 'User' table
-            key: 'userID',
+            model: 'Users', // Reference 'User' table
+            key: 'UserId',
         },
     },
-    injuryID: {
+    InjuryId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Injury', // Reference your 'Injury' table
-            key: 'injuryID',
+            model: 'Injuries', // reference Injury table
+            key: 'InjuryId',
         },
     },
-    painLevel: {
+    PainLevel: {
         type: DataTypes.INTEGER, // Scale: 1–10
         allowNull: false,
     },
-    mobilityLevel: {
+    MobilityLevel: {
         type: DataTypes.INTEGER, // Scale: 1–10
         allowNull: false,
     },
-    strength: {
+    Strength: {
         type: DataTypes.INTEGER, // Optional, scale: 1–10
         allowNull: true,
     },
-    endurance: {
+    Endurance: {
         type: DataTypes.INTEGER, // Optional, scale: 1–10
         allowNull: true,
     },
-    mobility: {
-        type: DataTypes.INTEGER, // Optional, scale: 1–10
+    Mobility: {
+        type: DataTypes.INTEGER, // scale: 1–10
         allowNull: true,
     },
-    painReduction: {
-        type: DataTypes.INTEGER, // Tracks improvement in pain levels
-        allowNull: true,
-    },
-    progressNotes: {
+    ProgressNotes: {
         type: DataTypes.TEXT, // Additional notes for context
         allowNull: true,
     },
-    progressFeedback: {
+    ProgressFeedback: {
         type: DataTypes.TEXT, // User feedback for recovery progress
         allowNull: true,
     },
-    recordedAt: {
+    RecordedAt: {
         type: DataTypes.DATE, // Timestamp for tracking
         allowNull: false,
-        defaultValue: sequelize.NOW,
+        defaultValue: Sequelize.NOW,
     },
 });
 
-module.exports = Progress;
+module.exports = ProgressTracker;
