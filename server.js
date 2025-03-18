@@ -115,7 +115,7 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));  
 });
 
-// API Routes
+
 // GET all Users
 app.get('/users', async (req, res) => {
   try {
