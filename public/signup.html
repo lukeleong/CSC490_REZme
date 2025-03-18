@@ -93,35 +93,63 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
     
+            const messageElement = document.getElementById("message");
+            messageElement.textContent = ""; 
+            messageElement.style.color = "red"; 
+    
             if (data.password !== data.confirmPassword) {
-                alert("Passwords do not match!");
+                messageElement.textContent = "Passwords do not match!";
                 return;
             }
     
-            // Send to /users/signup route
-            const response = await fetch("/users/signup", {  
-                method: "POST",
-                body: JSON.stringify({
-                    email: data.email,
-                    password: data.password,
-                    confirmPassword: data.confirmPassword,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    dob: data.dob,
-                    terms: data.terms === "on"  
-                }),
-                headers: { "Content-Type": "application/json" }
-            });
+            try {
+                const response = await fetch("/users/signup", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email: data.email,
+                        password: data.password,
+                        confirmPassword: data.confirmPassword,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        dob: data.dob,
+                        terms: data.terms === "on",
+                        isAdmin: false
+                    }),
+                    headers: { "Content-Type": "application/json" }
+                });
     
-            const result = await response.json();
-            if (response.ok) {
-                alert("Signup successful!");
-                window.location.href = "/login";  // Redirect to login page
-            } else {
-                alert(result.message || "Signup failed.");
-            }
+                const result = await response.json();
+    
+                if (!response.ok) {
+                    console.error("Signup failed:", result);
+                    if (result.errors) {
+                        messageElement.innerHTML = result.errors.map(err => `<p>${err.msg}</p>`).join(""); // Show validation errors
+                    } else {
+                        messageElement.textContent = result.message || "Signup failed. Please try again.";
+                    }
+                    return;
+                }
+    
+                messageElement.style.color = "green";
+                messageElement.textContent = "Signup successful! Redirecting...";
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 2000);
+    
+            } catch (error) {
+    console.error("Error during signup:", error);
+    const errorMessage = error.message || "An error occurred";
+    
+    if (errorMessage.includes("database is locked") || 
+        (result && result.error && result.error.includes("SQLITE_BUSY"))) {
+        messageElement.textContent = "The system is busy. Please try again in a few moments.";
+    } else {
+        messageElement.textContent = "An error occurred. Please try again.";
+    }
+}
         });
     </script>
+    
     
 </body>
 </html>
