@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"], textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<h1>Progress Tracker Form</h1>
+
+<form id="progressForm">
+    <div class="form-group">
+        <label for="UserId">User ID:</label>
+        <input type="number" id="UserId" name="UserId" value="1" disabled>
+    </div>
+
+    <div class="form-group">
+        <label for="InjuryId">Injury ID:</label>
+        <input type="number" id="InjuryId" name="InjuryId" value="101" disabled>
+    </div>
+
+
+    <div class="form-group">
+        <label for="PainLevel">Pain Level (1-10):</label>
+        <input type="number" id="PainLevel" name="PainLevel" min="1" max="10" required>
+    </div>
+
+    <div class="form-group">
+        <label for="MobilityLevel">Mobility Level (1-10):</label>
+        <input type="number" id="MobilityLevel" name="MobilityLevel" min="1" max="10" required>
+    </div>
+
+    <div class="form-group">
+        <label for="Strength">Strength (1-10):</label>
+        <input type="number" id="Strength" name="Strength" min="1" max="10">
+    </div>
+
+    <div class="form-group">
+        <label for="Endurance">Endurance (1-10):</label>
+        <input type="number" id="Endurance" name="Endurance" min="1" max="10">
+    </div>
+
+    <div class="form-group">
+        <label for="ProgressNotes">Progress Notes:</label>
+        <textarea id="ProgressNotes" name="ProgressNotes" rows="4"
+                  placeholder="Enter exercise type with summary etc reps,..."></textarea>
+    </div>
+
+     <div class="form-group">
+        <label for="ProgressFeedback">Progress Notes:</label>
+        <textarea id="ProgressFeedback" name="ProgressFeedback" rows="4"
+                  placeholder="Enter any additional comments..."></textarea>
+    </div>
+
+    <button type="submit">Submit Progress</button>
+</form>
+
+<script>
+    document.getElementById('progressForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        // Gather form data
+        const progressData = {
+            UserID: document.getElementById('UserId').value,
+            InjuryID: document.getElementById('InjuryId').value,
+            painLevel: document.getElementById('PainLevel').value,
+            mobilityLevel: document.getElementById('MobilityLevel').value,
+            strength: document.getElementById('Strength').value || null,
+            endurance: document.getElementById('Endurance').value || null,
+            progressNotes: document.getElementById('ProgressNotes').value || null,
+            progressFeedback: document.getElementById('ProgressFeedback').value|| null
+        };
+
+        // POST data to backend
+        try {
+            const response = await fetch('/api/progress-tracker', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(progressData)
+            });
+
+            if (response.ok) {
+                alert('Progress submitted successfully!');
+            } else {
+                alert('Failed to submit progress.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while submitting progress.');
+        }
+    });
+</script>
+</body>
+</html>
