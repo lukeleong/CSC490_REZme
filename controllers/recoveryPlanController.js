@@ -1,6 +1,6 @@
 const { RecoveryPlan } = require("../models");
 
-// **Create a new Recovery Plan**
+// Create a new Recovery Plan
 exports.createRecoveryPlan = async (req, res) => {
     try {
         const { 
@@ -36,7 +36,7 @@ exports.createRecoveryPlan = async (req, res) => {
     }
 };
 
-// **Get All Recovery Plans**
+// Get All Recovery Plans
 exports.getAllRecoveryPlans = async (req, res) => {
     try {
         const plans = await RecoveryPlan.findAll();
@@ -47,7 +47,7 @@ exports.getAllRecoveryPlans = async (req, res) => {
     }
 };
 
-// **Get a Single Recovery Plan**
+// Get a Single Recovery Plan
 exports.getRecoveryPlanById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -64,7 +64,7 @@ exports.getRecoveryPlanById = async (req, res) => {
     }
 };
 
-// **Update a Recovery Plan**
+// Update a Recovery Plan
 exports.updateRecoveryPlan = async (req, res) => {
     try {
         const { id } = req.params;
@@ -88,7 +88,7 @@ exports.updateRecoveryPlan = async (req, res) => {
     }
 };
 
-// **Delete a Recovery Plan**
+// Delete a Recovery Plan
 exports.deleteRecoveryPlan = async (req, res) => {
     try {
         const { id } = req.params;

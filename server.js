@@ -5,10 +5,12 @@ const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const jwt = require('jsonwebtoken');
 const sequelize = require('./config/database');
-const { User } = require('./models');
-const UserRoutes = require('./routes/UserRoutes');
-const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
-const ProgressRoutes = require("./routes/ProgressRoutes");
+const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion, ProgressTracker } = require('./models');
+const UserRoutes = require('./routes/userRoutes');
+const recoveryPlanRoutes = require("./routes/recoveryPlanRoutes");
+const progressRoutes = require("./routes/progressRoutes");
+const exerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes");
+const injuryRoutes = require("./routes/injuryRoutes");
 const path = require('path');
 const cors = require("cors");
 
@@ -62,18 +64,18 @@ app.use(session({
 
 // Request logger
 app.use((req, res, next) => {
-  console.log(`➡️ ${req.method} ${req.originalUrl}`);
+  console.log(`Received request: ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// Static files
+// Serve static files (Must be at the end)
 app.use(express.static(path.join(__dirname, 'public'))); 
 
 // Initialize passport and session
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google OAuth
+// Google OAuth Setup
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -121,10 +123,16 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Routes
+// Register Routes
+console.log("Loading API routes...");
+
 app.use('/users', UserRoutes);
 app.use("/api", recoveryPlanRoutes);
-app.use("/api", ProgressRoutes);
+app.use("/api", progressRoutes);
+app.use("/api", exerciseCompletionRoutes);
+app.use("/api", injuryRoutes);
+
+console.log("All API routes loaded!");
 
 // Home route
 app.get('/', (req, res) => {
@@ -169,7 +177,7 @@ app.get('/test-direct', (req, res) => {
 
 // Sync database and start server
 sequelize.sync()
-  .then(() => console.log('Database synced'))
+  .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 
 const PORT = process.env.PORT || 3000;
