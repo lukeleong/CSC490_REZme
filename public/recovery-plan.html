@@ -12,25 +12,34 @@
             background-color: #f4f4f4;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h1, h2 {
+        h1 {
             text-align: center;
         }
-        .plan-details {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: #fff;
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress {
+            height: 20px;
+            background-color: #4CAF50;
+            width: 0%;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            border-radius: 10px;
         }
         .exercise {
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ddd;
             margin: 10px 0;
             border-radius: 5px;
@@ -40,35 +49,98 @@
             display: block;
             width: 100%;
             padding: 10px;
-            margin-top: 20px;
+            margin-top: 10px;
             text-align: center;
             background: #007bff;
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Recovery Plan Details</h1>
-        <div class="plan-details">
-            <h2>Knee Injury Recovery</h2>
-            <p>Start Date: 2024-03-01</p>
-            <p>Progress: 40%</p>
+        <h1>Recovery Plan</h1>
+
+        <div class="progress-bar">
+            <div id="progress" class="progress">0%</div>
         </div>
-        
+
         <h2>Assigned Exercises</h2>
-        <div class="exercise" onclick="location.href='exercise.html';">
-            <h3>Leg Raises</h3>
-            <p>Sets: 3 | Reps: 15</p>
+        <div id="exercisesContainer">
+            <p>Loading exercises...</p>
         </div>
-        <div class="exercise" onclick="location.href='exercise.html';">
-            <h3>Knee Extensions</h3>
-            <p>Sets: 3 | Reps: 12</p>
-        </div>
-        
+
         <a href="dashboard.html" class="button">Back to Dashboard</a>
     </div>
+
+    <script>
+        async function fetchRecoveryPlan() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const planId = urlParams.get("planId");
+                if (!planId) {
+                    document.getElementById("exercisesContainer").innerHTML = "<p>Error: No plan selected.</p>";
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:3000/api/recovery-plans/${planId}`);
+                const plan = await response.json();
+                
+                if (!plan) {
+                    document.getElementById("exercisesContainer").innerHTML = "<p>Recovery plan not found.</p>";
+                    return;
+                }
+
+                // Update progress bar
+                const progressBar = document.getElementById("progress");
+                progressBar.style.width = `${plan.ProgressStatus}%`;
+                progressBar.innerText = `${plan.ProgressStatus}%`;
+
+                // Fetch exercises related to this plan
+                fetchExercises(planId);
+            } catch (error) {
+                document.getElementById("exercisesContainer").innerHTML = "<p>Failed to load recovery plan.</p>";
+                console.error("Error fetching recovery plan:", error);
+            }
+        }
+
+        async function fetchExercises(planId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/recovery-plans/${planId}/exercises`);
+                const exercises = await response.json();
+                const container = document.getElementById("exercisesContainer");
+                container.innerHTML = ""; // Clear previous results
+
+                if (exercises.length === 0) {
+                    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+                    return;
+                }
+
+                exercises.forEach(exercise => {
+                    const exerciseElement = document.createElement("div");
+                    exerciseElement.classList.add("exercise");
+                    exerciseElement.innerHTML = `
+                        <h3>${exercise.name}</h3>
+                        <p><strong>Target:</strong> ${exercise.target}</p>
+                        <p><strong>Equipment:</strong> ${exercise.equipment}</p>
+                        <img src="${exercise.gifUrl}" width="100">
+                        <button onclick="markExerciseComplete(${exercise.id})">Complete</button>
+                    `;
+                    container.appendChild(exerciseElement);
+                });
+            } catch (error) {
+                console.error("Error fetching exercises:", error);
+            }
+        }
+
+        function markExerciseComplete(exerciseId) {
+            alert(`Exercise ${exerciseId} marked as complete!`);
+        }
+
+        fetchRecoveryPlan();
+    </script>
 </body>
 </html>
