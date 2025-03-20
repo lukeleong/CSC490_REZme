@@ -25,6 +25,9 @@ ProgressTracker.belongsTo(User, { foreignKey: "UserId" });
 Injury.hasMany(ProgressTracker, { foreignKey: "InjuryId" });
 ProgressTracker.belongsTo(Injury, { foreignKey: "InjuryId" });
 
+Injury.hasMany(Exercise, { foreignKey: "InjuryId" });
+Exercise.belongsTo(Injury, { foreignKey: "InjuryId" });
+
 //sequelize.sync({ alter: true })  // Creates tables if not exist / updates structure
 //    .then(() => console.log("Database synced"))
 //    .catch((err) => console.error("Error syncing database:", err));
