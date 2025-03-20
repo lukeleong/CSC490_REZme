@@ -7,8 +7,10 @@ const jwt = require('jsonwebtoken');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion, ProgressTracker } = require('./models');
 const UserRoutes = require('./routes/userRoutes');
-const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
-const ProgressRoutes = require("./routes/ProgressRoutes");
+const recoveryPlanRoutes = require("./routes/recoveryPlanRoutes");
+const progressRoutes = require("./routes/progressRoutes");
+const exerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes");
+const injuryRoutes = require("./routes/injuryRoutes");
 const path = require('path');
 const cors = require("cors");
 const dotenv = require('dotenv');
@@ -40,18 +42,18 @@ app.use(session({
 
 // Request logger
 app.use((req, res, next) => {
-  console.log(`➡️ Received request: ${req.method} ${req.originalUrl}`);
+  console.log(`Received request: ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// Static files
+// Serve static files (Must be at the end)
 app.use(express.static(path.join(__dirname, 'public'))); 
 
 // Initialize passport and session
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google OAuth
+// Google OAuth Setup
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -81,13 +83,16 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
-// Routes
+// Register Routes
+console.log("Loading API routes...");
+
 app.use('/users', UserRoutes);
-console.log("Loading recovery plan routes...");
 app.use("/api", recoveryPlanRoutes);
-console.log("Recovery plan routes loaded!");
-console.log("Progress Tracking");
-app.use("/api", ProgressRoutes);
+app.use("/api", progressRoutes);
+app.use("/api", exerciseCompletionRoutes);
+app.use("/api", injuryRoutes);
+
+console.log("All API routes loaded!");
 
 // Home route
 app.get('/', (req, res) => {
@@ -115,7 +120,6 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));  
 });
 
-
 // GET all Users
 app.get('/users', async (req, res) => {
   try {
@@ -126,11 +130,9 @@ app.get('/users', async (req, res) => {
   }
 });
 
-
-
 // Sync database and start server
 sequelize.sync()
-  .then(() => console.log('Database synced'))
+  .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 
 const PORT = process.env.PORT || 3000;
