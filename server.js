@@ -133,7 +133,7 @@ app.get('/users', async (req, res) => {
 });
 
 // Sync database and start server
-sequelize.sync()
+sequelize.sync({ force: true })
   .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 

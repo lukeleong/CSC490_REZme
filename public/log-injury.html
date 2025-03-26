@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Log Injury - Recovery App</title>
     <style>
         body {
@@ -71,36 +71,36 @@
     <div class="container">
         <h1>Log Your Injury</h1>
         <form id="injuryForm">
-            <input type="hidden" id="user_id" name="user_id" value=""> <!-- Set dynamically -->
+            <input type="hidden" id="UserId" name="UserId" value="" />
 
             <div class="input-group">
-                <label for="injury_type">Injury Type:</label>
-                <input type="text" id="injury_type" name="injury_type" required>
+                <label for="InjuryType">Injury Type:</label>
+                <input type="text" id="InjuryType" name="InjuryType" required />
             </div>
 
             <div class="input-group">
-                <label for="injury_location">Injury Location:</label>
-                <input type="text" id="injury_location" name="injury_location" required>
+                <label for="InjuryLocation">Injury Location:</label>
+                <input type="text" id="InjuryLocation" name="InjuryLocation" required />
             </div>
 
             <div class="input-group">
-                <label for="injury_severity">Injury Severity (1-10):</label>
-                <input type="number" id="injury_severity" name="injury_severity" min="1" max="10" required>
+                <label for="InjurySeverity">Injury Severity (1-10):</label>
+                <input type="number" id="InjurySeverity" name="InjurySeverity" min="1" max="10" required />
             </div>
 
             <div class="input-group">
-                <label for="pain_level">Initial Pain Level (0-10):</label>
-                <input type="number" id="pain_level" name="pain_level" min="0" max="10" required>
+                <label for="PainLevel">Initial Pain Level (0-10):</label>
+                <input type="number" id="PainLevel" name="PainLevel" min="0" max="10" required />
             </div>
 
             <div class="input-group">
-                <label for="mobility_level">Initial Mobility Level (0-10):</label>
-                <input type="number" id="mobility_level" name="mobility_level" min="0" max="10" required>
+                <label for="MobilityLevel">Initial Mobility Level (0-10):</label>
+                <input type="number" id="MobilityLevel" name="MobilityLevel" min="0" max="10" required />
             </div>
 
             <div class="input-group">
-                <label for="start_date">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" required>
+                <label for="StartDate">Start Date:</label>
+                <input type="date" id="StartDate" name="StartDate" required />
             </div>
 
             <button type="submit" class="button">Submit Injury</button>
@@ -136,7 +136,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             const userId = getUserIdFromToken();
             if (userId) {
-                document.getElementById("user_id").value = userId;
+                document.getElementById("UserId").value = userId;
                 fetchUserName(userId);
             } else {
                 document.getElementById("greeting").innerText = "Please log in.";
@@ -149,7 +149,10 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
 
-            const response = await fetch("/log-injury", {
+            // 🧪 See exactly what's being sent
+            console.log("Submitting injury data:", data);
+
+            const response = await fetch("/api/injuries", {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: { "Content-Type": "application/json" }
@@ -159,14 +162,12 @@
             document.getElementById("message").innerText = result.message;
 
             if (response.ok) {
-                // Generate a recovery plan automatically
                 await fetch("/api/generate-recovery-plan", {
                     method: "POST",
-                    body: JSON.stringify({ user_id: data.user_id, injury_id: result.injury_id }),
+                    body: JSON.stringify({ user_id: data.UserId, injury_id: result.injury_id }),
                     headers: { "Content-Type": "application/json" }
                 });
 
-                // Redirect after success
                 window.location.href = "/recovery-plan.html";
             }
         });
