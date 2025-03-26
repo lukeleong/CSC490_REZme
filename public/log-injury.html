@@ -13,6 +13,13 @@
             background-color: #f4f4f4;
         }
 
+        .header {
+            text-align: right;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+
         .container {
             max-width: 600px;
             margin: auto;
@@ -59,10 +66,12 @@
 </head>
 
 <body>
+    <div class="header" id="greeting">Welcome!</div>
+
     <div class="container">
         <h1>Log Your Injury</h1>
         <form id="injuryForm">
-            <input type="hidden" name="user_id" value="1"> <!-- Replace dynamically -->
+            <input type="hidden" id="user_id" name="user_id" value=""> <!-- Set dynamically -->
 
             <div class="input-group">
                 <label for="injury_type">Injury Type:</label>
@@ -100,6 +109,40 @@
     </div>
 
     <script>
+        function getUserIdFromToken() {
+            const token = localStorage.getItem("token");
+            if (!token) return null;
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload.id || payload.UserId || payload.user_id;
+            } catch (err) {
+                console.error("Failed to decode token:", err);
+                return null;
+            }
+        }
+
+        async function fetchUserName(userId) {
+            try {
+                const res = await fetch(`/users/${userId}`);
+                const data = await res.json();
+                if (res.ok && data.FirstName) {
+                    document.getElementById("greeting").innerText = `Welcome, ${data.FirstName}!`;
+                }
+            } catch (err) {
+                console.error("Failed to fetch user name:", err);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const userId = getUserIdFromToken();
+            if (userId) {
+                document.getElementById("user_id").value = userId;
+                fetchUserName(userId);
+            } else {
+                document.getElementById("greeting").innerText = "Please log in.";
+            }
+        });
+
         document.getElementById("injuryForm").addEventListener("submit", async function (event) {
             event.preventDefault();
 
@@ -122,6 +165,9 @@
                     body: JSON.stringify({ user_id: data.user_id, injury_id: result.injury_id }),
                     headers: { "Content-Type": "application/json" }
                 });
+
+                // Redirect after success
+                window.location.href = "/recovery-plan.html";
             }
         });
     </script>
