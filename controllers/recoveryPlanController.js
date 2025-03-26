@@ -62,8 +62,12 @@ exports.getAllRecoveryPlans = async (req, res) => {
 exports.getRecoveryPlanById = async (req, res) => {
     try {
         const { id } = req.params;
-        const plan = await RecoveryPlan.findByPk(id);
+        const plan = await RecoveryPlan.findByPk(id, {
+            include: [{ model: Injury }] // Include the Injury details
+        });
 
+        console.log(JSON.stringify(plan, null, 2));
+        
         if (!plan) {
             return res.status(404).json({ error: "Recovery Plan not found" });
         }

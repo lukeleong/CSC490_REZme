@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
+
         .container {
             max-width: 800px;
             margin: auto;
@@ -19,9 +21,11 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
         }
+
         .progress-bar {
             width: 100%;
             background-color: #ddd;
@@ -29,6 +33,7 @@
             overflow: hidden;
             margin-bottom: 20px;
         }
+
         .progress {
             height: 20px;
             background-color: #4CAF50;
@@ -38,6 +43,7 @@
             line-height: 20px;
             border-radius: 10px;
         }
+
         .exercise {
             padding: 15px;
             border: 1px solid #ddd;
@@ -45,6 +51,7 @@
             border-radius: 5px;
             background: #f9f9f9;
         }
+
         .button {
             display: block;
             width: 100%;
@@ -60,10 +67,17 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Recovery Plan</h1>
-
+        <div id="planDetails" style="margin-bottom: 20px;">
+            <h2>Plan Details</h2>
+            <p><strong>Injury:</strong> <span id="injuryType">Loading...</span></p>
+            <p><strong>Start Date:</strong> <span id="startDate">Loading...</span></p>
+            <p><strong>End Date:</strong> <span id="endDate">Loading...</span></p>
+            <p><strong>Status:</strong> <span id="isActive">Loading...</span></p>
+        </div>
         <div class="progress-bar">
             <div id="progress" class="progress">0%</div>
         </div>
@@ -86,26 +100,33 @@
                     return;
                 }
 
-                const response = await fetch(`http://localhost:3000/api/recovery-plans/${planId}`);
+                const response = await fetch(`/api/recovery-plans/${planId}`);
                 const plan = await response.json();
-                
+
                 if (!plan) {
                     document.getElementById("exercisesContainer").innerHTML = "<p>Recovery plan not found.</p>";
                     return;
                 }
+
+                // Show details
+                document.getElementById("injuryType").innerText = plan.Injury?.InjuryType || "N/A"; 
+                document.getElementById("startDate").innerText = new Date(plan.StartDate).toLocaleDateString();
+                document.getElementById("endDate").innerText = plan.EndDate ? new Date(plan.EndDate).toLocaleDateString() : "Not set";
+                document.getElementById("isActive").innerText = plan.IsActive ? "Active" : "Completed";
 
                 // Update progress bar
                 const progressBar = document.getElementById("progress");
                 progressBar.style.width = `${plan.ProgressStatus}%`;
                 progressBar.innerText = `${plan.ProgressStatus}%`;
 
-                // Fetch exercises related to this plan
+                // Fetch exercises
                 fetchExercises(planId);
             } catch (error) {
                 document.getElementById("exercisesContainer").innerHTML = "<p>Failed to load recovery plan.</p>";
                 console.error("Error fetching recovery plan:", error);
             }
         }
+
 
         async function fetchExercises(planId) {
             try {
@@ -143,4 +164,5 @@
         fetchRecoveryPlan();
     </script>
 </body>
+
 </html>
