@@ -5,11 +5,16 @@ const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion,ProgressTracker } = require('./models');
 const UserRoutes = require('./routes/UserRoutes');
 const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
-const ProgressRoutes = require("./routes/ProgressRoutes")
+const ProgressRoutes = require("./routes/ProgressRoutes");
+const ExerciseCompletionRoutes = require("./routes/ExerciseCompletionRoutes")
+const ExerciseRoutes = require('./routes/ExerciseRoutes');
 const path = require('path');
 const cors = require("cors");
 
 const app = express();
+
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Parses URL-encoded data
@@ -27,7 +32,7 @@ console.log("Recovery plan routes loaded!"); // Debugging log
 
 console.log("Progress Tracking");
 app.use("/api", ProgressRoutes);
-
+console.log('User Model:', User);
 
 
 
@@ -57,6 +62,43 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));  
 });
 
+app.get('/api/progress-tracker', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'progress-tracker.html'));
+});
+app.use('/', ProgressRoutes);
+
+
+app.get('/exercise-completion', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public','exercise-completion.html'));
+});
+app.get('/edit/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'edit-exercise.html'));
+});
+
+
+app.use('/api/exercise-completion', ExerciseCompletionRoutes);
+
+app.get('/api/exercise-completion', async (req, res) => {
+    try {
+        const completions = await ExerciseCompletion.findAll();
+        res.json(completions); // Return JSON data
+    } catch (error) {
+        console.error('Error fetching exercise completions:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// added this 3/26 probably no longer need
+app.use('/api/exercises', ExerciseRoutes);
+
+
+
+
+
+
+
+
+app.use(express.static(path.join(__dirname, "public")));
 // Sync database and start server
 sequelize.sync()
   .then(() => console.log('Database synced'))

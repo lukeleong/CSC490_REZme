@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Exercise Completion</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    form {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    input, textarea, button, select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 4px;
+    }
+</style>
+</head>
+<body>
+<h1>Edit Exercise Completion</h1>
+<form id="editForm">
+    <label for="PlanId">Plan ID</label>
+    <input type="number" id="PlanId" required>
+
+    <label for="exerciseDropdown">Exercise</label>
+<select id="exerciseDropdown" required>
+    <option value="" disabled selected>Select an exercise</option>
+</select>
+
+    <label for="SetsCompleted">Sets Completed</label>
+    <input type="number" id="SetsCompleted">
+
+    <label for="RepsCompleted">Reps Completed</label>
+    <input type="number" id="RepsCompleted">
+
+    <label for="TimeTaken">Time Taken (seconds)</label>
+    <input type="number" id="TimeTaken">
+
+    <label for="DifficultyRating">Difficulty Rating</label>
+    <input type="number" id="DifficultyRating">
+
+    <label for="ProgressFeedback">Progress Feedback</label>
+    <textarea id="ProgressFeedback"></textarea>
+
+    <button type="submit">Save</button>
+</form>
+
+<script>
+
+    async function loadRecord() {
+        const id = window.location.pathname.split('/').pop(); // Extract ID from URL (e.g., "1")
+
+        if (!id) {
+            console.error('No ID provided in the URL');
+            return;
+        }
+
+        // Fetch the record from the backend
+        const response = await fetch(`/api/exercise-completion/${id}`);
+        if (response.ok) {
+            const record = await response.json();
+
+            // Populate the form fields
+            document.getElementById('PlanId').value = record.PlanId;
+          //  document.getElementById('ExerciseId').value = record.ExerciseId;
+            document.getElementById('SetsCompleted').value = record.SetsCompleted;
+            document.getElementById('RepsCompleted').value = record.RepsCompleted;
+            document.getElementById('TimeTaken').value = record.TimeTaken || '';
+            document.getElementById('DifficultyRating').value = record.DifficultyRating || '';
+            document.getElementById('ProgressFeedback').value = record.ProgressFeedback || '';
+            await populateExerciseDropdown(record.ExerciseId);
+        } else {
+            console.error(`Failed to fetch record with ID ${id}`);
+        }
+    }
+
+    async function populateExerciseDropdown(selectedExerciseId) {
+    const response = await fetch('/api/exercises'); // Fetch all exercises
+    if (response.ok) {
+        const exercises = await response.json();
+        const dropdown = document.getElementById('exerciseDropdown');
+        dropdown.innerHTML = `<option value="" disabled>Select an exercise</option>`;
+
+        // Populate the dropdown with exercise options
+        exercises.forEach(exercise => {
+            const option = document.createElement('option');
+            option.value = exercise.ExerciseId;
+            option.textContent = exercise.ExerciseName;
+
+            // Pre-select the current exercise
+            if (exercise.ExerciseId == selectedExerciseId) {
+                option.selected = true;
+            }
+
+            dropdown.appendChild(option);
+        });
+    } else {
+        console.error('Failed to fetch exercises');
+    }
+}
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', loadRecord);
+    document.getElementById('editForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const id = window.location.pathname.split('/').pop(); // Extract ID from URL
+
+    if (!id) {
+        console.error('No ID provided in the URL');
+        return;
+    }
+
+    const updatedData = {
+        PlanId: document.getElementById('PlanId').value,
+        ExerciseId: document.getElementById('exerciseDropdown').value,
+        SetsCompleted: document.getElementById('SetsCompleted').value || 0,
+        RepsCompleted: document.getElementById('RepsCompleted').value || 0,
+        TimeTaken: document.getElementById('TimeTaken').value || null,
+        DifficultyRating: document.getElementById('DifficultyRating').value || null,
+        ProgressFeedback: document.getElementById('ProgressFeedback').value || null,
+    };
+
+    // Send the updated data to the backend
+    const response = await fetch(`/api/exercise-completion/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData),
+    });
+
+    if (response.ok) {
+        console.log(`Record with ID ${id} updated successfully`);
+        window.location.href = '/exercise-completion'; // Redirect to main page
+    } else {
+        console.error(`Failed to update record with ID ${id}`);
+    }
+});
+
+
+    loadRecord(); // Load the record data when the page loads
+</script>
+</body>
+</html>
