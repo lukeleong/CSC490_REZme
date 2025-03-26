@@ -149,9 +149,6 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
 
-            // 🧪 See exactly what's being sent
-            console.log("Submitting injury data:", data);
-
             const response = await fetch("/api/injuries", {
                 method: "POST",
                 body: JSON.stringify(data),
@@ -162,13 +159,21 @@
             document.getElementById("message").innerText = result.message;
 
             if (response.ok) {
-                await fetch("/api/generate-recovery-plan", {
+                const recoveryResponse = await fetch("/api/recovery-plans", {
                     method: "POST",
                     body: JSON.stringify({ user_id: data.UserId, injury_id: result.injury_id }),
                     headers: { "Content-Type": "application/json" }
                 });
 
-                window.location.href = "/recovery-plan.html";
+                const recoveryData = await recoveryResponse.json();
+
+                if (recoveryResponse.ok && recoveryData.recoveryPlan?.PlanId) {
+                    // Redirect using the newly created recovery plan ID
+                    window.location.href = `/recovery-plan.html?planId=${recoveryData.recoveryPlan.PlanId}`;
+                } else {
+                    console.error("Recovery plan creation failed:", recoveryData);
+                    document.getElementById("message").innerText = "Recovery plan creation failed.";
+                }
             }
         });
     </script>

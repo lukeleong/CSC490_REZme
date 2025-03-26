@@ -11,7 +11,7 @@ const RecoveryPlan = sequelize.define('RecoveryPlan', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'User',
+            model: 'Users',
             key: 'UserId'
         },
     },
@@ -19,7 +19,7 @@ const RecoveryPlan = sequelize.define('RecoveryPlan', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Injury',
+            model: 'Injuries',
             key: 'InjuryId',
         },
     },
