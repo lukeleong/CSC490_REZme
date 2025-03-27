@@ -52,11 +52,16 @@
 
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <a href="/log-injury.html" class="button" style="width: auto;">Log a New Injury</a>
-            <a href="/injuries.html" class="button" style="width: auto;">View All Injuries</a>
-            <div id="greeting" style="font-weight: bold;"></div>
-        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; gap: 10px;">
+              <a href="/log-injury.html" class="button" style="width: auto;">Log a New Injury</a>
+              <a href="/injuries.html" class="button" style="width: auto;">View All Injuries</a>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div id="greeting" style="font-weight: bold;"></div>
+              <button onclick="logout()" class="button" style="width: auto; background-color: #dc3545;">Logout</button>
+            </div>
+          </div>
         <h1>Your Recovery Plans</h1>
         <div id="plansContainer">
             <p>Loading recovery plans...</p>
@@ -112,7 +117,7 @@
                     const planElement = document.createElement("div");
                     planElement.classList.add("plan");
                     planElement.innerHTML = `
-                        <h2>Recovery Plan #${plan.PlanId}</h2>
+                        <h2>${plan.Injury?.InjuryType || `Recovery Plan #${plan.PlanId}`}</h2>
                         <p><strong>Start Date:</strong> ${new Date(plan.StartDate).toDateString()}</p>
                         <p><strong>Progress:</strong> ${plan.ProgressStatus}%</p>
                         <p><strong>Status:</strong> ${plan.IsActive ? "Active" : "Completed"}</p>
@@ -128,6 +133,11 @@
 
         function viewPlan(planId) {
             window.location.href = `/recovery-plan.html?planId=${planId}`;
+        }
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "/login.html";
         }
 
         fetchRecoveryPlans();

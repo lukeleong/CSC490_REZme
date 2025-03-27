@@ -63,13 +63,19 @@ exports.createRecoveryPlan = async (req, res) => {
 
 // Get All Recovery Plans
 exports.getAllRecoveryPlans = async (req, res) => {
-    try {
-        const plans = await RecoveryPlan.findAll();
-        res.json(plans);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to fetch recovery plans." });
-    }
+  try {
+      const plans = await RecoveryPlan.findAll({
+          where: req.query.user_id ? { UserId: req.query.user_id } : undefined,
+          include: [{
+              model: Injury,
+              attributes: ['InjuryType']
+          }]
+      });
+      res.json(plans);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch recovery plans." });
+  }
 };
 
 // Get a Single Recovery Plan
