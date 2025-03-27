@@ -47,9 +47,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files (Must be at the end)
-app.use(express.static(path.join(__dirname, 'public'))); 
-
 // Initialize passport and session
 app.use(passport.initialize());
 app.use(passport.session());
@@ -139,3 +136,6 @@ sequelize.sync({ force: true })
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Serve static files (Must be at the end)
+app.use(express.static(path.join(__dirname, 'public'))); 
