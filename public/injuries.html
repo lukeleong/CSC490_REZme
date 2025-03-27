@@ -81,6 +81,10 @@
             window.location.href = `/recovery-plan.html?planId=${planId}`;
         }
 
+        function goToPlanMaker(injuryId) {
+            window.location.href = `/recoveryplan-maker.html?injury_id=${injuryId}`;
+        }
+
         async function fetchInjuries() {
             const userId = getUserIdFromToken();
             if (!userId) {
@@ -114,7 +118,7 @@
                         <p><strong>Start Date:</strong> ${new Date(injury.StartDate).toDateString()}</p>
                         ${hasPlan
                             ? `<button class="button" onclick="goToRecoveryPlan(${hasPlan})">View Recovery Plan</button>`
-                            : `<button class="button" onclick="createRecoveryPlan(${userId}, ${injury.InjuryId})">Create Recovery Plan</button>`
+                            : `<button class="button" onclick="goToPlanMaker(${injury.InjuryId})">Create Recovery Plan</button>`
                         }
                     `;
                     container.appendChild(div);
@@ -128,35 +132,12 @@
         async function checkRecoveryPlan(userId, injuryId) {
             try {
                 const res = await fetch(`/api/recovery-plans?user_id=${userId}`);
-        const plans = await res.json();
-        const match = plans.find(plan => plan.InjuryId === injuryId);
-        return match ? match.PlanId : null;
+                const plans = await res.json();
+                const match = plans.find(plan => plan.InjuryId === injuryId);
+                return match ? match.PlanId : null;
             } catch (err) {
                 console.error("Error checking recovery plan:", err);
                 return false;
-            }
-        }
-
-        async function createRecoveryPlan(userId, injuryId) {
-            try {
-                const res = await fetch("/api/recovery-plans", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: userId, injury_id: injuryId })
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.recoveryPlan?.PlanId) {
-                    alert("Recovery plan created!");
-                    window.location.href = `/recovery-plan.html?planId=${data.recoveryPlan.PlanId}`;
-                } else {
-                    alert("Failed to create recovery plan.");
-                    console.error(data);
-                }
-            } catch (error) {
-                alert("Error creating recovery plan.");
-                console.error("Recovery plan creation error:", error);
             }
         }
 
