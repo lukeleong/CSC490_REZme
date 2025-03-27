@@ -20,7 +20,7 @@ const Exercise = sequelize.define("Exercise", {
     },
   },
   Difficulty: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER, asdfasfas
     allowNull: false,
     validate: {
       min: 1,
