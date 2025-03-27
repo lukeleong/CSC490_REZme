@@ -52,6 +52,11 @@
 
 <body>
     <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/log-injury.html" class="button" style="width: auto;">Log a New Injury</a>
+            <a href="/injuries.html" class="button" style="width: auto;">View All Injuries</a>
+            <div id="greeting" style="font-weight: bold;"></div>
+        </div>
         <h1>Your Recovery Plans</h1>
         <div id="plansContainer">
             <p>Loading recovery plans...</p>
@@ -59,9 +64,40 @@
     </div>
 
     <script>
+        function getUserIdFromToken() {
+            const token = localStorage.getItem("token");
+            if (!token) return null;
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload.id || payload.user_id || payload.UserId;
+            } catch (err) {
+                console.error("Failed to decode token:", err);
+                return null;
+            }
+        }
+
+        async function fetchUserGreeting(userId) {
+            try {
+                const response = await fetch(`/users/${userId}`);
+                const user = await response.json();
+                if (user.FirstName) {
+                    document.getElementById("greeting").innerText = `Hello, ${user.FirstName}`;
+                }
+            } catch (error) {
+                console.error("Failed to fetch user greeting:", error);
+            }
+        }
+
         async function fetchRecoveryPlans() {
             try {
-                const userId = 2; // Replace with dynamic user ID
+                const userId = getUserIdFromToken();
+                if (!userId) {
+                    document.getElementById("plansContainer").innerHTML = "<p>Please log in to view recovery plans.</p>";
+                    return;
+                }
+
+                fetchUserGreeting(userId);
+
                 const response = await fetch(`/api/recovery-plans?user_id=${userId}`);
                 const plans = await response.json();
                 const container = document.getElementById("plansContainer");

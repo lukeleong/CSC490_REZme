@@ -11,6 +11,7 @@ const recoveryPlanRoutes = require("./routes/recoveryPlanRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const exerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes");
 const injuryRoutes = require("./routes/injuryRoutes");
+const exerciseRoutes = require("./routes/exerciseRoutes");
 const path = require('path');
 const cors = require("cors");
 const dotenv = require('dotenv');
@@ -45,9 +46,6 @@ app.use((req, res, next) => {
   console.log(`Received request: ${req.method} ${req.originalUrl}`);
   next();
 });
-
-// Serve static files (Must be at the end)
-app.use(express.static(path.join(__dirname, 'public'))); 
 
 // Initialize passport and session
 app.use(passport.initialize());
@@ -91,6 +89,7 @@ app.use("/api", recoveryPlanRoutes);
 app.use("/api", progressRoutes);
 app.use("/api", exerciseCompletionRoutes);
 app.use("/api", injuryRoutes);
+app.use("/api", exerciseRoutes);
 
 console.log("All API routes loaded!");
 
@@ -131,9 +130,12 @@ app.get('/users', async (req, res) => {
 });
 
 // Sync database and start server
-sequelize.sync()
+sequelize.sync({ force: true })
   .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Serve static files (Must be at the end)
+app.use(express.static(path.join(__dirname, 'public'))); 

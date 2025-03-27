@@ -2,129 +2,224 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Injury - Recovery App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log Injury - Recovery App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 16px;
+    }
 
-        h1 {
-            text-align: center;
-        }
+    .back-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
 
-        .input-group {
-            margin: 15px 0;
-        }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
+    h1 {
+      text-align: center;
+    }
 
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+    .input-group {
+      margin: 15px 0;
+    }
 
-        .button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            text-align: center;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .input-group input[type="range"] {
+      padding: 0;
+    }
+
+    .range-value {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      text-align: center;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Log Your Injury</h1>
-        <form id="injuryForm">
-            <input type="hidden" name="user_id" value="1"> <!-- Replace dynamically -->
+  <div class="header">
+    <a href="/dashboard.html" class="back-button">← Back to Dashboard</a>
+    <div id="greeting">Welcome!</div>
+  </div>
 
-            <div class="input-group">
-                <label for="injury_type">Injury Type:</label>
-                <input type="text" id="injury_type" name="injury_type" required>
-            </div>
+  <div class="container">
+    <h1>Log Your Injury</h1>
+    <form id="injuryForm">
+      <input type="hidden" id="UserId" name="UserId" value="" />
 
-            <div class="input-group">
-                <label for="injury_location">Injury Location:</label>
-                <input type="text" id="injury_location" name="injury_location" required>
-            </div>
+      <div class="input-group">
+        <label for="InjuryType">Injury Type:</label>
+        <input type="text" id="InjuryType" name="InjuryType" required />
+      </div>
 
-            <div class="input-group">
-                <label for="injury_severity">Injury Severity (1-10):</label>
-                <input type="number" id="injury_severity" name="injury_severity" min="1" max="10" required>
-            </div>
+      <div class="input-group">
+        <label for="InjuryLocation">Injury Location:</label>
+        <select id="InjuryLocation" name="InjuryLocation" required>
+          <option value="">Loading...</option>
+        </select>
+      </div>
 
-            <div class="input-group">
-                <label for="pain_level">Initial Pain Level (0-10):</label>
-                <input type="number" id="pain_level" name="pain_level" min="0" max="10" required>
-            </div>
+      <div class="input-group">
+        <label for="InjurySeverity">Injury Severity:</label>
+        <input type="range" id="InjurySeverity" name="InjurySeverity" min="1" max="10" value="5" required
+          oninput="updateLabel('severityValue', this.value)" />
+        <div class="range-value" id="severityValue">5</div>
+      </div>
 
-            <div class="input-group">
-                <label for="mobility_level">Initial Mobility Level (0-10):</label>
-                <input type="number" id="mobility_level" name="mobility_level" min="0" max="10" required>
-            </div>
+      <div class="input-group">
+        <label for="PainLevel">Pain Level:</label>
+        <input type="range" id="PainLevel" name="PainLevel" min="1" max="10" value="5" required
+          oninput="updateLabel('painValue', this.value)" />
+        <div class="range-value" id="painValue">5</div>
+      </div>
 
-            <div class="input-group">
-                <label for="start_date">Start Date:</label>
-                <input type="date" id="start_date" name="start_date" required>
-            </div>
+      <div class="input-group">
+        <label for="MobilityLevel">Mobility Level:</label>
+        <input type="range" id="MobilityLevel" name="MobilityLevel" min="1" max="10" value="5" required
+          oninput="updateLabel('mobilityValue', this.value)" />
+        <div class="range-value" id="mobilityValue">5</div>
+      </div>
 
-            <button type="submit" class="button">Submit Injury</button>
-        </form>
-        <p id="message"></p>
-    </div>
+      <div class="input-group">
+        <label for="StartDate">Sustained Date:</label>
+        <input type="date" id="StartDate" name="StartDate" required />
+      </div>
 
-    <script>
-        document.getElementById("injuryForm").addEventListener("submit", async function (event) {
-            event.preventDefault();
+      <button type="submit" class="button">Submit Injury</button>
+    </form>
+    <p id="message"></p>
+  </div>
 
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+  <script>
+    function updateLabel(id, value) {
+      document.getElementById(id).innerText = value;
+    }
 
-            const response = await fetch("/log-injury", {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: { "Content-Type": "application/json" }
-            });
+    function getUserIdFromToken() {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.UserId || payload.user_id;
+      } catch (err) {
+        console.error("Failed to decode token:", err);
+        return null;
+      }
+    }
 
-            const result = await response.json();
-            document.getElementById("message").innerText = result.message;
+    async function fetchUserName(userId) {
+      try {
+        const res = await fetch(`/users/${userId}`);
+        const data = await res.json();
+        if (res.ok && data.FirstName) {
+          document.getElementById("greeting").innerText = `Welcome, ${data.FirstName}!`;
+        }
+      } catch (err) {
+        console.error("Failed to fetch user name:", err);
+      }
+    }
 
-            if (response.ok) {
-                // Generate a recovery plan automatically
-                await fetch("/api/generate-recovery-plan", {
-                    method: "POST",
-                    body: JSON.stringify({ user_id: data.user_id, injury_id: result.injury_id }),
-                    headers: { "Content-Type": "application/json" }
-                });
-            }
+    async function populateMuscleGroups() {
+      try {
+        const res = await fetch("/api/muscle-groups");
+        const groups = await res.json();
+        const dropdown = document.getElementById("InjuryLocation");
+
+        dropdown.innerHTML = '<option value="">Select Location</option>';
+        groups.forEach(group => {
+          const option = document.createElement("option");
+          option.value = group;
+          option.textContent = group.charAt(0).toUpperCase() + group.slice(1);
+          dropdown.appendChild(option);
         });
-    </script>
+      } catch (err) {
+        console.error("Failed to load muscle groups:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const userId = getUserIdFromToken();
+      if (userId) {
+        document.getElementById("UserId").value = userId;
+        fetchUserName(userId);
+      } else {
+        document.getElementById("greeting").innerText = "Please log in.";
+      }
+      populateMuscleGroups();
+    });
+
+    document.getElementById("injuryForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+
+      const response = await fetch("/api/injuries", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const result = await response.json();
+      document.getElementById("message").innerText = result.message || "Injury submitted successfully.";
+
+      if (!response.ok) {
+        console.error("Failed to log injury:", result);
+      }
+    });
+  </script>
 </body>
 
 </html>
