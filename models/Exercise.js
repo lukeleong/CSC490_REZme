@@ -31,14 +31,6 @@ const Exercise = sequelize.define("Exercise", {
     type: DataTypes.STRING(255),
     allowNull: true, // Optional video tutorial URL
   },
-  UserRating: {
-    type: DataTypes.FLOAT,
-    allowNull: true,
-    validate: {
-      min: 0,
-      max: 5,
-    },
-  },
 }, {
   timestamps: true,
 });
