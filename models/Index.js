@@ -54,4 +54,14 @@ ExerciseRating.belongsTo(Exercise, { foreignKey: "ExerciseId" });
 //    .then(() => console.log("Database synced"))
 //    .catch((err) => console.error("Error syncing database:", err));
 
-module.exports = { sequelize, User, RecoveryPlan, Injury, Exercise, ExerciseCompletion, ProgressTracker };
+module.exports = {
+    sequelize,
+    User,
+    RecoveryPlan,
+    Injury,
+    Exercise,
+    ExerciseCompletion,
+    ProgressTracker,
+    ExerciseRating,
+    RecoveryPlanExercise,
+};

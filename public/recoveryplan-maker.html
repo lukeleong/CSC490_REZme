@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -41,11 +40,9 @@
       margin-bottom: 5px;
     }
 
-    .input-group select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ddd;
+    .checkbox-group label {
+      display: block;
+      font-weight: normal;
     }
 
     .button {
@@ -86,14 +83,11 @@
       </div>
 
       <div class="input-group">
-        <label for="equipment">Equipment Type</label>
-        <select id="equipment" name="equipment" required>
-          <option value="">Select equipment</option>
-          <option value="Bodyweight">Bodyweight</option>
-          <option value="Resistance Band">Resistance Band</option>
-          <option value="Dumbbell">Dumbbell</option>
-          <option value="None">None</option>
-        </select>
+        <label>Available Equipment (Body weight is always included)</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="equipment" value="resistance band" /> Resistance Band</label>
+          <label><input type="checkbox" name="equipment" value="gym" /> Gym</label>
+        </div>
       </div>
 
       <button type="submit" class="button">Generate Recovery Plan</button>
@@ -146,18 +140,21 @@
       e.preventDefault();
 
       const formData = new FormData(this);
-      const data = Object.fromEntries(formData);
+      const checkedEquipment = Array.from(document.querySelectorAll('input[name="equipment"]:checked')).map(el => el.value);
+      checkedEquipment.push("body weight"); // Always include body weight
+
+      const data = {
+        user_id: formData.get("UserId"),
+        injury_id: formData.get("injury_id"),
+        difficulty: parseInt(formData.get("difficulty")),
+        equipment: checkedEquipment
+      };
 
       try {
         const res = await fetch("/api/recovery-plans", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: data.UserId,
-            injury_id: data.injury_id,
-            difficulty: parseInt(data.difficulty),
-            equipment: data.equipment
-          })
+          body: JSON.stringify(data)
         });
 
         const result = await res.json();
@@ -174,5 +171,4 @@
     });
   </script>
 </body>
-
 </html>

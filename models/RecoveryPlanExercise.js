@@ -24,7 +24,7 @@ const RecoveryPlanExercise = sequelize.define("RecoveryPlanExercise", {
     primaryKey: true,
   },
 }, {
-  timestamps: false, // Optional if you don't want createdAt/updatedAt
+  timestamps: true, // Optional if you don't want createdAt/updatedAt
   tableName: "RecoveryPlanExercises"
 });
 
