@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 });
 
 // Serve static files (Must be at the end)
-app.use(express.static(path.join(__dirname, 'public'))); 
+//app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize passport and session
 app.use(passport.initialize());
@@ -89,7 +89,7 @@ console.log("Loading API routes...");
 app.use('/users', UserRoutes);
 app.use("/api", recoveryPlanRoutes);
 app.use("/api", progressRoutes);
-app.use("/api", exerciseCompletionRoutes);
+//app.use("/api", exerciseCompletionRoutes);
 app.use("/api", injuryRoutes);
 
 console.log("All API routes loaded!");
@@ -129,6 +129,33 @@ app.get('/users', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// load html from public folder
+app.get('/exercise-completion', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public','exercise-completion.html'));
+});
+app.get('/edit/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'edit-exercise.html'));
+});
+
+// fetch backend data for exercise routes
+app.use('/api/exercise-completion', exerciseCompletionRoutes);
+
+
+// GET exercises
+app.get('/api/exercise-completion', async (req, res) => {
+    try {
+        const completions = await ExerciseCompletion.findAll();
+        res.json(completions); // Return JSON data
+    } catch (error) {
+        console.error('Error fetching exercise completions:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // Sync database and start server
 sequelize.sync()
