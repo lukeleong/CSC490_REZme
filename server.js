@@ -12,6 +12,7 @@ const progressRoutes = require("./routes/progressRoutes");
 const exerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes");
 const injuryRoutes = require("./routes/injuryRoutes");
 const exerciseRoutes = require("./routes/exerciseRoutes");
+const exerciseRatingRoutes = require("./routes/exerciseRatingRoutes");
 const path = require('path');
 const cors = require("cors");
 const dotenv = require('dotenv');
@@ -90,6 +91,7 @@ app.use("/api", progressRoutes);
 app.use("/api", exerciseCompletionRoutes);
 app.use("/api", injuryRoutes);
 app.use("/api", exerciseRoutes);
+app.use("/api", exerciseRatingRoutes);
 
 console.log("All API routes loaded!");
 
