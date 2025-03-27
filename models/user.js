@@ -14,7 +14,7 @@ const User = sequelize.define("User", {
   },
   Password: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: true,
   },
   TermsAgreed: {
     type: DataTypes.BOOLEAN,
@@ -53,6 +53,12 @@ const User = sequelize.define("User", {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
+  },
+
+  googleId: {  
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    unique: true,  
   },
 });
 
