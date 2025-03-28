@@ -6,7 +6,6 @@ const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const jwt = require('jsonwebtoken');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion, ProgressTracker } = require('./models');
-const UserRoutes = require('./routes/userRoutes');
 const recoveryPlanRoutes = require("./routes/recoveryPlanRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const exerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes");
@@ -21,6 +20,7 @@ require('dotenv').config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use(cors());
+
 
 // JWT Authentication middleware
 const authenticateJWT = (req, res, next) => {
@@ -41,6 +41,8 @@ const authenticateJWT = (req, res, next) => {
     res.status(401).json({ error: "Authorization header not found" });
   }
 };
+exports.authenticateJWT = authenticateJWT;
+
 
 // Content Security Policy
 app.use((req, res, next) => {
@@ -68,8 +70,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files (Must be at the end)
-app.use(express.static(path.join(__dirname, 'public'))); 
+
 
 // Initialize passport and session
 app.use(passport.initialize());
@@ -125,7 +126,10 @@ passport.deserializeUser(async (id, done) => {
 
 // Register Routes
 console.log("Loading API routes...");
-
+const UserRoutes = require('./routes/UserRoutes');
+app.get('/test-admin-check', authenticateJWT, (req, res) => {
+  res.json({ message: 'Test admin check route working' });
+});
 app.use('/users', UserRoutes);
 app.use("/api", recoveryPlanRoutes);
 app.use("/api", progressRoutes);
@@ -133,6 +137,8 @@ app.use("/api", exerciseCompletionRoutes);
 app.use("/api", injuryRoutes);
 
 console.log("All API routes loaded!");
+// Serve static files 
+app.use(express.static(path.join(__dirname, 'public'))); 
 
 // Home route
 app.get('/', (req, res) => {
@@ -144,16 +150,18 @@ app.get('/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email']
 }));
 
-// Google OAuth callback route
+// Google OAuth callback route 
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
-  // Generate JWT token
   const token = jwt.sign(
-    { id: req.user.UserId, email: req.user.Email }, 
+    { 
+      id: req.user.UserId, 
+      email: req.user.Email,
+      isAdmin: req.user.IsAdmin || false 
+    },
     process.env.JWT_SECRET, 
     { expiresIn: '1h' }
   );
   
-  // Return token as JSON or redirect with token
   res.json({ token });
 });
 
@@ -174,6 +182,7 @@ app.get('/profile', (req, res) => {
 app.get('/test-direct', (req, res) => {
   res.json({ message: "Direct test route working" });
 });
+
 
 // Sync database and start server
 sequelize.sync()

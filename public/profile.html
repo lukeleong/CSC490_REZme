@@ -119,7 +119,7 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         #confirmationModel {
@@ -129,7 +129,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 100;
@@ -147,6 +147,14 @@
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
+        }
+
+        .google-user-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -213,8 +221,11 @@
         </div>
 
         <!-- Account Deletion Section -->
-        <div class="section">
+        <div class="section" id="deleteAccountSection">
             <h2>Delete Account</h2>
+            <div id="googleUserWarning" class="google-user-warning" style="display:none;">
+                <p>Note: Google Sign-In users cannot delete their account through this interface. Please contact support for account deletion.</p>
+            </div>
             <p>Warning: This action cannot be undone. All your data will be permanently deleted.</p>
             <div class="right-aligned">
                 <button id="deleteAccountBtn" class="button button-danger">Delete Account</button>
@@ -274,7 +285,7 @@
             }, 5000);
         }
 
-        // Show API erros
+        // Show API errors
         function handleApiError(error, defaultMessage) {
             console.error('API Error:', error);
             let errorMessage = defaultMessage;
@@ -313,11 +324,15 @@
                 const data = await response.json();
                 currentUser = data;
 
-                // Check if user Google
+                // Check if user is Google user
                 const parsedToken = parseJwt(token);
                 if (currentUser.googleId) {
-                    // Hide password change section for Google 
+                    // Hide password change section for Google users
                     document.getElementById('passwordSection').style.display = 'none';
+                    
+                    // Show Google user warning for account deletion
+                    document.getElementById('googleUserWarning').style.display = 'block';
+                    document.getElementById('deleteAccountBtn').style.display = 'none';
                 }
 
                 // Fill form fields
@@ -424,7 +439,7 @@
                     throw new Error(errorData.error || 'Failed to change password');
                 }
 
-                // Clear  form
+                // Clear form
                 document.getElementById('passwordForm').reset();
                 showMessage('Password changed successfully!');
 
@@ -432,7 +447,6 @@
                 console.error('Error changing password:', error);
                 showMessage(error.message || 'Failed to change password. Please try again.', true);
                 
-               
                 if (error.message && (error.message.includes('401') || error.message.includes('403'))) {
                     showMessage('Current password is incorrect', true);
                 }

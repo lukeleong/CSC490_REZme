@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin User Management - Recovery App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            margin-top: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-links {
+            text-align: right;
+        }
+
+        .nav-links a {
+            margin-left: 15px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .button-warning {
+            background: #ffc107;
+        }
+
+        .button-danger {
+            background: #dc3545;
+        }
+
+        .status-message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .right-aligned {
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #confirmationModel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .Model-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .Model-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        #userSearchContainer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #userSearch {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        #searchButton {
+            flex-shrink: 0;
+        }
+
+        #debugInfo {
+            background-color: #f8f9fa;
+            border: 1px solid #e2e6ea;
+            padding: 10px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* New styles for deletion confirmation popup */
+        #deletionConfirmationPopup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Admin User Management</h1>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="#" id="logoutButton">Logout</a>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="status-message"></div>
+
+        <!-- Debug Information -->
+        <div id="debugInfo"></div>
+
+        <!-- User Search and Selection -->
+        <div class="section">
+            <div id="userSearchContainer">
+                <input type="text" id="userSearch" placeholder="Search User ID">
+                <button id="searchButton" class="button">Search</button>
+            </div>
+            <div class="input-group">
+                <label for="userSelect">Select User:</label>
+                <select id="userSelect">
+                    <option value="">Select a user</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Profile Information Section -->
+        <div class="section" id="profileSection" class="hidden">
+            <h2>User Profile Information</h2>
+            <form id="profileForm">
+                <div class="input-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName">
+                </div>
+                <div class="input-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName">
+                </div>
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" readonly>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="text" id="password" name="password">
+                </div>
+                <div class="input-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob">
+                </div>
+                <div class="input-group">
+                    <label for="isAdmin">Admin Status:</label>
+                    <select id="isAdmin" name="isAdmin">
+                        <option value="false">Regular User</option>
+                        <option value="true">Admin</option>
+                    </select>
+                </div>
+                <div class="right-aligned">
+                    <button type="submit" class="button">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Account Deletion Section -->
+        <div class="section" id="deleteSection" class="hidden">
+            <h2>Delete User Account</h2>
+            <p>Warning: This action cannot be undone. All user data will be permanently deleted.</p>
+            <div class="right-aligned">
+                <button id="deleteAccountBtn" class="button button-danger">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Model for Delete Account -->
+    <div id="confirmationModel" class="hidden">
+        <div class="Model-content">
+            <h2>Confirm User Account Deletion</h2>
+            <p>Are you sure you want to delete this user account? This action cannot be undone.</p>
+            <div class="input-group">
+                <label for="deleteConfirmPassword">Enter your admin password to confirm:</label>
+                <input type="password" id="deleteConfirmPassword" name="deleteConfirmPassword" required>
+            </div>
+            <div class="Model-buttons">
+                <button id="cancelDeleteBtn" class="button">Cancel</button>
+                <button id="confirmDeleteBtn" class="button button-danger">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Deletion Confirmation Popup -->
+    <div id="deletionConfirmationPopup" class="hidden">
+        <h2>User Deleted</h2>
+        <p>The user account has been successfully deleted.</p>
+        <button id="confirmDeletionPopupBtn" class="button">OK</button>
+    </div>
+
+    <script>
+        // Token management
+        const token = localStorage.getItem('token');
+        console.log('Token:', token);
+        let currentUser = null;
+        let selectedUserId = null;
+
+        // Show debug information
+        function showDebug(message, error = null) {
+            const debugElement = document.getElementById('debugInfo');
+            debugElement.textContent = message;
+
+            if (error) {
+                debugElement.textContent += '\n\nError Details:\n' + JSON.stringify(error, null, 2);
+            }
+        }
+
+        // Show status messages helper
+        function showMessage(message, isError = false) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = isError ? 'status-message error' : 'status-message success';
+            statusElement.style.display = 'block';
+
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Parse JWT token to get user info
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                showDebug('Error parsing JWT', e);
+                return null;
+            }
+        }
+
+        // Verify admin status
+        async function verifyAdminStatus() {
+            if (!token) {
+                showDebug('No token found. Please log in.');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 10000);
+                return false;
+            }
+
+            try {
+                const response = await fetch('/users/admin-check', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    let errorMessage = 'Admin check failed';
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                        if (errorData.action === "logout") {
+                            localStorage.removeItem('token');
+                            setTimeout(() => {
+                                window.location.href = 'login.html';
+                            }, 3000);
+                            return false;
+                        }
+                    } else {
+                        const errorText = await response.text();
+                        errorMessage = errorText || errorMessage;
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                if (!data.isAdmin) {
+                    showMessage('You do not have admin privileges', true);
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 3000);
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Verification error:', error);
+                showMessage('Failed to verify admin status: ' + error.message, true);
+                return false;
+            }
+        }
+
+        // Search for users
+        async function searchUsers() {
+            const searchTerm = document.getElementById('userSearch').value.trim();
+            const userSelect = document.getElementById('userSelect');
+            userSelect.innerHTML = '<option value="">Select a user</option>';
+
+            if (!searchTerm) {
+                showMessage('Please enter a search term', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/users/findUsers?userId=${searchTerm}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showDebug('Failed to search users', { status: response.status, error: errorText });
+                    throw new Error('Failed to search users');
+                }
+
+                const users = await response.json();
+
+                if (users.length === 0) {
+                    showMessage('No users found', true);
+                    return;
+                }
+
+                users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.UserId;
+                    option.textContent = `${user.Email} (ID: ${user.UserId})`;
+                    userSelect.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Error searching users:', error);
+                showMessage('Failed to search users: ' + error.message, true);
+            }
+        }
+
+        // Fetch user data for selected user
+        async function fetchSelectedUserData(userId) {
+            try {
+                const response = await fetch(`/users/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showDebug('Failed to fetch user data', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        error: errorText
+                    });
+
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                const data = await response.json();
+                selectedUserId = userId;
+
+                // Show sections
+                document.getElementById('profileSection').classList.remove('hidden');
+                document.getElementById('deleteSection').classList.remove('hidden');
+
+                // Fill form fields
+                document.getElementById('firstName').value = data.FirstName || '';
+                document.getElementById('lastName').value = data.LastName || '';
+                document.getElementById('email').value = data.Email || '';
+                document.getElementById('password').value = ''; // Clear password field
+                document.getElementById('isAdmin').value = data.IsAdmin ? 'true' : 'false';
+
+                if (data.DateOfBirth) {
+                    const date = new Date(data.DateOfBirth);
+                    if (!isNaN(date)) {
+                        document.getElementById('dob').value = date.toISOString().split('T')[0];
+                    }
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Detailed error fetching user data:', error);
+                showMessage(`Failed to load user data: ${error.message}`, true);
+
+                if (token) {
+                    try {
+                        const payload = parseJwt(token);
+                        const isExpired = payload.exp < Date.now() / 1000;
+
+                        if (isExpired) {
+                            showMessage('Session expired. Please log in again.', true);
+                            setTimeout(() => {
+                                localStorage.removeItem('token');
+                                window.location.href = 'login.html';
+                            }, 2000);
+                        }
+                    } catch (parseError) {
+                        console.error('Error parsing token:', parseError);
+                        showMessage('Invalid session. Please log in again.', true);
+                        localStorage.removeItem('token');
+                        window.location.href = 'login.html';
+                    }
+                }
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', async () => {
+            const isAdmin = await verifyAdminStatus();
+            if (isAdmin) {
+                // Add search button event listener
+                document.getElementById('searchButton').addEventListener('click', searchUsers);
+
+                // Add user select change event listener
+                document.getElementById('userSelect').addEventListener('change', function () {
+                    const userId = this.value;
+                    if (userId) {
+                        fetchSelectedUserData(userId);
+                    } else {
+                        // Hide sections if no user selected
+                        document.getElementById('profileSection').classList.add('hidden');
+                        document.getElementById('deleteSection').classList.add('hidden');
+                    }
+                });
+
+                // Update Profile
+                document.getElementById('profileForm').addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    if (!selectedUserId) {
+                        showMessage('No user selected', true);
+                        return;
+                    }
+
+                    const updatedProfile = {
+                        FirstName: document.getElementById('firstName').value,
+                        LastName: document.getElementById('lastName').value,
+                        DateOfBirth: document.getElementById('dob').value,
+                        IsAdmin: document.getElementById('isAdmin').value === 'true',
+                        Password: document.getElementById('password').value || undefined
+                    };
+
+                    try {
+                        const response = await fetch(`/users/${selectedUserId}/admin`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updatedProfile)
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            showDebug('Failed to update profile', { status: response.status, error: errorText });
+                            throw new Error(errorText || 'Failed to update profile');
+                        }
+
+                        const responseData = await response.json();
+                        showMessage('User profile updated successfully!');
+
+                    } catch (error) {
+                        console.error('Error updating profile:', error);
+                        showMessage(error.message || 'Failed to update profile. Please try again.', true);
+                    }
+                });
+
+                // Delete Account Modal Handling
+                document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+                    const confirmationModel = document.getElementById('confirmationModel');
+                    confirmationModel.classList.remove('hidden');
+                    confirmationModel.style.display = 'flex';
+                });
+
+                // Cancel Delete Button
+                document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+                    const confirmationModel = document.getElementById('confirmationModel');
+                    confirmationModel.classList.add('hidden');
+                    confirmationModel.style.display = 'none';
+                });
+
+                // Confirm Delete Button
+                document.getElementById('confirmDeleteBtn').addEventListener('click', async function () {
+                    const password = document.getElementById('deleteConfirmPassword').value;
+
+                    if (!selectedUserId) {
+                        showMessage('No user selected', true);
+                        return;
+                    }
+
+                    if (!password) {
+                        showMessage('Please enter your admin password to confirm deletion', true);
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/users/${selectedUserId}/admin-delete`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                password,
+                                userId: selectedUserId
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            let errorMessage;
+                            try {
+                                const errorData = JSON.parse(errorText);
+                                errorMessage = errorData.error || 'Failed to delete account';
+                            } catch {
+                                errorMessage = errorText || 'Failed to delete account';
+                            }
+                            showMessage(errorMessage, true);
+                            return;
+                        }
+
+                        const responseData = await response.json();
+                        
+                        // Hide confirmation modal
+                        const confirmationModel = document.getElementById('confirmationModel');
+                        confirmationModel.classList.add('hidden');
+                        confirmationModel.style.display = 'none';
+
+                        // Show deletion confirmation popup
+                        const deletionPopup = document.getElementById('deletionConfirmationPopup');
+                        deletionPopup.classList.remove('hidden');
+                        deletionPopup.style.display = 'block';
+
+                        // Add event listener to confirmation popup
+                        document.getElementById('confirmDeletionPopupBtn').addEventListener('click', function() {
+                            // Reload the page
+                            window.location.reload();
+                        });
+
+                    } catch (error) {
+                        console.error('Error deleting account:', error);
+                        showMessage(error.message || 'Failed to delete account. Please try again.', true);
+                    }
+                });
+
+                // Logout
+                document.getElementById('logoutButton').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
