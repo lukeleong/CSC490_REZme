@@ -187,7 +187,7 @@ app.get('/test-direct', (req, res) => {
 
 
 // Sync database and start server
-sequelize.sync({ force: true })
+sequelize.sync({ force: false })
   .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 
