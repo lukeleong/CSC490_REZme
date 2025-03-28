@@ -7,7 +7,7 @@ const UserRoutes = require('./routes/UserRoutes');
 const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
 const ProgressRoutes = require("./routes/ProgressRoutes");
 const ExerciseCompletionRoutes = require("./routes/ExerciseCompletionRoutes")
-const ExerciseRoutes = require('./routes/ExerciseRoutes');
+//const ExerciseRoutes = require('./routes/ExerciseRoutes');
 const path = require('path');
 const cors = require("cors");
 
@@ -88,8 +88,16 @@ app.get('/api/exercise-completion', async (req, res) => {
     }
 });
 
-// added this 3/26 probably no longer need
-app.use('/api/exercises', ExerciseRoutes);
+
+app.get('/api/exercises', async (req, res) => {
+    try {
+        const exercises = await Exercise.findAll(); // Adjust query based on your database
+        res.json(exercises); // Send the data as JSON
+    } catch (error) {
+        console.error('Error fetching exercises:', error);
+        res.status(500).json({ message: 'Failed to fetch exercises' });
+    }
+});
 
 
 
