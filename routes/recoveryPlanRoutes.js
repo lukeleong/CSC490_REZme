@@ -4,7 +4,8 @@ const {
     getAllRecoveryPlans,
     getRecoveryPlanById,
     updateRecoveryPlan,
-    deleteRecoveryPlan
+    deleteRecoveryPlan,
+    getExercisesByPlanId
 } = require("../controllers/recoveryPlanController");
 
 const router = express.Router();
@@ -14,5 +15,6 @@ router.get("/recovery-plans", getAllRecoveryPlans);
 router.get("/recovery-plans/:id", getRecoveryPlanById);
 router.put("/recovery-plans/:id", updateRecoveryPlan);
 router.delete("/recovery-plans/:id", deleteRecoveryPlan);
+router.get("/recovery-plans/:planId/exercises", getExercisesByPlanId);
 
 module.exports = router;

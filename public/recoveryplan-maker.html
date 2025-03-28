@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Recovery Plan - REZme</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .injury-info {
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .input-group {
+      margin: 15px 0;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .checkbox-group label {
+      display: block;
+      font-weight: normal;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      text-align: center;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div style="margin-bottom: 15px;">
+      <a href="/injuries.html" class="button" style="display: inline-block; width: auto;">← Back to Injuries</a>
+    </div>
+
+    <h1>Create Recovery Plan</h1>
+    <div id="injuryInfo" class="injury-info">Loading injury details...</div>
+
+    <form id="planMakerForm">
+      <input type="hidden" id="UserId" name="UserId" value="" />
+      <input type="hidden" id="InjuryId" name="injury_id" value="" />
+
+      <div class="input-group">
+        <label for="difficulty">Difficulty Level</label>
+        <select id="difficulty" name="difficulty" required>
+          <option value="">Select difficulty</option>
+          <option value="1">Beginner</option>
+          <option value="2">Intermediate</option>
+          <option value="3">Advanced</option>
+          <option value="4">Expert</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Available Equipment (Body weight is always included)</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="equipment" value="resistance band" /> Resistance Band</label>
+          <label><input type="checkbox" name="equipment" value="gym" /> Gym</label>
+        </div>
+      </div>
+
+      <button type="submit" class="button">Generate Recovery Plan</button>
+    </form>
+
+    <p id="message"></p>
+  </div>
+
+  <script>
+    function getUserIdFromToken() {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.UserId || payload.user_id;
+      } catch (err) {
+        console.error("Failed to decode token:", err);
+        return null;
+      }
+    }
+
+    async function loadInjuryDetails(injuryId) {
+      try {
+        const res = await fetch(`/api/injuries/${injuryId}`);
+        const injury = await res.json();
+
+        document.getElementById("InjuryId").value = injuryId;
+        document.getElementById("injuryInfo").innerText = `Injury: ${injury.InjuryType} (${injury.InjuryLocation})`;
+      } catch (err) {
+        console.error("Error loading injury:", err);
+        document.getElementById("injuryInfo").innerText = "Failed to load injury.";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const injuryId = urlParams.get("injury_id");
+      const userId = getUserIdFromToken();
+
+      if (!injuryId || !userId) {
+        document.getElementById("injuryInfo").innerText = "Missing required data.";
+        return;
+      }
+
+      document.getElementById("UserId").value = userId;
+      loadInjuryDetails(injuryId);
+    });
+
+    document.getElementById("planMakerForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const checkedEquipment = Array.from(document.querySelectorAll('input[name="equipment"]:checked')).map(el => el.value);
+      checkedEquipment.push("body weight"); // Always include body weight
+
+      const data = {
+        user_id: formData.get("UserId"),
+        injury_id: formData.get("injury_id"),
+        difficulty: parseInt(formData.get("difficulty")),
+        equipment: checkedEquipment
+      };
+
+      try {
+        const res = await fetch("/api/recovery-plans", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.recoveryPlan?.PlanId) {
+          window.location.href = `/recovery-plan.html?planId=${result.recoveryPlan.PlanId}`;
+        } else {
+          document.getElementById("message").innerText = result.error || "Failed to create plan.";
+        }
+      } catch (err) {
+        console.error("Error creating plan:", err);
+        document.getElementById("message").innerText = "Something went wrong.";
+      }
+    });
+  </script>
+</body>
+
+</html>
