@@ -6,7 +6,7 @@ const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion,ProgressTracker
 const UserRoutes = require('./routes/UserRoutes');
 const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
 const ProgressRoutes = require("./routes/ProgressRoutes");
-const ExerciseCompletionRoutes = require("./routes/ExerciseCompletionRoutes")
+const ExerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes")
 //const ExerciseRoutes = require('./routes/ExerciseRoutes');
 const path = require('path');
 const cors = require("cors");

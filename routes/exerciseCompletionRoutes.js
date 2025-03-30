@@ -8,7 +8,7 @@ const {
     updateExerciseCompletion,
     deleteExerciseCompletion,
     getExercisesByCompletion,
-} = require('../controllers/ExerciseCompletionController');
+} = require('../controllers/exerciseCompletionController');
 
 router.post('/', createExerciseCompletion);
 router.get('/', getAllExerciseCompletions);
