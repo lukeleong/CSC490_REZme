@@ -14,5 +14,9 @@ router.get("/injuries", getAllInjuries);
 router.get("/injuries/:id", getInjuryById);
 router.put("/injuries/:id", updateInjury);
 router.delete("/injuries/:id", deleteInjury);
+router.get('/muscle-groups', (req, res) => {
+    const muscleGroups = ['quadriceps', 'hamstrings', 'biceps', 'triceps', 'calves', 'shoulders', 'back'];
+    return res.json(muscleGroups);
+  });
 
 module.exports = router;
