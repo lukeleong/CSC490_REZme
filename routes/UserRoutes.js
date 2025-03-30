@@ -1,6 +1,7 @@
 console.log('UserRoutes.js file has been loaded!');
-
+const path = require('path');
 const express = require("express");
+const crypto = require('crypto');
 const passport = require("passport");
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
@@ -11,6 +12,8 @@ const authenticateJWT = require('../server').authenticateJWT;
 console.log("Value of authenticateJWT after import:", authenticateJWT); 
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const nodemailer = require('nodemailer');
+const transporter = require('./mailer');
 
 router.get("/test-route", (req, res) => {
   console.log('Inside /test-route');
@@ -495,6 +498,66 @@ router.get("/all", authenticateJWT, checkAdminStatus, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  try {
+      const user = await User.findOne({ where: { Email: email } });
+      if (!user) {
+          return res.status(404).json({ error: "Email not found" });
+      }
+
+      // Generate a reset token
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const tokenExpiry = new Date(Date.now() + 3600000); // 1-hour expiry
+
+      // Save token to user record 
+      await user.update({ resetToken, resetTokenExpiry: tokenExpiry });
+
+      const resetLink = `http://localhost:3000/reset-password?token=${resetToken}&email=${email}`;
+      await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: 'Password Reset Request',
+          text: `Click the link to reset your password: ${resetLink}`
+      });
+
+      res.json({ message: 'Password reset link sent to your email!' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/reset-password', (req, res) => {
+  // This assumes your HTML file is in a 'public' directory at the root of your project
+  // Adjust the path as needed based on your project structure
+  res.sendFile(path.join(__dirname, '../public/reset_password.html'));
+});
+
+router.post('/reset-password', async (req, res) => {
+  const { email, token, newPassword } = req.body;
+  
+  try {
+      const user = await User.findOne({ where: { Email: email } });
+      
+      if (!user || user.resetToken !== token || user.resetTokenExpiry < new Date()) {
+          return res.status(400).json({ error: 'Invalid or expired token' });
+      }
+
+      // Update user's password and remove the reset token
+      await user.update({
+          Password: newPassword, 
+          resetToken: null,
+          resetTokenExpiry: null
+      });
+
+      res.json({ message: 'Password successfully reset!' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
   }
 });
 

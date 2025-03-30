@@ -185,6 +185,14 @@ app.get('/test-direct', (req, res) => {
   res.json({ message: "Direct test route working" });
 });
 
+app.get('/reset-password', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/reset_password.html'));
+});
+
+app.post('/reset-password', (req, res) => {
+  req.url = '/users/reset-password';
+  app.handle(req, res);
+});
 
 // Sync database and start server
 sequelize.sync({ force: false })
