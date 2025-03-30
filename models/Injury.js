@@ -20,7 +20,7 @@ const Injury = sequelize.define("Injury", {
         allowNull: false,
     },
     InjuryLocation: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.ENUM('quadriceps', 'hamstrings', 'biceps', 'triceps', 'calves', 'shoulders', 'back'),
         allowNull: false,
     },
     InjurySeverity: {
