@@ -6,8 +6,8 @@ const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion,ProgressTracker
 const UserRoutes = require('./routes/UserRoutes');
 const recoveryPlanRoutes = require("./routes/RecoveryPlanRoutes");
 const ProgressRoutes = require("./routes/ProgressRoutes");
-const ExerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes")
-//const ExerciseRoutes = require('./routes/ExerciseRoutes');
+const exerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes")
+const ExerciseRoutes = require('./routes/ExerciseRoutes');
 const path = require('path');
 const cors = require("cors");
 
@@ -76,7 +76,7 @@ app.get('/edit/:id', (req, res) => {
 });
 
 
-app.use('/api/exercise-completion', ExerciseCompletionRoutes);
+app.use('/api/exercise-completion', exerciseCompletionRoutes);
 
 app.get('/api/exercise-completion', async (req, res) => {
     try {
@@ -107,6 +107,10 @@ app.get('/api/exercises', async (req, res) => {
 
 
 app.use(express.static(path.join(__dirname, "public")));
+console.log("Database connection:", this.connection);
+
+
+
 // Sync database and start server
 sequelize.sync()
   .then(() => console.log('Database synced'))

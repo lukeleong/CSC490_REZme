@@ -19,10 +19,6 @@ const Exercise = sequelize.define("Exercise", {
       key: "InjuryId",
     },
   },
-  ExerciseName: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
   TargetMuscleGroup: {
     type: DataTypes.STRING(100),
     allowNull: false, // e.g., "lower back", "hamstrings"
@@ -43,10 +39,7 @@ const Exercise = sequelize.define("Exercise", {
     type: DataTypes.STRING(255),
     allowNull: true, // Optional video tutorial URL
   },
-  ExerciseName: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-  },
+
 });
 
 module.exports = Exercise;
