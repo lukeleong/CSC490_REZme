@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recovery Plan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 25px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4CAF50, #81C784);
+      text-align: right;
+      color: white;
+      font-weight: bold;
+      line-height: 25px;
+      padding-right: 10px;
+      border-radius: 10px 0 0 10px;
+      transition: width 0.6s ease;
+    }
+
+    .exercise {
+      padding: 15px;
+      border: 1px solid #ddd;
+      margin: 10px 0;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px;
+      margin-top: 10px;
+      margin-right: 10px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #ratingModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    #ratingModalContent {
+      background: white;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 id="recoveryTitle">Recovery Plan</h1>
+    <div id="planDetails">
+      <h2>Plan Details</h2>
+      <p><strong>Injury:</strong> <span id="injuryType">Loading...</span></p>
+      <p><strong>Start Date:</strong> <span id="startDate">Loading...</span></p>
+      <p><strong>End Date:</strong> <span id="endDate">Loading...</span></p>
+      <p><strong>Status:</strong> <span id="isActive">Loading...</span></p>
+    </div>
+
+    <div class="progress-bar">
+      <div id="progress" class="progress">0%</div>
+    </div>
+
+    <h2>Assigned Exercises</h2>
+    <div id="exercisesContainer">
+      <p>Loading exercises...</p>
+    </div>
+
+    <a href="dashboard.html" class="button" style="width: 100%; text-align: center;">Back to Dashboard</a>
+  </div>
+
+  <!-- Rating Modal -->
+  <div id="ratingModal">
+    <div id="ratingModalContent">
+      <h3>Rate Exercise</h3>
+      <form id="ratingForm">
+        <input type="hidden" id="ratingExerciseId">
+        <div class="input-group">
+          <label for="ratingValue">Rating (0–5):</label>
+          <input type="range" id="ratingValue" name="rating" min="0" max="5" step="0.5" value="0"
+            oninput="document.getElementById('ratingDisplay').innerText = this.value">
+          <span id="ratingDisplay">0</span>
+        </div>
+        <div class="input-group">
+          <label for="ratingComment">Comment:</label>
+          <textarea id="ratingComment" name="comment" rows="3"></textarea>
+        </div>
+        <button type="submit" class="button" id="ratingSubmitButton">Submit Rating</button>
+        <button type="button" class="button" style="background: #ccc;" onclick="closeRatingModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const userId = getUserIdFromToken();
+
+    function getUserIdFromToken() {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.user_id || payload.UserId;
+      } catch {
+        return null;
+      }
+    }
+
+    async function fetchRecoveryPlan() {
+      const planId = new URLSearchParams(window.location.search).get("planId");
+      if (!planId) return;
+
+      const res = await fetch(`/api/recovery-plans/${planId}`);
+      const plan = await res.json();
+
+      document.getElementById("injuryType").innerText = plan.Injury?.InjuryType || "N/A";
+      document.getElementById("recoveryTitle").innerText = `Recovery Plan – ${plan.Injury?.InjuryType || "Unknown Injury"}`;
+      document.getElementById("startDate").innerText = new Date(plan.StartDate).toLocaleDateString();
+      const endDateEl = document.getElementById("endDate");
+      if (plan.IsActive) {
+        endDateEl.parentElement.style.display = "none";
+      } else {
+        endDateEl.parentElement.style.display = "block";
+        endDateEl.innerText = plan.EndDate ? new Date(plan.EndDate).toLocaleDateString() : "Not set";
+      }
+      document.getElementById("isActive").innerText = plan.IsActive ? "Active" : "Completed";
+
+      const progress = document.getElementById("progress");
+      progress.style.width = `${plan.ProgressStatus}%`;
+      progress.innerText = `${plan.ProgressStatus}%`;
+
+      fetchExercises(planId);
+    }
+
+    async function fetchExercises(planId) {
+      const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+      const exercises = await res.json();
+      const container = document.getElementById("exercisesContainer");
+      container.innerHTML = "";
+
+      if (!exercises.length) {
+        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+        return;
+      }
+
+      for (const ex of exercises) {
+        const ratingsRes = await fetch(`/api/exercise-ratings/${ex.ExerciseId}`);
+        const allRatings = await ratingsRes.json();
+        const userRating = allRatings.find(r => r.UserId === userId);
+        const avg = allRatings.length > 0
+          ? (allRatings.reduce((sum, r) => sum + r.Rating, 0) / allRatings.length).toFixed(1)
+          : "No ratings";
+
+        const div = document.createElement("div");
+        div.className = "exercise";
+        div.innerHTML = `
+          <h3>${ex.ExerciseName} <small style="font-weight:normal;">(${avg === "No ratings" ? avg : `Avg: ${avg}★`})</small></h3>
+          <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+          <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+          ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+          <button class="button" onclick="markExerciseComplete(${ex.ExerciseId})">Complete</button>
+          <button class="button" style="background: ${userRating ? "#6c757d" : "#007bff"};" onclick="openRatingModal(${ex.ExerciseId})">${userRating ? "Change Rating" : "Rate"}</button>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function markExerciseComplete(exerciseId) {
+      alert(`Exercise ${exerciseId} marked as complete.`);
+    }
+
+    async function openRatingModal(exerciseId) {
+      document.getElementById("ratingExerciseId").value = exerciseId;
+      const ratingSlider = document.getElementById("ratingValue");
+      const ratingDisplay = document.getElementById("ratingDisplay");
+      const commentBox = document.getElementById("ratingComment");
+      const submitBtn = document.getElementById("ratingSubmitButton");
+      const heading = document.querySelector("#ratingModalContent h3");
+
+      ratingSlider.value = 0;
+      ratingDisplay.innerText = "0";
+      commentBox.value = "";
+      submitBtn.innerText = "Submit Rating";
+      submitBtn.style.background = "#007bff";
+      heading.innerText = "Rate Exercise";
+
+      document.getElementById("ratingModal").style.display = "block";
+
+      if (!userId) return;
+
+      try {
+        const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
+        const allRatings = await res.json();
+        const userRating = allRatings.find(r => r.UserId === userId);
+
+        if (userRating) {
+          ratingSlider.value = userRating.Rating;
+          ratingDisplay.innerText = userRating.Rating;
+          commentBox.value = userRating.Comment || "";
+          submitBtn.innerText = "Update Rating";
+          submitBtn.style.background = "#6c757d";
+          heading.innerText = "Update Rating";
+        }
+      } catch (err) {
+        console.error("Error preloading rating:", err);
+      }
+    }
+
+    function closeRatingModal() {
+      document.getElementById("ratingModal").style.display = "none";
+    }
+
+    document.getElementById("ratingForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const exerciseId = document.getElementById("ratingExerciseId").value;
+      const rating = parseFloat(document.getElementById("ratingValue").value);
+      const comment = document.getElementById("ratingComment").value;
+
+      const url = `/api/exercise-ratings/${exerciseId}/${userId}`;
+      const payload = { Rating: rating, Comment: comment };
+
+      try {
+        const method = await checkRatingExists(exerciseId) ? "PUT" : "POST";
+        const endpoint = method === "POST" ? "/api/exercise-ratings" : url;
+
+        const res = await fetch(endpoint, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...(method === "POST" ? { userId, exerciseId } : {}),
+            ...payload
+          })
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          alert("Rating saved successfully.");
+          closeRatingModal();
+          fetchRecoveryPlan(); // Refresh UI
+        } else {
+          alert(result.error || "Failed to save rating.");
+        }
+      } catch (err) {
+        console.error("Error saving rating:", err);
+        alert("Something went wrong.");
+      }
+    });
+
+    async function checkRatingExists(exerciseId) {
+      try {
+        const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
+        const ratings = await res.json();
+        return ratings.some(r => r.UserId === userId);
+      } catch (err) {
+        return false;
+      }
+    }
+
+    fetchRecoveryPlan();
+  </script>
+</body>
+
+</html>
