@@ -102,7 +102,7 @@
         </form>
         <p id="message" style="color: red;"></p>
         <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
-
+        <p>Forgot password? <a href="forgot_password.html">Forgot Password</a></p>
         <div class="google-login-divider">
             <span>OR</span>
         </div>
@@ -151,7 +151,7 @@
             .then(data => {
                 if (data.token) {
                     localStorage.setItem('token', data.token);
-                    window.location.href = 'dashboard.html'; // Redirect to dashboard
+                    window.location.href = 'profile.html'; // Redirect to dashboard TEMPORARY 
                 } else {
                     document.getElementById("message").innerText = 'Google login failed: ' + (data.error || 'Unknown error');
                 }
@@ -190,7 +190,7 @@
                 }
 
                 localStorage.setItem("token", result.token);
-                window.location.href = "dashboard.html";
+                window.location.href = "dashboard.html"; //TEMPORARY CHNAG
             } catch (error) {
                 loadingEl.style.display = "none";
                 messageEl.innerText = "An error occurred. Please try again.";

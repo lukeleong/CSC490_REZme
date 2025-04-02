@@ -6,7 +6,6 @@ const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const jwt = require('jsonwebtoken');
 const sequelize = require('./config/database');
 const { User, Injury, RecoveryPlan, Exercise, ExerciseCompletion, ProgressTracker } = require('./models');
-const UserRoutes = require('./routes/userRoutes');
 const recoveryPlanRoutes = require("./routes/recoveryPlanRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const exerciseCompletionRoutes = require("./routes/exerciseCompletionRoutes");
@@ -15,7 +14,6 @@ const exerciseRoutes = require("./routes/exerciseRoutes");
 const exerciseRatingRoutes = require("./routes/exerciseRatingRoutes");
 const path = require('path');
 const cors = require("cors");
-const dotenv = require('dotenv');
 
 const app = express();
 require('dotenv').config();
@@ -24,6 +22,29 @@ require('dotenv').config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use(cors());
+
+
+// JWT Authentication middleware
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+    
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: "Token is invalid or expired" });
+      }
+      
+      req.user = user;
+      next();
+    });
+  } else {
+    res.status(401).json({ error: "Authorization header not found" });
+  }
+};
+exports.authenticateJWT = authenticateJWT;
+
 
 // Content Security Policy
 app.use((req, res, next) => {
@@ -36,10 +57,13 @@ app.use((req, res, next) => {
 
 // Set up session management
 app.use(session({
-  secret: 'key', 
+  secret: process.env.SESSION_SECRET || 'default_secret_key', 
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } 
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  } 
 }));
 
 // Request logger
@@ -56,17 +80,31 @@ app.use(passport.session());
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'http://localhost:3000/auth/google/callback'
+  callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback'
 }, async (token, tokenSecret, profile, done) => {
   try {
     let user = await User.findOne({ where: { googleId: profile.id } });
+    
     if (!user) {
-      user = await User.create({
-        googleId: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value
-      });
+      // Try finding by email as fallback
+      user = await User.findOne({ where: { Email: profile.emails[0].value } });
+      
+      if (user) {
+        // Update existing user with Google ID
+        await user.update({ googleId: profile.id });
+      } else {
+        // Create new user
+        user = await User.create({
+          googleId: profile.id,
+          Email: profile.emails[0].value,
+          FirstName: profile.name.givenName || profile.displayName.split(' ')[0],
+          LastName: profile.name.familyName || profile.displayName.split(' ').slice(1).join(' '),
+          TermsAgreed: true,
+          RegistrationDate: new Date()
+        });
+      }
     }
+    
     done(null, user);
   } catch (error) {
     done(error, null);
@@ -74,17 +112,24 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.UserId);
 });
 
 passport.deserializeUser(async (id, done) => {
-  const user = await User.findByPk(id);
-  done(null, user);
+  try {
+    const user = await User.findByPk(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
 });
 
 // Register Routes
 console.log("Loading API routes...");
-
+const UserRoutes = require('./routes/UserRoutes');
+app.get('/test-admin-check', authenticateJWT, (req, res) => {
+  res.json({ message: 'Test admin check route working' });
+});
 app.use('/users', UserRoutes);
 app.use("/api", recoveryPlanRoutes);
 app.use("/api", progressRoutes);
@@ -94,6 +139,8 @@ app.use("/api", exerciseRoutes);
 app.use("/api", exerciseRatingRoutes);
 
 console.log("All API routes loaded!");
+// Serve static files 
+app.use(express.static(path.join(__dirname, 'public'))); 
 
 // Home route
 app.get('/', (req, res) => {
@@ -105,14 +152,22 @@ app.get('/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email']
 }));
 
-// Google OAuth callback route
+// Google OAuth callback route 
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
-  // Generate JWT token 
-  const token = jwt.sign({ id: req.user.id, email: req.user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign(
+    { 
+      id: req.user.UserId, 
+      email: req.user.Email,
+      isAdmin: req.user.IsAdmin || false 
+    },
+    process.env.JWT_SECRET, 
+    { expiresIn: '1h' }
+  );
+  
   res.json({ token });
 });
 
-// Signup/Login routes
+// HTML routes
 app.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'signup.html'));  
 });
@@ -121,18 +176,26 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));  
 });
 
-// GET all Users
-app.get('/users', async (req, res) => {
-  try {
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+app.get('/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
+// Test routes
+app.get('/test-direct', (req, res) => {
+  res.json({ message: "Direct test route working" });
+});
+
+app.get('/reset-password', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/reset_password.html'));
+});
+
+app.post('/reset-password', (req, res) => {
+  req.url = '/users/reset-password';
+  app.handle(req, res);
 });
 
 // Sync database and start server
-sequelize.sync({ force: true })
+sequelize.sync({ force: false })
   .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 
