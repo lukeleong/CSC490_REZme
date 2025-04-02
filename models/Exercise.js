@@ -15,7 +15,7 @@ const Exercise = sequelize.define("Exercise", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Injury",
+      model: "Injuries",
       key: "InjuryId",
     },
   },

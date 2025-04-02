@@ -11,7 +11,7 @@ const ExerciseCompletion = sequelize.define('ExerciseCompletion', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'RecoveryPlan',
+            model: 'RecoveryPlans',
             key: 'PlanId',
         },
     },
@@ -19,7 +19,7 @@ const ExerciseCompletion = sequelize.define('ExerciseCompletion', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Exercise',
+            model: 'Exercises',
             key: 'ExerciseId'
         },
     },
