@@ -223,7 +223,10 @@
         const div = document.createElement("div");
         div.className = "exercise";
         div.innerHTML = `
-          <h3>${ex.ExerciseName} <small style="font-weight:normal;">(${avg === "No ratings" ? avg : `Avg: ${avg}★`})</small></h3>
+          <h3>${ex.ExerciseName} <small style="font-weight:normal;">(${avg === "No ratings"
+            ? avg
+            : `<a href="exercise-rating.html?exerciseId=${ex.ExerciseId}" style="text-decoration:none;">Avg: ${avg}★</a>`
+          })</small></h3>
           <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
           <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
           ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}

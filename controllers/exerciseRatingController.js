@@ -47,7 +47,7 @@ exports.getRatingsForExercise = async (req, res) => {
     }
 };
 
-// GET /api/exercise-ratings/:exerciseId/:userId"
+// PUT /api/exercise-ratings/:exerciseId/:userId
 exports.updateRating = async (req, res) => {
     try {
         const { exerciseId, userId } = req.params;

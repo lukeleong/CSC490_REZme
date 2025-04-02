@@ -220,7 +220,7 @@
 
     async function populateMuscleGroups() {
       try {
-        const res = await fetch("/api/muscle-groups");
+        const res = await fetch("/api/exercises/muscle-groups");
         const groups = await res.json();
         const dropdown = document.getElementById("InjuryLocation");
 
