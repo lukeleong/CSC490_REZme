@@ -14,7 +14,7 @@ const User = sequelize.define("User", {
   },
   Password: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: true,
   },
   TermsAgreed: {
     type: DataTypes.BOOLEAN,
@@ -54,6 +54,20 @@ const User = sequelize.define("User", {
     allowNull: false,
     defaultValue: false,
   },
+   googleId: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    unique: true,
+  },
+  resetToken: {
+    type: DataTypes.STRING,
+    allowNull: true },
+
+  resetTokenExpiry: {
+    type: DataTypes.DATE,
+    allowNull: true }
+
+
 });
 
 module.exports = User;

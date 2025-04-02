@@ -7,10 +7,6 @@ const Exercise = sequelize.define("Exercise", {
     autoIncrement: true,
     primaryKey: true,
   },
-  ExerciseName: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-  },
   InjuryId: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -18,6 +14,18 @@ const Exercise = sequelize.define("Exercise", {
       model: "Injuries",
       key: "InjuryId",
     },
+  },
+  ExerciseName: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+  },
+  TargetMuscleGroup: {
+    type: DataTypes.STRING(100),
+    allowNull: false, // e.g., "lower back", "hamstrings"
+  },
+  Equipment: {
+    type: DataTypes.STRING(100),
+    allowNull: true, // e.g., "body weight", "resistance band"
   },
   Difficulty: {
     type: DataTypes.INTEGER,
@@ -29,12 +37,10 @@ const Exercise = sequelize.define("Exercise", {
   },
   VideoGuide: {
     type: DataTypes.STRING(255),
-    allowNull: true, // Some exercises may not have a video guide
+    allowNull: true, // Optional video tutorial URL
   },
-  ExerciseName: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-  },
+}, {
+  timestamps: true,
 });
 
 module.exports = Exercise;
