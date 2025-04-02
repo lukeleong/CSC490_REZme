@@ -7,11 +7,15 @@ const Exercise = sequelize.define("Exercise", {
     autoIncrement: true,
     primaryKey: true,
   },
+  ExerciseName: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+  },
   InjuryId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Injuries",
+      model: "Injury",
       key: "InjuryId",
     },
   },
@@ -39,8 +43,10 @@ const Exercise = sequelize.define("Exercise", {
     type: DataTypes.STRING(255),
     allowNull: true, // Optional video tutorial URL
   },
-}, {
-  timestamps: true,
+  ExerciseName: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+  },
 });
 
 module.exports = Exercise;

@@ -1,17 +1,11 @@
 // scripts/seedExercises.js
-//run *node scripts/seedExercises.js
-const { sequelize, Exercise } = require("../models");
+const { sequelize, Exercise } = require("../models"); // adjust path if needed
 
 const seedExercises = async () => {
   try {
-    await sequelize.sync(); // Ensure table exists
-
-    // Clear the table first
-    await Exercise.destroy({ where: {} });
-    console.log("Cleared existing exercises");
+    await sequelize.sync(); // Make sure tables exist
 
     const exercises = [
-      // Ankle Exercises
       {
         ExerciseName: "Ankle Alphabet",
         TargetMuscleGroup: "ankle",
@@ -47,70 +41,12 @@ const seedExercises = async () => {
         Difficulty: 2,
         VideoGuide: "https://example.com/heel-walking",
       },
-
-      // Lower Back Exercises
-      {
-        ExerciseName: "Pelvic Tilt",
-        TargetMuscleGroup: "lower back",
-        Equipment: "body weight",
-        Difficulty: 1,
-        VideoGuide: "https://example.com/pelvic-tilt",
-      },
-      {
-        ExerciseName: "Cat-Cow Stretch",
-        TargetMuscleGroup: "lower back",
-        Equipment: "body weight",
-        Difficulty: 1,
-        VideoGuide: "https://example.com/cat-cow",
-      },
-      {
-        ExerciseName: "Bird Dog",
-        TargetMuscleGroup: "lower back",
-        Equipment: "body weight",
-        Difficulty: 2,
-        VideoGuide: "https://example.com/bird-dog",
-      },
-      {
-        ExerciseName: "Glute Bridge",
-        TargetMuscleGroup: "lower back",
-        Equipment: "body weight",
-        Difficulty: 2,
-        VideoGuide: "https://example.com/glute-bridge",
-      },
-      {
-        ExerciseName: "Superman",
-        TargetMuscleGroup: "lower back",
-        Equipment: "body weight",
-        Difficulty: 2,
-        VideoGuide: "https://example.com/superman",
-      },
-      {
-        ExerciseName: "Resistance Band Deadlift",
-        TargetMuscleGroup: "lower back",
-        Equipment: "resistance band",
-        Difficulty: 3,
-        VideoGuide: "https://example.com/band-deadlift",
-      },
-      {
-        ExerciseName: "Back Extensions on Stability Ball",
-        TargetMuscleGroup: "lower back",
-        Equipment: "stability ball",
-        Difficulty: 3,
-        VideoGuide: "https://example.com/stability-ball-back-extension",
-      },
-      {
-        ExerciseName: "Dumbbell Romanian Deadlift",
-        TargetMuscleGroup: "lower back",
-        Equipment: "dumbbells",
-        Difficulty: 4,
-        VideoGuide: "https://example.com/romanian-deadlift",
-      }
     ];
 
     await Exercise.bulkCreate(exercises);
-    console.log("Exercises seeded successfully");
+    console.log("✅ Exercises seeded successfully");
   } catch (err) {
-    console.error("Failed to seed exercises:", err);
+    console.error("❌ Failed to seed exercises:", err);
   } finally {
     await sequelize.close();
   }
