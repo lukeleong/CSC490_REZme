@@ -54,19 +54,19 @@ const User = sequelize.define("User", {
     allowNull: false,
     defaultValue: false,
   },
-   googleId: {
+
+  googleId: {  
     type: DataTypes.STRING(255),
     allowNull: true,
-    unique: true,
+    unique: true,  
   },
-  resetToken: {
-    type: DataTypes.STRING,
+  resetToken: { 
+    type: DataTypes.STRING, 
     allowNull: true },
 
-  resetTokenExpiry: {
-    type: DataTypes.DATE,
+  resetTokenExpiry: { 
+    type: DataTypes.DATE, 
     allowNull: true }
-
 
 });
 

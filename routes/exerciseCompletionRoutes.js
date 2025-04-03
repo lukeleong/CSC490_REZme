@@ -1,21 +1,18 @@
-const express = require('express');
-const router = express.Router();
-
+const express = require("express");
 const {
     createExerciseCompletion,
     getAllExerciseCompletions,
     getExerciseCompletionById,
     updateExerciseCompletion,
-    deleteExerciseCompletion,
-    getExercisesByCompletion,
-} = require('../controllers/exerciseCompletionController');
+    deleteExerciseCompletion
+} = require("../controllers/exerciseCompletionController");
 
-router.post('/', createExerciseCompletion);
-router.get('/', getAllExerciseCompletions);
-router.get('/:id', getExerciseCompletionById);
-router.put('/:id', updateExerciseCompletion);
-router.delete('/:id', deleteExerciseCompletion);
-router.get('/completed', getExercisesByCompletion);
+const router = express.Router();
 
+router.post("/exercise-completions", createExerciseCompletion);
+router.get("/exercise-completions", getAllExerciseCompletions);
+router.get("/exercise-completions/:id", getExerciseCompletionById);
+router.put("/exercise-completions/:id", updateExerciseCompletion);
+router.delete("/exercise-completions/:id", deleteExerciseCompletion);
 
 module.exports = router;

@@ -1,58 +1,93 @@
-const { RecoveryPlan } = require("../models");
+const { RecoveryPlan, Exercise, Injury, RecoveryPlanExercise } = require("../models");
 
-// **Create a new Recovery Plan**
+// Create a New Recovery Plan (simplified - no exercises)
 exports.createRecoveryPlan = async (req, res) => {
     try {
-        const { 
-            user_id, 
-            injury_id, 
-            start_date, 
-            end_date, 
-            progress_status, 
-            progress_feedback, 
-            is_active 
-        } = req.body;
-
-        // Ensure required fields are provided
-        if (!user_id || !injury_id) {
-            return res.status(400).json({ error: "User ID and Injury ID are required" });
+      const { user_id, injury_id, difficulty, equipment } = req.body;
+  
+      if (!user_id || !injury_id || !difficulty || !equipment) {
+        return res.status(400).json({ error: "Missing required fields." });
+      }
+  
+      // Fetch injury to confirm and get InjuryLocation
+      const injury = await Injury.findByPk(injury_id);
+      if (!injury) {
+        return res.status(404).json({ error: "Injury not found." });
+      }
+  
+      const targetMuscleGroup = injury.InjuryLocation.toLowerCase();
+  
+      // Find exercises that match injury location, difficulty, and equipment
+      const matchingExercises = await Exercise.findAll({
+        where: {
+          TargetMuscleGroup: targetMuscleGroup,
+          Difficulty: difficulty,
+          Equipment: equipment
         }
-
-        // Create Recovery Plan with correct field mapping
-        const newPlan = await RecoveryPlan.create({
-            UserId: user_id, // Matches model field name
-            InjuryId: injury_id, // Matches model field name
-            StartDate: start_date ? new Date(start_date) : new Date(),
-            EndDate: end_date ? new Date(end_date) : null,
-            ProgressStatus: progress_status !== undefined ? progress_status : 0,
-            ProgressFeedback: progress_feedback || "No feedback provided",
-            IsActive: is_active !== undefined ? is_active : true,
+      });
+  
+      if (!matchingExercises.length) {
+        return res.status(404).json({
+          error: "No matching exercises found for the selected location, difficulty, and equipment."
         });
-
-        res.status(201).json({ message: "Recovery Plan Created", recoveryPlan: newPlan });
-    } catch (error) {
-        console.error("Error creating recovery plan:", error);
-        res.status(500).json({ error: "Failed to create recovery plan", details: error.message });
+      }
+  
+      // Create new recovery plan
+      const newPlan = await RecoveryPlan.create({
+        UserId: user_id,
+        InjuryId: injury_id,
+        ProgressStatus: 0,
+        ProgressFeedback: "Generated based on your inputs",
+        StartDate: new Date(),
+        IsActive: true
+      });
+  
+      // Link each exercise to the recovery plan
+      await Promise.all(matchingExercises.map(ex => {
+        return RecoveryPlanExercise.create({
+          RecoveryPlanId: newPlan.PlanId,
+          ExerciseId: ex.ExerciseId
+        });
+      }));
+  
+      res.status(201).json({
+        message: "Recovery Plan created successfully with matching exercises.",
+        recoveryPlan: newPlan
+      });
+  
+    } catch (err) {
+      console.error("Error creating recovery plan:", err);
+      res.status(500).json({ error: "Failed to create recovery plan." });
     }
-};
+  };
 
-// **Get All Recovery Plans**
+// Get All Recovery Plans
 exports.getAllRecoveryPlans = async (req, res) => {
-    try {
-        const plans = await RecoveryPlan.findAll();
-        res.json(plans);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to fetch recovery plans" });
-    }
+  try {
+      const plans = await RecoveryPlan.findAll({
+          where: req.query.user_id ? { UserId: req.query.user_id } : undefined,
+          include: [{
+              model: Injury,
+              attributes: ['InjuryType']
+          }]
+      });
+      res.json(plans);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch recovery plans." });
+  }
 };
 
-// **Get a Single Recovery Plan**
+// Get a Single Recovery Plan
 exports.getRecoveryPlanById = async (req, res) => {
     try {
         const { id } = req.params;
-        const plan = await RecoveryPlan.findByPk(id);
+        const plan = await RecoveryPlan.findByPk(id, {
+            include: [{ model: Injury }] // Include the Injury details
+        });
 
+        console.log(JSON.stringify(plan, null, 2));
+        
         if (!plan) {
             return res.status(404).json({ error: "Recovery Plan not found" });
         }
@@ -60,11 +95,11 @@ exports.getRecoveryPlanById = async (req, res) => {
         res.json(plan);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to fetch recovery plan" });
+        res.status(500).json({ error: "Failed to fetch recovery plan." });
     }
 };
 
-// **Update a Recovery Plan**
+// Update a Recovery Plan
 exports.updateRecoveryPlan = async (req, res) => {
     try {
         const { id } = req.params;
@@ -88,7 +123,7 @@ exports.updateRecoveryPlan = async (req, res) => {
     }
 };
 
-// **Delete a Recovery Plan**
+// Delete a Recovery Plan
 exports.deleteRecoveryPlan = async (req, res) => {
     try {
         const { id } = req.params;
@@ -104,4 +139,29 @@ exports.deleteRecoveryPlan = async (req, res) => {
         console.error(error);
         res.status(500).json({ error: "Failed to delete recovery plan" });
     }
+};
+
+// Fetch exercises tied to a recovery plan
+exports.getExercisesByPlanId = async (req, res) => {
+  try {
+    const { planId } = req.params;
+
+    const plan = await RecoveryPlan.findByPk(planId, {
+      include: [
+        {
+          model: Exercise,
+          through: { attributes: [] }, // Exclude join table fields
+        }
+      ]
+    });
+
+    if (!plan) {
+      return res.status(404).json({ error: "Recovery plan not found" });
+    }
+
+    res.json(plan.Exercises);
+  } catch (err) {
+    console.error("Error fetching exercises:", err);
+    res.status(500).json({ error: "Failed to fetch exercises." });
+  }
 };
