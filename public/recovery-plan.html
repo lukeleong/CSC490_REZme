@@ -113,6 +113,26 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
+
+    /* New styles for the feedback form */
+    #exCompleteModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    #exCompleteModalContent {
+      background: white;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      border-radius: 8px;
+      position: relative;
+    }
   </style>
 </head>
 
@@ -139,7 +159,6 @@
     <a href="dashboard.html" class="button" style="width: 100%; text-align: center;">Back to Dashboard</a>
   </div>
 
-  <!-- Rating Modal -->
   <div id="ratingModal">
     <div id="ratingModalContent">
       <h3>Rate Exercise</h3>
@@ -157,6 +176,26 @@
         </div>
         <button type="submit" class="button" id="ratingSubmitButton">Submit Rating</button>
         <button type="button" class="button" style="background: #ccc;" onclick="closeRatingModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="exCompleteModal">
+    <div id="exCompleteModalContent">
+      <h3>Exercise Complete</h3>
+      <form id="exerciseCompleteForm">
+        <input type="hidden" id="feedbackExerciseId">
+        <input type="hidden" id="feedbackPlanId">
+        <div class="input-group">
+          <label for="setsCompleted">Sets Completed:</label>
+          <input type="number" id="setsCompleted" name="setsCompleted" required>
+        </div>
+        <div class="input-group">
+          <label for="repsCompleted">Reps Completed:</label>
+          <input type="number" id="repsCompleted" name="repsCompleted" required>
+        </div>
+        <button type="submit" class="button" id="feedbackSubmitButton">Submit</button>
+        <button type="button" class="button" style="background: #ccc;" onclick="closeExCimpleteModal()">Cancel</button>
       </form>
     </div>
   </div>
@@ -230,15 +269,17 @@
           <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
           <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
           ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-          <button class="button" onclick="markExerciseComplete(${ex.ExerciseId})">Complete</button>
+          <button class="button" onclick="markExerciseComplete(${ex.ExerciseId}, ${planId})">Complete</button>
           <button class="button" style="background: ${userRating ? "#6c757d" : "#007bff"};" onclick="openRatingModal(${ex.ExerciseId})">${userRating ? "Change Rating" : "Rate"}</button>
         `;
         container.appendChild(div);
       }
     }
 
-    function markExerciseComplete(exerciseId) {
-      alert(`Exercise ${exerciseId} marked as complete.`);
+    async function markExerciseComplete(exerciseId, planId) {
+      document.getElementById("feedbackExerciseId").value = exerciseId;
+      document.getElementById("feedbackPlanId").value = planId;
+      document.getElementById("exCompleteModal").style.display = "block";
     }
 
     async function openRatingModal(exerciseId) {
@@ -282,6 +323,10 @@
       document.getElementById("ratingModal").style.display = "none";
     }
 
+    function closeExCimpleteModal() {
+      document.getElementById("exCompleteModal").style.display = "none";
+    }
+
     document.getElementById("ratingForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
@@ -318,6 +363,42 @@
         alert("Something went wrong.");
       }
     });
+
+      document.getElementById("exerciseCompleteForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const exerciseId = document.getElementById("feedbackExerciseId").value;
+      const planId = document.getElementById("feedbackPlanId").value;
+      const setsCompleted = parseInt(document.getElementById("setsCompleted").value);
+      const repsCompleted = parseInt(document.getElementById("repsCompleted").value);
+
+      const payload = {
+          PlanId: planId,
+          ExerciseId: exerciseId,
+          SetsCompleted: setsCompleted,
+          RepsCompleted: repsCompleted,
+      };
+
+      try {
+          const res = await fetch("/api/exercise-completions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+          });
+
+          const result = await res.json();
+          if (res.ok) {
+              alert("Exercise completion data saved successfully.");
+              closeExCimpleteModal();
+              fetchRecoveryPlan(); // Refresh UI
+          } else {
+              alert(result.error || "Failed to save exercise completion data.");
+          }
+      } catch (err) {
+          console.error("Error saving exercise completion data:", err);
+          alert("Something went wrong.");
+      }
+  });
 
     async function checkRatingExists(exerciseId) {
       try {
