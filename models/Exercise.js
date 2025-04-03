@@ -15,7 +15,7 @@ const Exercise = sequelize.define("Exercise", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "Injury",
+      model: "Injuries",
       key: "InjuryId",
     },
   },
@@ -39,7 +39,6 @@ const Exercise = sequelize.define("Exercise", {
     type: DataTypes.STRING(255),
     allowNull: true, // Optional video tutorial URL
   },
-
 });
 
 module.exports = Exercise;

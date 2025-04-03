@@ -49,6 +49,8 @@ ExerciseRating.belongsTo(User, { foreignKey: "UserId" });
 Exercise.hasMany(ExerciseRating, { foreignKey: "ExerciseId" });
 ExerciseRating.belongsTo(Exercise, { foreignKey: "ExerciseId" });
 
+ExerciseCompletion.belongsTo(Exercise, { foreignKey: "ExerciseId" });
+Exercise.hasMany(ExerciseCompletion, { foreignKey: "ExerciseId" });
 
 //sequelize.sync({ alter: true })  // Creates tables if not exist / updates structure
 //    .then(() => console.log("Database synced"))

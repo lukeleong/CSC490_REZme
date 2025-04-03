@@ -14,6 +14,7 @@ const createExerciseCompletion = async (req, res) => {
             ProgressFeedback
         } = req.body;
 
+
         const planExists = await RecoveryPlan.findByPk(PlanId);
         if (!planExists) {
             return res.status(400).json({error: `RecoveryPlan with PlanId ${PlanId} does not exist.`});
@@ -47,10 +48,11 @@ const createExerciseCompletion = async (req, res) => {
             data: newCompletion,
         });
 
-    } catch (error) {
-        console.error('Error creating exercise completion:', error);
-        res.status(500).json({error: 'Failed to create the record.'});
-    }
+    }  catch (error) {
+    console.error('Detailed error:', error);
+    res.status(500).json({ error: error.message });
+}
+
 };
 
 // Controller: Fetch all Exercise Completion records
@@ -62,6 +64,7 @@ const getAllExerciseCompletions = async (req, res) => {
                 attributes: ['ExerciseId', 'ExerciseName'], // Get ExerciseName if needed
             }]
         });
+
         res.status(200).json(completions);
     } catch (error) {
         console.error('Error fetching exercise completions:', error);

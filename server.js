@@ -133,7 +133,7 @@ app.get('/test-admin-check', authenticateJWT, (req, res) => {
 app.use('/users', UserRoutes);
 app.use("/api", recoveryPlanRoutes);
 app.use("/api", progressRoutes);
-app.use("/api", exerciseCompletionRoutes);
+//app.use("/api", exerciseCompletionRoutes);
 app.use("/api", injuryRoutes);
 app.use("/api", exerciseRoutes);
 app.use("/api", exerciseRatingRoutes);
@@ -146,7 +146,37 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send('Server is working');
 });
+// exercise completion
+app.get('/exercise-completion', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public','exercise-completion.html'));
+});
+app.get('/edit/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'edit-exercise.html'));
+});
 
+
+app.use('/api/exercise-completion', exerciseCompletionRoutes);
+
+app.get('/api/exercise-completion', async (req, res) => {
+    try {
+        const completions = await ExerciseCompletion.findAll();
+        res.json(completions); // Return JSON data
+    } catch (error) {
+        console.error('Error fetching exercise completions:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+app.get('/api/exercises', async (req, res) => {
+    try {
+        const exercises = await Exercise.findAll(); // Adjust query based on your database
+        res.json(exercises); // Send the data as JSON
+    } catch (error) {
+        console.error('Error fetching exercises:', error);
+        res.status(500).json({ message: 'Failed to fetch exercises' });
+    }
+});
 // Google login route
 app.get('/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email']
@@ -193,6 +223,14 @@ app.post('/reset-password', (req, res) => {
   req.url = '/users/reset-password';
   app.handle(req, res);
 });
+
+sequelize.authenticate()
+    .then(() => console.log("Database connected successfully"))
+    .catch(err => console.error("Database connection error:", err));
+
+
+
+
 
 // Sync database and start server
 sequelize.sync({ force: false })

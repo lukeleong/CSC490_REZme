@@ -50,7 +50,7 @@ const ExerciseCompletion = sequelize.define('ExerciseCompletion', {
         allowNull: true,
     },
     ModifiedAt: {
-        type: DataTypes.DATE,
+        type: DataTypes.REAL,
         allowNull: false,
         defaultValue: Sequelize.NOW,
     },
