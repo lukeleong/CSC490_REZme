@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recovery Plan Progress Tester</title>
+  <style>
+    body { font-family: sans-serif; padding: 30px; }
+    label, input { font-size: 1rem; }
+    #output { margin-top: 20px; font-size: 1.1rem; }
+    .section { margin-top: 30px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #eee; }
+    .progress-bar {
+      margin-top: 10px;
+      width: 100%;
+      background: #ddd;
+      height: 25px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #4CAF50, #81C784);
+      text-align: right;
+      color: white;
+      padding-right: 10px;
+      font-weight: bold;
+      line-height: 25px;
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+  <h2>Recovery Plan Progress Monitor</h2>
+
+  <label for="planId">Enter Plan ID:</label>
+  <input type="number" id="planId" value="1" min="1" />
+  <button onclick="fetchAndShow()">Fetch Now</button>
+
+  <div id="output">
+    <p><strong>Status:</strong> <span id="status">--%</span></p>
+    <div class="progress-bar">
+      <div id="progressFill" class="progress-fill">--%</div>
+    </div>
+    <p><strong>Feedback:</strong> <span id="feedback">--</span></p>
+    <p><strong>Last Checked:</strong> <span id="timestamp">--</span></p>
+  </div>
+
+  <div class="section">
+    <h3>Exercise Completions</h3>
+    <div id="completionsTable">Loading...</div>
+  </div>
+
+  <div class="section">
+    <h3>Assigned Exercises</h3>
+    <div id="assignedTable">Loading...</div>
+  </div>
+
+  <div class="section">
+    <h3>Progress Calculation Details</h3>
+    <div id="progressDetails">Loading...</div>
+    <p><strong>Explanation:</strong> The progress status is based on how much of the assigned plan you’ve completed and how hard those exercises felt. 
+    Higher difficulty slows down progress gains. The weighted progress formula uses a capped completion rate (max 100%) and penalizes high difficulty using an exponential penalty.</p>
+  </div>
+
+  <script>
+    async function fetchAndShow() {
+      const id = document.getElementById("planId").value;
+      const statusEl = document.getElementById("status");
+      const fill = document.getElementById("progressFill");
+      const feedbackEl = document.getElementById("feedback");
+      const timeEl = document.getElementById("timestamp");
+
+      try {
+        const res = await fetch(`/api/recovery-plans/${id}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          statusEl.textContent = data.ProgressStatus + "%";
+          feedbackEl.textContent = data.ProgressFeedback || "No feedback.";
+          timeEl.textContent = new Date().toLocaleTimeString();
+          fill.style.width = `${Math.min(data.ProgressStatus, 100)}%`;
+          fill.textContent = `${data.ProgressStatus}%`;
+        } else {
+          statusEl.textContent = "--";
+          feedbackEl.textContent = data.error || "Error fetching plan.";
+          fill.style.width = "0%";
+          fill.textContent = "--%";
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        statusEl.textContent = "--";
+        feedbackEl.textContent = "Fetch failed.";
+        fill.style.width = "0%";
+        fill.textContent = "--%";
+      }
+
+      fetchCompletions(id);
+      fetchAssignedExercises(id);
+      fetchProgressDetails(id);
+    }
+
+    async function fetchCompletions(planId) {
+      try {
+        const res = await fetch(`/api/exercise-completions`);
+        const all = await res.json();
+        const rows = all.filter(c => c.PlanId == planId);
+
+        if (!rows.length) {
+          document.getElementById("completionsTable").innerHTML = "<p>No completions.</p>";
+          return;
+        }
+
+        let html = "<table><tr><th>ID</th><th>ExerciseId</th><th>Sets</th><th>Reps</th><th>Difficulty</th><th>Progress</th></tr>";
+        for (const row of rows) {
+          html += `<tr>
+            <td>${row.CompletionId || "?"}</td>
+            <td>${row.ExerciseId}</td>
+            <td>${row.SetsCompleted}</td>
+            <td>${row.RepsCompleted}</td>
+            <td>${row.DifficultyRating ?? "-"}</td>
+            <td>${row.ProgressValue ?? "-"}</td>
+          </tr>`;
+        }
+        html += "</table>";
+        document.getElementById("completionsTable").innerHTML = html;
+      } catch (err) {
+        document.getElementById("completionsTable").innerHTML = "<p>Error loading completions.</p>";
+      }
+    }
+
+    async function fetchAssignedExercises(planId) {
+      try {
+        const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+        const rows = await res.json();
+
+        if (!rows.length) {
+          document.getElementById("assignedTable").innerHTML = "<p>No assigned exercises.</p>";
+          return;
+        }
+
+        let html = "<table><tr><th>ExerciseId</th><th>Name</th><th>Target</th><th>Equipment</th></tr>";
+        for (const ex of rows) {
+          html += `<tr>
+            <td>${ex.ExerciseId}</td>
+            <td>${ex.ExerciseName}</td>
+            <td>${ex.TargetMuscleGroup}</td>
+            <td>${ex.Equipment}</td>
+          </tr>`;
+        }
+        html += "</table>";
+        document.getElementById("assignedTable").innerHTML = html;
+      } catch (err) {
+        document.getElementById("assignedTable").innerHTML = "<p>Error loading exercises.</p>";
+      }
+    }
+
+    async function fetchProgressDetails(planId) {
+      try {
+        const res = await fetch(`/api/recovery-plans/${planId}/progress-details`);
+        const data = await res.json();
+        const container = document.getElementById("progressDetails");
+
+        if (data.message) {
+          container.innerHTML = `<p>${data.message}</p>`;
+          return;
+        }
+
+        const rawCompletion = (data.completionRate * 100).toFixed(1);
+        const cappedCompletion = Math.min(data.completionRate, 1.0) * 100;
+        const finalWeighted = Math.min(data.weightedProgress, 100);
+        const penaltyBase = ((4.5 - data.avgDifficulty) / 4.5);
+        const penaltyExp = Math.pow(penaltyBase, 1.5);
+
+        container.innerHTML = `
+          <table>
+            <tr><th>Average Progress</th><td>${data.avgProgress.toFixed(1)}</td></tr>
+            <tr><th>Average Difficulty</th><td>${data.avgDifficulty.toFixed(2)}</td></tr>
+            <tr><th>Penalty Factor</th><td>${data.difficultyPenaltyFactor.toFixed(3)}</td></tr>
+            <tr><th>Adjusted Progress</th><td>${data.adjustedProgress.toFixed(1)}</td></tr>
+            <tr><th>Raw Completion Rate</th><td>${rawCompletion}%</td></tr>
+            <tr><th>Capped Completion Rate</th><td>${cappedCompletion.toFixed(1)}%</td></tr>
+            <tr><th>Weighted Progress</th><td>${finalWeighted.toFixed(1)}%</td></tr>
+          </table>
+
+          <p style="margin-top: 10px;"><strong>Formula Steps:</strong></p>
+          <ol>
+            <li>Penalty Factor = ((4.5 - ${data.avgDifficulty.toFixed(2)}) / 4.5) ^ 1.5 = <strong>${penaltyExp.toFixed(3)}</strong></li>
+            <li>Adjusted Progress = ${data.avgProgress.toFixed(1)} × ${penaltyExp.toFixed(3)} = <strong>${data.adjustedProgress.toFixed(1)}</strong></li>
+            <li>Completion Rate = min(${rawCompletion}%, 100%) = <strong>${cappedCompletion.toFixed(1)}%</strong></li>
+            <li>Weighted Progress = (${data.adjustedProgress.toFixed(1)} × 0.7) + (${cappedCompletion.toFixed(1)} × 0.3)</li>
+            <li>Capped at 100% → <strong>${finalWeighted.toFixed(1)}%</strong></li>
+          </ol>
+        `;
+      } catch (err) {
+        console.error("Error fetching progress details:", err);
+        document.getElementById("progressDetails").innerHTML = "<p>Error loading progress details.</p>";
+      }
+    }
+
+    setInterval(fetchAndShow, 5000);
+    document.addEventListener("DOMContentLoaded", fetchAndShow);
+  </script>
+</body>
+</html>

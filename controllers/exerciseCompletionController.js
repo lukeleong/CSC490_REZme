@@ -1,60 +1,91 @@
-const { ExerciseCompletion } = require("../models");
+const { ExerciseCompletion, RecoveryPlanExercise } = require("../models");
+const { updatePlanProgress } = require("../services/recoveryPlanUpdater");
 
 // Create a new ExerciseCompletion record
 exports.createExerciseCompletion = async (req, res) => {
-    try {
-        const completion = await ExerciseCompletion.create(req.body);
-        res.status(201).json(completion);
-    } catch (error) {
-        console.error("Error creating ExerciseCompletion:", error);
-        res.status(500).json({ error: "Failed to create record" });
+  try {
+    const { PlanId, ExerciseId } = req.body;
+
+    // Validate the association between RecoveryPlan and Exercise
+    const isLinked = await RecoveryPlanExercise.findOne({
+      where: {
+        RecoveryPlanId: PlanId,
+        ExerciseId: ExerciseId,
+      },
+    });
+
+    if (!isLinked) {
+      return res.status(400).json({
+        error: "This exercise is not part of the selected recovery plan.",
+      });
     }
+
+    const completion = await ExerciseCompletion.create(req.body);
+
+    // Dynamically update the recovery plan's progress
+    await updatePlanProgress(completion.PlanId);
+
+    res.status(201).json(completion);
+  } catch (error) {
+    console.error("Error creating ExerciseCompletion:", error);
+    res.status(500).json({ error: "Failed to create record" });
+  }
 };
 
 // Get all ExerciseCompletion records
 exports.getAllExerciseCompletions = async (req, res) => {
-    try {
-        const completions = await ExerciseCompletion.findAll();
-        res.json(completions);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch records" });
-    }
+  try {
+    const completions = await ExerciseCompletion.findAll();
+    res.json(completions);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch records" });
+  }
 };
 
 // Get a single ExerciseCompletion by ID
 exports.getExerciseCompletionById = async (req, res) => {
-    try {
-        const completion = await ExerciseCompletion.findByPk(req.params.id);
-        if (!completion) return res.status(404).json({ error: "Not found" });
+  try {
+    const completion = await ExerciseCompletion.findByPk(req.params.id);
+    if (!completion) return res.status(404).json({ error: "Not found" });
 
-        res.json(completion);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch record" });
-    }
+    res.json(completion);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch record" });
+  }
 };
 
 // Update an ExerciseCompletion record
 exports.updateExerciseCompletion = async (req, res) => {
-    try {
-        const completion = await ExerciseCompletion.findByPk(req.params.id);
-        if (!completion) return res.status(404).json({ error: "Not found" });
+  try {
+    const completion = await ExerciseCompletion.findByPk(req.params.id);
+    if (!completion) return res.status(404).json({ error: "Not found" });
 
-        await completion.update(req.body);
-        res.json(completion);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to update record" });
-    }
+    await completion.update(req.body);
+
+    // Recalculate progress after update
+    await updatePlanProgress(completion.PlanId);
+
+    res.json(completion);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update record" });
+  }
 };
 
 // Delete an ExerciseCompletion record
 exports.deleteExerciseCompletion = async (req, res) => {
-    try {
-        const completion = await ExerciseCompletion.findByPk(req.params.id);
-        if (!completion) return res.status(404).json({ error: "Not found" });
+  try {
+    const completion = await ExerciseCompletion.findByPk(req.params.id);
+    if (!completion) return res.status(404).json({ error: "Not found" });
 
-        await completion.destroy();
-        res.json({ message: "Deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to delete record" });
-    }
+    const planId = completion.PlanId;
+
+    await completion.destroy();
+
+    // Update recovery plan after deletion
+    await updatePlanProgress(planId);
+
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete record" });
+  }
 };
