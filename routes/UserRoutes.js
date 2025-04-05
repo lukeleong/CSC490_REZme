@@ -14,6 +14,7 @@ const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const nodemailer = require('nodemailer');
 const transporter = require('./mailer');
+const fetch = require("node-fetch");
 
 router.get("/test-route", (req, res) => {
   console.log('Inside /test-route');
@@ -90,7 +91,7 @@ router.post("/signup", async (req, res) => {
       try {
         newUser = await User.create({
           Email: email,
-          Password: password, // Should be hashed in production!
+          Password: password, 
           FirstName: firstName,
           LastName: lastName,
           DateOfBirth: dob,
@@ -532,8 +533,6 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 router.get('/reset-password', (req, res) => {
-  // This assumes your HTML file is in a 'public' directory at the root of your project
-  // Adjust the path as needed based on your project structure
   res.sendFile(path.join(__dirname, '../public/reset_password.html'));
 });
 
@@ -558,6 +557,83 @@ router.post('/reset-password', async (req, res) => {
   } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post('/ask-hf-ai', authenticateJWT, async (req, res) => {
+  try {
+    const hf_api_token = "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"; 
+    const { question } = req.body;
+    const model_name = "mistralai/Mistral-7B-Instruct-v0.2"; 
+
+    if (!question) {
+      return res.status(400).json({ error: 'Question is required.' });
+    }
+
+    const prompt = `
+The following is a conversation with an AI fitness assistant that provides helpful, accurate, and safe advice about exercise, injuries, and recovery.
+
+Question: ${question}
+Answer:`;
+
+    const api_url = `https://api-inference.huggingface.co/models/${model_name}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${hf_api_token}`
+    };
+
+    const payload = {
+      inputs: prompt,
+      parameters: {
+        max_length: 150,
+        temperature: 0.7,
+        top_p: 0.9,
+        return_full_text: false
+      }
+    };
+
+    console.log("Sending request to Hugging Face:", payload);
+
+    const response = await fetch(api_url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Hugging Face API Error:', errorData);
+      return res.status(response.status).json({ 
+        error: `Failed to get answer from Hugging Face: ${errorData.error || response.statusText}` 
+      });
+    }
+
+    const result = await response.json();
+    console.log('HF API response:', result);
+
+    // Handle different response formats
+    let answer = '';
+    if (Array.isArray(result) && result[0] && typeof result[0].generated_text === 'string') {
+      answer = result[0].generated_text.trim();
+    } else if (typeof result === 'string') {
+      answer = result.trim();
+    } else if (typeof result.generated_text === 'string') {
+      answer = result.generated_text.trim();
+    } else {
+      console.warn('Unexpected Hugging Face API response format:', result);
+      return res.status(500).json({ error: 'Unexpected response format from Hugging Face.' });
+    }
+
+    //Clean Answer
+    if (answer.toLowerCase().includes('question:')) {
+      answer = answer.substring(0, answer.toLowerCase().indexOf('question:')).trim();
+    }
+
+    res.json({ answer });
+
+  } catch (error) {
+    console.error('Error calling Hugging Face Inference API:', error);
+    res.status(500).json({ error: 'Failed to get answer from AI.' });
   }
 });
 

@@ -14,6 +14,7 @@ const exerciseRoutes = require("./routes/exerciseRoutes");
 const exerciseRatingRoutes = require("./routes/exerciseRatingRoutes");
 const path = require('path');
 const cors = require("cors");
+const fetch = require("node-fetch");
 
 const app = express();
 require('dotenv').config();
