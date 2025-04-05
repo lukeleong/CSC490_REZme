@@ -112,7 +112,7 @@ const seedExercises = async () => {
   } catch (err) {
     console.error("Failed to seed exercises:", err);
   } finally {
-    await sequelize.close();
+    //await sequelize.close();
   }
 };
 

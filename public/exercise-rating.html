@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exercise Ratings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .review {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+
+    .review:last-child {
+      border-bottom: none;
+    }
+
+    .review h4 {
+      margin: 0;
+    }
+
+    .rating {
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .timestamp {
+      font-size: 0.9em;
+      color: #888;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="exerciseName">Loading...</h1>
+    <div id="reviewsContainer">
+      <p>Loading reviews...</p>
+    </div>
+    <a href="javascript:history.back()" class="button">Back</a>
+  </div>
+
+  <script>
+    async function loadRatings() {
+      const exerciseId = new URLSearchParams(window.location.search).get("exerciseId");
+      if (!exerciseId) return;
+
+      try {
+        const exerciseRes = await fetch(`/api/exercises/${exerciseId}`);
+        if (!exerciseRes.ok) throw new Error(`Failed to fetch exercise: ${exerciseRes.status}`);
+        const exercise = await exerciseRes.json();
+        document.getElementById("exerciseName").innerText = `${exercise.ExerciseName} – Reviews`;
+
+        const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
+        if (!res.ok) throw new Error(`Failed to fetch ratings: ${res.status}`);
+        const ratings = await res.json();
+
+        const container = document.getElementById("reviewsContainer");
+        container.innerHTML = "";
+
+        if (!ratings.length) {
+          container.innerHTML = "<p>No reviews yet.</p>";
+          return;
+        }
+
+        for (const r of ratings) {
+          const div = document.createElement("div");
+          div.className = "review";
+
+          const userName = r.User ? `${r.User.FirstName} ${r.User.LastName}` : `User ${r.UserId}`;
+          const createdAt = r.createdAt ? new Date(r.createdAt).toLocaleString() : "Unknown date";
+
+          div.innerHTML = `
+            <h4>${userName} <span class="rating">${r.Rating}★</span></h4>
+            <p>${r.Comment || "No comment"}</p>
+            <div class="timestamp">Posted on ${createdAt}</div>
+          `;
+          container.appendChild(div);
+        }
+      } catch (err) {
+        console.error("Failed to load reviews:", err);
+        document.getElementById("reviewsContainer").innerHTML = "<p>Error loading reviews.</p>";
+      }
+    }
+
+    loadRatings();
+  </script>
+</body>
+</html>
