@@ -1,4 +1,5 @@
-const { ExerciseCompletion } = require("../models");
+const ExerciseCompletion = require("../models/ExerciseCompletion");
+
 
 // Create a new ExerciseCompletion record
 exports.createExerciseCompletion = async (req, res) => {
