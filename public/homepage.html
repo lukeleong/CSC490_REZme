@@ -1,63 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to Recovery App</title>
+    <!-- Font Awesome Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            text-align: center;
-            background: url('background.jpg') no-repeat center center/cover;
-            height: 100vh;
+        }
+
+        /* Change #1: Updated Body Style for Immersive LIGHT Green Theme */
+                /* Change #1: Updated Body Style for Immersive Image Background */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #34495e; /* Keep dark text color - MIGHT NEED ADJUSTMENT based on image! */
+            background-color: #e8f5e9; /* Keep light green fallback */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            color: white;
-        }
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 0;
-        }
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 600px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-        .button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
             text-align: center;
-            background: #007bff;
-            color: white;
+            overflow-x: hidden;
+            padding: 70px 30px 50px 30px;
+
+            /* --- Background Image Settings --- */
+            /* Replace gradient with image */
+            background-image: url('images/backgroundimage.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+            background-size: cover; /* Scale image to cover the whole area */
+            background-position: center center; /* Center the image */
+            background-repeat: no-repeat; /* Don't tile the image */
+            background-attachment: fixed; /* Optional: Image stays fixed when scrolling */
+        }
+
+        /* Container still acts mainly as a width constraint */
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Adjusted welcome-text styles */
+        .welcome-text {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            /* Light grey border */
+            border-bottom: 1px solid #d1d8e0;
+        }
+
+        .action-buttons {
+            margin-bottom: 50px;
+        }
+
+        /* Change #2: H1 Style - Using primary green color */
+        h1 {
+            color: #198754; /* Primary green heading */
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 2.8rem;
+            text-transform: none;
+            letter-spacing: -0.5px;
+            text-align: center;
+            /* Removed text shadow, less effective on light bg */
+        }
+
+        /* Change #3: General paragraph style for light background */
+        p {
+            color: #5a6a7d; /* Slightly muted dark grey */
+            margin-bottom: 1em;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        /* Change #4: Buttons adjusted slightly if needed */
+        .button {
+            display: inline-block;
+            padding: 12px 28px;
+            text-align: center;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-size: 1rem;
+        }
+        /* Primary Button (Login) */
+        .button {
+            background-color: #198754;
+            border-color: #198754;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+        }
+        .button:hover {
+            background-color: #157347;
+            border-color: #157347;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        /* Secondary Button (Sign Up - Outline) */
+        .button-secondary {
+            background-color: transparent;
+            border-color: #198754;
+            color: #198754; /* Green text */
+            box-shadow: none;
+        }
+        .button-secondary:hover {
+            background-color: rgba(25, 135, 84, 0.05); /* Even subtler tint */
+            color: #157347; /* Darker green text on hover */
+            border-color: #157347;
+            transform: translateY(-2px);
+        }
+
+        /* Adjusted useful elements grid container */
+        .useful-elements {
+            margin-top: 50px;
+            padding-top: 40px;
+            /* Lighter border */
+            border-top: 1px solid #d1d8e0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 30px;
+        }
+
+        /* Change #5: Styling for the useful element cards - MORE TRANSPARENT */
+        .useful-element {
+            /* Light, more transparent background */
+            background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
+            padding: 30px 25px;
+            border-radius: 12px;
+            /* Subtle border */
+            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle light grey border */
+            text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            /* Optional: Add backdrop filter for frosted glass */
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Very subtle shadow */
+        }
+        .useful-element:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly less transparent on hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Change #6: Card Content Colors for Light Background */
+        .useful-element .icon {
+            font-size: 2.8rem;
+            color: #198754; /* Keep icon color green */
+            margin-bottom: 20px;
+            display: block;
+        }
+        .useful-element h3 {
+            color: #2c3e50; /* Darker heading for contrast */
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .useful-element p {
+            color: #5a6a7d; /* Muted dark grey for card text */
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+            max-width: none;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: 400;
+        }
+
+        /* Media Query remains largely the same */
+        @media (max-width: 768px) {
+            body {
+                padding: 60px 15px 40px 15px;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .button { /* Stack buttons */
+                display: block;
+                width: calc(100% - 20px);
+                margin: 15px 10px;
+            }
+            .useful-elements {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .useful-element {
+                padding: 25px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="overlay"></div>
     <div class="container">
-        <h1>Welcome to Recovery App</h1>
-        <p>Your personalized injury recovery assistant.</p>
-        <p>Track your progress, complete exercises, and recover faster with our guided plans.</p>
-        
-        <a href="login.html" class="button">Login</a>
-        <a href="signup.html" class="button">Sign Up</a>
+        <!-- Structure remains the same -->
+        <div class="welcome-text">
+            <h1>Welcome to Your Recovery Journey</h1>
+            <p>Empowering you to track your progress and achieve your rehabilitation goals.</p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="login.html" class="button">Login</a>
+            <a href="signup.html" class="button button-secondary">Sign Up</a>
+        </div>
+
+        <div class="useful-elements">
+            <div class="useful-element">
+                <i class="fas fa-notes-medical icon"></i>
+                <h3>Track Your Injuries</h3>
+                <p>Log new injuries and monitor their healing progress over time.</p>
+            </div>
+            <div class="useful-element">
+                <i class="fas fa-clipboard-list icon"></i>
+                <h3>Personalized Recovery Plans</h3>
+                <p>Access tailored exercise and treatment plans designed for your specific needs.</p>
+            </div>
+            <div class="useful-element">
+                <i class="fas fa-dumbbell icon"></i>
+                <h3>Exercise Library</h3>
+                <p>Explore a library of guided exercises with clear instructions and visuals.</p>
+            </div>
+            <div class="useful-element">
+                <i class="fas fa-chart-line icon"></i>
+                <h3>Progress Visualization</h3>
+                <p>View charts and reports to see your recovery trends and stay motivated.</p>
+            </div>
+        </div>
     </div>
 </body>
 </html>

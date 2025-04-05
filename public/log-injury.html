@@ -1,278 +1,639 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Log Injury - Recovery App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f4;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log Injury - Recovery App</title>
+    <!-- Font Awesome Link (Optional but good practice for consistency) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Link -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      color: #333;
-      font-size: 16px;
-    }
+        /* --- Core Theme Styles (Copied from Dashboard) --- */
+        :root {
+            --primary-green: #388e3c; /* Darker green like buttons/icons */
+            --light-green-bg-start: #d1f0d9; /* Lightest green for bg */
+            --light-green-bg-end: #a8e0b0;   /* Slightly darker green for bg */
+            --card-bg: #ffffff;             /* Use white for the form container */
+            --card-bg-popup: #f8f9fa;      /* Off-white for popup */
+            --text-dark: #343a40;           /* Dark text for headings */
+            --text-muted: #5f6368;          /* Muted text for paragraphs/labels */
+            --text-form-label: #388e3c;     /* Green for form labels */
+            --border-color-light: #e0e0e0;   /* Light border for dividers/cards */
+            --border-color-input: #ced4da;   /* Standard input border */
+            --input-bg: #ffffff;            /* White input background */
+            --status-active-green: #28a745;  /* Brighter green for status/progress */
+            --status-completed-grey: #6c757d;/* Grey for completed status */
+            --logout-red: #dc3545;           /* Red for logout */
+        }
 
-    .back-button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      text-decoration: none;
-    }
+        body {
+            font-family: 'Segoe UI', 'Nunito Sans', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text-muted); /* Default text color */
 
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+            /* --- Background Image Settings --- */
+            /* V V V V V V V V V V V V V V V V V V V V V V V V V V V */
+            /*      REPLACE THIS URL WITH YOUR IMAGE PATH       */
+            background-image: url('images/backgroundimage.jpg');
+            /* ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ */
 
-    h1 {
-      text-align: center;
-    }
+            /* --- Ensure Gradient is Commented Out or Removed --- */
+            /* background: linear-gradient(135deg, var(--light-green-bg-start) 0%, var(--light-green-bg-end) 100%); */
 
-    .input-group {
-      margin: 15px 0;
-    }
+            /* --- General background properties --- */
+            background-size: cover;                     /* Scale image to cover the whole area */
+            background-position: center center;         /* Center the image */
+            background-repeat: no-repeat;               /* Do not tile the image */
+            background-attachment: fixed;               /* Image stays fixed when scrolling */
+            background-color: var(--light-green-bg-start); /* Fallback color if image fails */
+            /* --- End Background Image Settings --- */
 
-    .input-group label {
-      display: block;
-      margin-bottom: 5px;
-    }
+            padding: 40px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    .input-group input,
-    .input-group select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
+        /* Main container for the form */
+        .container {
+            max-width: 700px; /* Suitable width for a form */
+            width: 100%;
+            margin: 20px auto;
+            background: var(--card-bg); /* White background for the form area */
+            padding: 30px 40px; /* Good padding */
+            border-radius: 10px; /* Consistent border radius */
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Consistent shadow */
+            border: 1px solid var(--border-color-light); /* Subtle border */
+        }
 
-    .input-group input[type="range"] {
-      padding: 0;
-    }
+        /* Header specific to this page */
+        .page-header { /* Renamed from .header to avoid conflicts if structure differs */
+            max-width: 950px; /* Match dashboard width */
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px; /* Space below header */
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(56, 142, 60, 0.3); /* Subtle green border */
+        }
 
-    .range-value {
-      text-align: right;
-      font-weight: bold;
-      margin-top: 5px;
-    }
+        h1 {
+            text-align: center;
+            color: var(--primary-green); /* Use primary green */
+            font-weight: 700;
+            margin-bottom: 35px; /* Space below title */
+            font-size: 2.2rem; /* Adjust size */
+            text-transform: none;
+            letter-spacing: normal;
+        }
 
-    .button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-top: 20px;
-      text-align: center;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-    }
+        /* --- Button Styles (Copied from Dashboard) --- */
+        .button, .back-button {
+            display: inline-block;
+            padding: 10px 24px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.95rem;
+            margin: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
 
-    /* Popup Modal */
-    #popupOverlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-    }
+        /* PRIMARY BUTTON STYLE (Submit) */
+        .button.button-primary {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+        .button.button-primary:hover {
+            background-color: #2e7d32;
+            border-color: #2e7d32;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+        }
 
-    #popupBox {
-      background: white;
-      max-width: 300px;
-      margin: 150px auto;
-      padding: 20px;
-      text-align: center;
-      border-radius: 8px;
-    }
+        /* SECONDARY OUTLINE BUTTON STYLE (Back Button) */
+        .button.button-secondary, .back-button { /* Apply to back button */
+            background-color: transparent;
+            border: 1.5px solid var(--primary-green);
+            color: var(--primary-green);
+            box-shadow: none;
+        }
+        .button.button-secondary:hover, .back-button:hover {
+            background-color: rgba(56, 142, 60, 0.08);
+            color: #2e7d32;
+            border-color: #2e7d32;
+            transform: translateY(-1px);
+        }
 
-    #popupBox button {
-      margin-top: 15px;
-      margin-right: 10px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+        /* --- Form Styles --- */
+        .input-group {
+            margin-bottom: 22px; /* Consistent spacing */
+        }
 
-    #popupBox .dashboard-btn {
-      background-color: #007bff;
-      color: white;
-    }
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-form-label); /* Use green for labels */
+            font-weight: 600; /* Bolder labels */
+            font-size: 0.9rem;
+        }
 
-    #popupBox .view-btn {
-      background-color: #28a745;
-      color: white;
-    }
-  </style>
+        .input-group input[type="text"],
+        .input-group input[type="date"],
+        .input-group select {
+            width: 100%;
+            padding: 10px 12px; /* Adjusted padding */
+            border: 1px solid var(--border-color-input); /* Standard input border */
+            border-radius: 5px; /* Slightly less rounded */
+            background: var(--input-bg); /* White background */
+            color: var(--text-dark); /* Dark text for input */
+            font-size: 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-group input[type="text"]:focus,
+        .input-group input[type="date"]:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-green); /* Green border on focus */
+            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.15); /* Subtle green glow */
+        }
+
+        /* Style for dropdown arrow */
+        .input-group select {
+            appearance: none; /* Remove default arrow */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23388E3C%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px auto;
+            padding-right: 30px; /* Make space for arrow */
+        }
+
+        /* Range Slider Styles */
+        .input-group input[type="range"] {
+            width: 100%;
+            height: 6px; /* Thinner track */
+            background: #e9ecef; /* Light grey track */
+            border-radius: 3px;
+            appearance: none;
+            cursor: pointer;
+            padding: 0; /* Remove default padding */
+            border: none; /* Remove default border */
+            margin-top: 8px; /* Space above slider */
+        }
+
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px; /* Thumb size */
+            height: 18px;
+            background: var(--primary-green); /* Green thumb */
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+         /* Firefox Thumb */
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .range-value {
+            text-align: right;
+            font-weight: 600; /* Bolder value */
+            margin-top: 4px; /* Space above value */
+            color: var(--text-dark); /* Darker text for value */
+            font-size: 0.9rem;
+        }
+
+        /* Submit Button Specifics */
+        #injuryForm button[type="submit"] {
+            width: 100%; /* Full width submit */
+            margin-top: 15px; /* Space above submit */
+            padding: 12px 25px; /* Larger padding */
+            font-size: 1rem;
+        }
+
+        #message {
+          text-align: center;
+          margin-top: 20px;
+          color: var(--logout-red); /* Use red for error messages */
+          font-weight: 500;
+        }
+
+        /* Greeting Style */
+        #greeting {
+            font-weight: 600;
+            color: var(--primary-green); /* Match H1 color */
+            font-size: 1.05rem;
+        }
+
+        /* --- Popup Modal Styles --- */
+        #popupOverlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
+            z-index: 1000;
+            animation: fadeInPopup 0.3s ease-out;
+        }
+
+        #popupBox {
+            background: var(--card-bg-popup); /* Use off-white */
+            color: var(--text-dark); /* Dark text inside popup */
+            max-width: 450px; /* Slightly wider */
+            margin: 120px auto; /* Adjust top margin */
+            padding: 35px 40px; /* More padding */
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color-light);
+            position: relative;
+            animation: slideInPopup 0.4s ease-out;
+        }
+
+        #popupBox h2 { /* Optional: Add a title */
+            color: var(--primary-green);
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+        }
+
+        #popupBox p {
+            margin-bottom: 25px; /* More space */
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        #popupBox .popup-buttons { /* Container for buttons */
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Space between buttons */
+            flex-wrap: wrap;
+        }
+
+        #popupBox button {
+             /* Use the base button styles */
+             padding: 10px 20px;
+             font-size: 0.9rem;
+             margin: 0; /* Remove default margin */
+        }
+
+        /* Style popup buttons using theme classes */
+        #popupBox .dashboard-btn { /* Secondary outline green */
+             background-color: transparent;
+            border: 1.5px solid var(--primary-green);
+            color: var(--primary-green);
+            box-shadow: none;
+        }
+         #popupBox .dashboard-btn:hover {
+             background-color: rgba(56, 142, 60, 0.08);
+             color: #2e7d32;
+             border-color: #2e7d32;
+             transform: translateY(-1px);
+        }
+
+        #popupBox .view-btn { /* Primary solid green */
+             background-color: var(--primary-green);
+             border-color: var(--primary-green);
+             color: white;
+        }
+         #popupBox .view-btn:hover {
+             background-color: #2e7d32;
+             border-color: #2e7d32;
+             transform: translateY(-1px);
+             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+        }
+
+
+        /* Animation */
+        @keyframes fadeInPopup {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInPopup {
+             from { opacity: 0; transform: translateY(-30px); }
+             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+             body {
+                 padding: 30px 15px;
+             }
+             .page-header {
+                 flex-direction: column;
+                 align-items: center; /* Center items when stacked */
+                 text-align: center;
+                 border-bottom: none; /* Remove border */
+                 margin-bottom: 20px;
+             }
+             .page-header .back-button {
+                 margin-bottom: 10px;
+             }
+            .container {
+                padding: 25px 20px; /* Adjust container padding */
+            }
+             h1 {
+                 font-size: 1.8rem; /* Smaller title */
+                 margin-bottom: 25px;
+             }
+        }
+         @media (max-width: 480px) {
+             #popupBox {
+                 max-width: 90%;
+                 margin: 80px auto;
+                 padding: 25px;
+             }
+             #popupBox h2 { font-size: 1.4rem; }
+             #popupBox p { font-size: 0.95rem; }
+             #popupBox .popup-buttons { flex-direction: column; gap: 10px; align-items: stretch;}
+             #popupBox .popup-buttons button { width: 100%; }
+         }
+
+    </style>
 </head>
 
 <body>
-  <div class="header">
-    <a href="/dashboard.html" class="back-button">← Back to Dashboard</a>
-    <div id="greeting">Welcome!</div>
-  </div>
-
-  <div class="container">
-    <h1>Log Your Injury</h1>
-    <form id="injuryForm">
-      <input type="hidden" id="UserId" name="UserId" value="" />
-
-      <div class="input-group">
-        <label for="InjuryType">Injury Type:</label>
-        <input type="text" id="InjuryType" name="InjuryType" required />
-      </div>
-
-      <div class="input-group">
-        <label for="InjuryLocation">Injury Location:</label>
-        <select id="InjuryLocation" name="InjuryLocation" required>
-          <option value="">Loading...</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label for="InjurySeverity">Injury Severity:</label>
-        <input type="range" id="InjurySeverity" name="InjurySeverity" min="1" max="10" value="5" required
-          oninput="updateLabel('severityValue', this.value)" />
-        <div class="range-value" id="severityValue">5</div>
-      </div>
-
-      <div class="input-group">
-        <label for="PainLevel">Pain Level:</label>
-        <input type="range" id="PainLevel" name="PainLevel" min="1" max="10" value="5" required
-          oninput="updateLabel('painValue', this.value)" />
-        <div class="range-value" id="painValue">5</div>
-      </div>
-
-      <div class="input-group">
-        <label for="MobilityLevel">Mobility Level:</label>
-        <input type="range" id="MobilityLevel" name="MobilityLevel" min="1" max="10" value="5" required
-          oninput="updateLabel('mobilityValue', this.value)" />
-        <div class="range-value" id="mobilityValue">5</div>
-      </div>
-
-      <div class="input-group">
-        <label for="StartDate">Date of Injury:</label>
-        <input type="date" id="StartDate" name="StartDate" required />
-      </div>
-
-      <button type="submit" class="button">Submit Injury</button>
-    </form>
-    <p id="message"></p>
-  </div>
-
-  <!-- Success Popup -->
-  <div id="popupOverlay">
-    <div id="popupBox">
-      <p>Injury logged successfully!</p>
-      <button class="dashboard-btn" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
-      <button class="view-btn" onclick="window.location.href='/injuries.html'">View Injuries</button>
+    <!-- Page Header -->
+    <div class="page-header">
+        <a href="/dashboard.html" class="back-button">← Back to Dashboard</a>
+        <div id="greeting">Welcome!</div>
     </div>
-  </div>
 
-  <script>
-    function updateLabel(id, value) {
-      document.getElementById(id).innerText = value;
-    }
+    <!-- Main Form Container -->
+    <div class="container">
+        <h1>Log Your Injury</h1>
+        <form id="injuryForm">
+            <input type="hidden" id="UserId" name="UserId" value="" />
 
-    function getUserIdFromToken() {
-      const token = localStorage.getItem("token");
-      if (!token) return null;
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.id || payload.UserId || payload.user_id;
-      } catch (err) {
-        console.error("Failed to decode token:", err);
-        return null;
-      }
-    }
+            <div class="input-group">
+                <label for="InjuryType">Injury Type:</label>
+                <input type="text" id="InjuryType" name="InjuryType" required />
+            </div>
 
-    async function fetchUserName(userId) {
-      try {
-        const res = await fetch(`/users/${userId}`);
-        const data = await res.json();
-        if (res.ok && data.FirstName) {
-          document.getElementById("greeting").innerText = `Welcome, ${data.FirstName}!`;
+            <div class="input-group">
+                <label for="InjuryLocation">Injury Location:</label>
+                <select id="InjuryLocation" name="InjuryLocation" required>
+                    <option value="">Loading...</option>
+                    <!-- Options populated by JS -->
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="InjurySeverity">Injury Severity (1=Minor, 10=Severe):</label>
+                <input type="range" id="InjurySeverity" name="InjurySeverity" min="1" max="10" value="5" required
+                  oninput="updateLabel('severityValue', this.value)" />
+                <div class="range-value" id="severityValue">5</div>
+            </div>
+
+            <div class="input-group">
+                <label for="PainLevel">Current Pain Level (1=None, 10=Worst):</label>
+                <input type="range" id="PainLevel" name="PainLevel" min="1" max="10" value="5" required
+                  oninput="updateLabel('painValue', this.value)" />
+                <div class="range-value" id="painValue">5</div>
+            </div>
+
+            <div class="input-group">
+                <label for="MobilityLevel">Current Mobility Level (1=Immobile, 10=Full):</label>
+                <input type="range" id="MobilityLevel" name="MobilityLevel" min="1" max="10" value="5" required
+                  oninput="updateLabel('mobilityValue', this.value)" />
+                <div class="range-value" id="mobilityValue">5</div>
+            </div>
+
+            <div class="input-group">
+                <label for="StartDate">Date of Injury:</label>
+                <input type="date" id="StartDate" name="StartDate" required />
+            </div>
+
+            <button type="submit" class="button button-primary">Submit Injury</button>
+        </form>
+        <p id="message"></p> <!-- For error messages -->
+    </div>
+
+    <!-- Success Popup -->
+    <div id="popupOverlay">
+        <div id="popupBox">
+             <!-- Optional Title -->
+             <!-- <h2>Success!</h2> -->
+            <p>Injury logged successfully!</p>
+            <div class="popup-buttons">
+                <button class="dashboard-btn" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+                <button class="view-btn" onclick="window.location.href='/injuries.html'">View Injuries</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateLabel(id, value) {
+            document.getElementById(id).innerText = value;
         }
-      } catch (err) {
-        console.error("Failed to fetch user name:", err);
-      }
-    }
 
-    async function populateMuscleGroups() {
-      try {
-        const res = await fetch("/api/exercises/muscle-groups");
-        const groups = await res.json();
-        const dropdown = document.getElementById("InjuryLocation");
+        function getUserIdFromToken() {
+            const token = localStorage.getItem("token");
+            if (!token) return null;
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                const payload = JSON.parse(jsonPayload);
+                return payload.id || payload.UserId || payload.user_id; // Check common variations
+            } catch (err) {
+                console.error("Failed to decode token:", err);
+                return null;
+            }
+        }
 
-        dropdown.innerHTML = '<option value="">Select Location</option>';
-        groups.forEach(group => {
-          const option = document.createElement("option");
-          option.value = group;
-          option.textContent = group.charAt(0).toUpperCase() + group.slice(1);
-          dropdown.appendChild(option);
+        async function fetchUserName(userId) {
+            const greetingElement = document.getElementById("greeting");
+            try {
+                 const headers = { 'Content-Type': 'application/json' };
+                 const token = localStorage.getItem("token");
+                 if (token) {
+                     headers['Authorization'] = `Bearer ${token}`;
+                 }
+                const res = await fetch(`/users/${userId}`, { headers }); // Add headers if needed
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const data = await res.json();
+                if (data.FirstName) {
+                    greetingElement.innerText = `Welcome, ${data.FirstName}!`;
+                } else {
+                     greetingElement.innerText = `Welcome!`;
+                }
+            } catch (err) {
+                console.error("Failed to fetch user name:", err);
+                greetingElement.innerText = `Welcome!`; // Fallback
+            }
+        }
+
+        async function populateMuscleGroups() {
+            const dropdown = document.getElementById("InjuryLocation");
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                 const token = localStorage.getItem("token");
+                 if (token) {
+                     headers['Authorization'] = `Bearer ${token}`;
+                 }
+                const res = await fetch("/api/exercises/muscle-groups", { headers }); // Add headers if needed
+                 if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                const groups = await res.json();
+
+                dropdown.innerHTML = '<option value="">Select Location</option>'; // Clear loading/default
+                if (Array.isArray(groups)) {
+                    groups.forEach(group => {
+                        const option = document.createElement("option");
+                        option.value = group;
+                        // Simple capitalization
+                        option.textContent = group.charAt(0).toUpperCase() + group.slice(1).toLowerCase().replace(/_/g, ' ');
+                        dropdown.appendChild(option);
+                    });
+                } else {
+                     console.error("Muscle groups data is not an array:", groups);
+                     dropdown.innerHTML = '<option value="">Error loading locations</option>';
+                }
+            } catch (err) {
+                console.error("Failed to load muscle groups:", err);
+                dropdown.innerHTML = '<option value="">Error loading locations</option>';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const userId = getUserIdFromToken();
+            const greetingElement = document.getElementById("greeting");
+            const userIdInput = document.getElementById("UserId");
+            const messageElement = document.getElementById("message"); // Clear any previous messages
+
+             messageElement.innerText = ''; // Clear error message on load
+
+            if (userId) {
+                userIdInput.value = userId;
+                fetchUserName(userId);
+            } else {
+                greetingElement.innerText = "Please log in.";
+                // Optionally disable form or redirect
+                 document.getElementById('injuryForm').style.opacity = '0.5';
+                 document.getElementById('injuryForm').querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+                 messageElement.innerText = 'You must be logged in to submit an injury.';
+            }
+
+            populateMuscleGroups();
+
+            // Set default date to today
+            const dateInput = document.getElementById("StartDate");
+             if (dateInput) {
+                try {
+                     const today = new Date().toISOString().split("T")[0];
+                     dateInput.value = today;
+                     // Optional: Set max date to today as well?
+                     // dateInput.max = today;
+                 } catch(e) { console.error("Error setting date:", e);}
+             }
         });
-      } catch (err) {
-        console.error("Failed to load muscle groups:", err);
-      }
-    }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const userId = getUserIdFromToken();
-      if (userId) {
-        document.getElementById("UserId").value = userId;
-        fetchUserName(userId);
-      } else {
-        document.getElementById("greeting").innerText = "Please log in.";
-      }
-      populateMuscleGroups();
 
-      // Set default date to today
-      const today = new Date().toISOString().split("T")[0];
-      document.getElementById("StartDate").value = today;
-    });
+        document.getElementById("injuryForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const messageElement = document.getElementById("message");
+            const submitButton = this.querySelector('button[type="submit"]');
+            messageElement.innerText = ""; // Clear previous messages
+            submitButton.disabled = true; // Prevent double-submit
+            submitButton.textContent = 'Submitting...';
 
-    document.getElementById("injuryForm").addEventListener("submit", async function (event) {
-      event.preventDefault();
+            const formData = new FormData(this);
+            // Convert range values explicitly to numbers if backend expects them
+            const data = {
+                UserId: formData.get('UserId'),
+                InjuryType: formData.get('InjuryType'),
+                InjuryLocation: formData.get('InjuryLocation'),
+                InjurySeverity: parseInt(formData.get('InjurySeverity'), 10),
+                PainLevel: parseInt(formData.get('PainLevel'), 10),
+                MobilityLevel: parseInt(formData.get('MobilityLevel'), 10),
+                StartDate: formData.get('StartDate')
+            };
 
-      const formData = new FormData(this);
-      const data = Object.fromEntries(formData);
 
-      const response = await fetch("/api/injuries", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      });
+            try {
+                const headers = {
+                    "Content-Type": "application/json",
+                    // Add Authorization header if your API needs it
+                    // 'Authorization': `Bearer ${localStorage.getItem("token")}`
+                };
+                const token = localStorage.getItem("token");
+                if (token) {
+                     headers['Authorization'] = `Bearer ${token}`;
+                }
 
-      const result = await response.json();
+                const response = await fetch("/api/injuries", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: headers
+                });
 
-      if (response.ok) {
-        // Show success popup
-        document.getElementById("popupOverlay").style.display = "block";
-      } else {
-        document.getElementById("message").innerText = result.message || "Failed to log injury.";
-        console.error("Failed to log injury:", result);
-      }
-    });
-  </script>
+                const result = await response.json(); // Try to parse JSON regardless of status
+
+                if (response.ok) {
+                    // Show success popup
+                    document.getElementById("popupOverlay").style.display = "block";
+                    this.reset(); // Optionally reset the form
+                     // Reset range labels
+                    updateLabel('severityValue', '5');
+                    updateLabel('painValue', '5');
+                    updateLabel('mobilityValue', '5');
+                    // Reset date to today
+                    const today = new Date().toISOString().split("T")[0];
+                    document.getElementById("StartDate").value = today;
+
+                } else {
+                    messageElement.innerText = result.message || `Error: ${response.statusText}`;
+                    console.error("Failed to log injury:", result);
+                }
+            } catch (error) {
+                 console.error("Network or other error:", error);
+                 messageElement.innerText = "An error occurred. Please try again.";
+            } finally {
+                 submitButton.disabled = false; // Re-enable button
+                 submitButton.textContent = 'Submit Injury';
+            }
+        });
+
+         // Close popup if needed (optional - current buttons navigate away)
+         /*
+         document.getElementById("popupOverlay").addEventListener('click', function(event) {
+             // Close if clicking overlay itself, not the box content
+             if (event.target === this) {
+                 this.style.display = 'none';
+             }
+         });
+         */
+
+    </script>
 </body>
 </html>

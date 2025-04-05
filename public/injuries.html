@@ -4,71 +4,341 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Injuries - REZme</title>
+    <title>Your Injuries - Recovery App</title>
+    <!-- Font Awesome Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Link -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
+            padding: 0;
         }
 
+        /* --- Core Theme Styles --- */
+        :root {
+            --primary-green: #388e3c;
+            --secondary-green: #66bb6a;
+            --light-green-bg-start: #d1f0d9;
+            --light-green-bg-end: #a8e0b0;
+
+            /* UPDATED Card Backgrounds for semi-transparency */
+            --card-bg: rgba(255, 255, 255, 0.7);  /* Semi-transparent white (like welcome page) */
+            --card-bg-hover: rgba(255, 255, 255, 0.85); /* Slightly less transparent (like welcome page) */
+
+            --text-dark: #343a40;
+            --text-muted: #5f6368; /* Adjusted slightly darker gray for better contrast */
+
+             /* Use subtle dark border like welcome page */
+             --border-color-light: rgba(0, 0, 0, 0.08);
+
+            --separator-color: rgba(56, 142, 60, 0.3);
+            --status-active-green: #28a745;
+            --status-completed-grey: #6c757d;
+            --logout-red: #dc3545;
+            --button-back-bg: #e0f2e2;
+            --button-back-bg-hover: #cfe8d1;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Nunito Sans', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text-muted); /* Default text color */
+
+            /* --- Background Image Settings --- */
+            background-image: url('images/backgroundimage.jpg');
+            /* --- OR use Gradient Background --- */
+            /* background: linear-gradient(135deg, var(--light-green-bg-start) 0%, var(--light-green-bg-end) 100%); */
+
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: var(--light-green-bg-start); /* Fallback */
+
+            padding: 40px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Make container the positioning context */
         .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 30px 40px; /* Keep sufficient padding */
+            border-radius: 12px;
+            text-align: left;
+            position: relative; /* Needed for absolute positioning of children */
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+         /* Style for the horizontal line above the title */
+        hr.title-separator {
+            border: none;
+            height: 1px;
+            background-color: var(--separator-color);
+            margin-top: 25px;
+            margin-bottom: 25px;
+            width: 100%;
         }
 
         h1 {
             text-align: center;
+            color: var(--primary-green);
+            font-weight: 700;
+            font-size: 2.2rem;
+            text-transform: none;
+            letter-spacing: normal;
+            margin: 0 auto 30px auto;
+            padding-top: 0;
+            max-width: 80%;
         }
 
-        .injury {
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: #fff;
-        }
-
+        /* --- Button Styles --- */
         .button {
-            background: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
+            display: inline-block;
+            padding: 8px 18px;
+            text-align: center;
             text-decoration: none;
+            border-radius: 6px;
+            border: 1.5px solid transparent;
             cursor: pointer;
-            margin-left: 5px;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.9rem;
+            margin: 3px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
         }
 
-        .button.green {
-            background: #28a745;
+        /* PRIMARY SOLID GREEN BUTTON */
+        .button.button-primary {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
         }
+        .button.button-primary:hover {
+            background-color: #2e7d32;
+            border-color: #2e7d32;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        /* SECONDARY OUTLINE GREEN BUTTON */
+        .button.button-secondary {
+            background-color: transparent;
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            box-shadow: none;
+            text-decoration: none;
+        }
+        .button.button-secondary:hover {
+             background-color: rgba(56, 142, 60, 0.08);
+             color: #2e7d32;
+             border-color: #2e7d32;
+             transform: translateY(-1px);
+        }
+
+        /* Styles for the absolutely positioned back button */
+        .back-button {
+            position: absolute;
+            top: 0px;
+            left: 40px;
+            background-color: var(--button-back-bg);
+            border: 1.5px solid var(--primary-green);
+            color: var(--primary-green);
+            box-shadow: none;
+            border-radius: 8px;
+            padding: 9px 20px;
+            text-decoration: none; /* Ensure no underline */
+            transition: all 0.2s ease-in-out;
+            margin: 0;
+            z-index: 2;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .back-button:hover {
+            background-color: var(--button-back-bg-hover);
+            color: #2e7d32;
+            border-color: #2e7d32;
+            transform: translateY(-1px);
+        }
+
+
+        /* --- Injury Card Styles (Subtle Semi-Transparent) --- */
+        .injury {
+            padding: 25px 30px; /* Keep slightly larger padding */
+            margin: 20px 0; /* Keep slightly larger margin */
+            border-radius: 12px; /* Match welcome page radius */
+            background: var(--card-bg); /* USE SEMI-TRANSPARENT VARIABLE */
+            border: 1px solid var(--border-color-light); /* Use subtle dark border */
+            backdrop-filter: blur(4px); /* ADD BLUR EFFECT */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Match subtle shadow */
+            transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            /* border-top: none; */ /* No thick top border */
+        }
+
+        .injury:hover {
+            transform: translateY(-5px); /* Match welcome page lift */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Match welcome page hover shadow */
+            background-color: var(--card-bg-hover); /* Use hover variable */
+            /* border-color: rgba(0, 0, 0, 0.12); */ /* Optional: Slightly darker border on hover */
+        }
+
+        /* Grid Layout for Details (Keep compact sizes) */
+        .injury-details {
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0 20px;
+        }
+        @media (min-width: 576px) {
+            .injury-details {
+                 grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Text Sizes (Keep compact sizes) */
+        .injury h2 {
+             color: var(--text-dark);
+             font-size: 1.3rem;
+             font-weight: 600;
+             margin-bottom: 15px;
+             grid-column: 1 / -1;
+             text-align: left;
+        }
+
+        .injury .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted); /* Ensure contrast */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .injury .info-item i.icon {
+            font-size: 1rem;
+            color: var(--primary-green);
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .injury .info-item strong {
+            color: var(--text-dark); /* Ensure contrast */
+            font-weight: 600;
+            margin-right: 4px;
+            flex-shrink: 0;
+        }
+        .injury .info-item span.value {
+             white-space: normal;
+             overflow: visible;
+             text-overflow: clip;
+             display: inline;
+        }
+
+        .injury-actions {
+            text-align: right;
+            margin-top: 10px;
+        }
+         .injury-actions .button {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+         }
+
+         /* Loading/Error Message Style */
+        #injuryContainer p {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+             /* Use subtle background for message */
+             background: rgba(255, 255, 255, 0.6); /* Slightly more opaque */
+             border-radius: 8px;
+             border: 1px solid rgba(0,0,0,0.05);
+        }
+         #injuryContainer p.error-message {
+             color: var(--logout-red);
+             font-weight: 500;
+             background: rgba(255, 224, 224, 0.7);
+         }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+             body {
+                 padding: 30px 15px;
+             }
+             .container {
+                 padding: 25px 20px;
+                 margin-top: 50px;
+             }
+             .back-button {
+                 top: 10px;
+                 left: 15px;
+                 padding: 7px 15px;
+                 font-size: 0.85rem;
+             }
+             hr.title-separator {
+                margin-top: 15px;
+                margin-bottom: 15px;
+             }
+              h1 {
+                 font-size: 1.8rem;
+                 margin-bottom: 20px;
+                 max-width: 90%;
+             }
+             .injury {
+                 padding: 15px 18px; /* Adjust card padding */
+                 border-radius: 10px; /* Slightly smaller radius for mobile */
+             }
+             .injury h2 {
+                 font-size: 1.2rem;
+             }
+             .injury .info-item {
+                 font-size: 0.9rem;
+             }
+             .injury .info-item i.icon {
+                 font-size: 0.95rem;
+                 width: 16px;
+             }
+        }
+        @media (max-width: 575px) {
+            .injury-details {
+                 grid-template-columns: 1fr;
+            }
+             .injury .info-item {
+                 white-space: normal;
+            }
+            .injury-actions {
+                 text-align: center;
+            }
+        }
+
     </style>
 </head>
 
 <body>
+    <!-- HTML Structure remains the same -->
     <div class="container">
-        <div class="header">
-            <a href="/dashboard.html" class="button">Back to Dashboard</a>
-            <h1>Your Injuries</h1>
-        </div>
+        <a href="/dashboard.html" class="back-button">← Back to Dashboard</a>
+        <hr class="title-separator">
+        <h1>Your Injuries</h1>
         <div id="injuryContainer">
             <p>Loading injuries...</p>
+            <!-- Injury cards injected by JS -->
         </div>
     </div>
 
     <script>
+        // --- JavaScript Functions remain the same ---
         function getUserIdFromToken() {
             const token = localStorage.getItem("token");
             if (!token) return null;
@@ -89,59 +359,100 @@
             window.location.href = `/recoveryplan-maker.html?injury_id=${injuryId}`;
         }
 
+        async function fetchAllRecoveryPlans(userId, headers) {
+            try {
+                const res = await fetch(`/api/recovery-plans?user_id=${userId}`, { headers });
+                 if (!res.ok) {
+                     console.error(`HTTP error fetching plans! status: ${res.status}`);
+                     return [];
+                 }
+                const plans = await res.json();
+                return Array.isArray(plans) ? plans : [];
+            } catch (err) {
+                console.error("Error fetching recovery plans:", err);
+                return [];
+            }
+        }
+
         async function fetchInjuries() {
+            const container = document.getElementById("injuryContainer");
             const userId = getUserIdFromToken();
+
             if (!userId) {
-                document.getElementById("injuryContainer").innerHTML = "<p>Please log in to view injuries.</p>";
+                container.innerHTML = '<p class="error-message">Please log in to view injuries.</p>';
                 return;
             }
 
-            try {
-                const response = await fetch(`/api/injuries?user_id=${userId}`);
-                const injuries = await response.json();
+            const headers = { 'Content-Type': 'application/json' };
+            const token = localStorage.getItem("token");
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
-                const container = document.getElementById("injuryContainer");
+            try {
+                const response = await fetch(`/api/injuries?user_id=${userId}`, { headers });
+
+                 if (!response.ok) {
+                     if (response.status === 401) {
+                         container.innerHTML = '<p class="error-message">Session expired. Please log in again.</p>';
+                     } else {
+                         throw new Error(`HTTP error fetching injuries! status: ${response.status}`);
+                     }
+                     return;
+                 }
+
+                const injuries = await response.json();
                 container.innerHTML = "";
 
-                if (!injuries.length) {
-                    container.innerHTML = "<p>No injuries logged.</p>";
+                if (!injuries || !Array.isArray(injuries) || injuries.length === 0) {
+                    container.innerHTML = "<p>No injuries logged yet.</p>";
                     return;
                 }
 
-                for (const injury of injuries) {
-                    const hasPlan = await checkRecoveryPlan(userId, injury.InjuryId);
+                const allPlans = await fetchAllRecoveryPlans(userId, headers);
 
+                for (const injury of injuries) {
+                    const existingPlan = allPlans.find(plan => plan.InjuryId === injury.InjuryId);
                     const div = document.createElement("div");
                     div.className = "injury";
+                    const formattedDate = injury.StartDate ? new Date(injury.StartDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+
                     div.innerHTML = `
-                        <p><strong>Type:</strong> ${injury.InjuryType}</p>
-                        <p><strong>Location:</strong> ${injury.InjuryLocation}</p>
-                        <p><strong>Severity:</strong> ${injury.InjurySeverity}</p>
-                        <p><strong>Pain Level:</strong> ${injury.PainLevel}</p>
-                        <p><strong>Mobility Level:</strong> ${injury.MobilityLevel}</p>
-                        <p><strong>Start Date:</strong> ${new Date(injury.StartDate).toDateString()}</p>
-                        ${hasPlan
-                            ? `<button class="button" onclick="goToRecoveryPlan(${hasPlan})">View Recovery Plan</button>`
-                            : `<button class="button green" onclick="goToPlanMaker(${injury.InjuryId})">Create Recovery Plan</button>`
-                        }
+                        <h2><strong>Injury Name: </strong>${injury.InjuryType || 'Unnamed Injury'}</h2>
+                        <div class="injury-details">
+                             <div class="info-item">
+                                <i class="icon fas fa-map-marker-alt"></i>
+                                <p><strong>Location:</strong> <span class="value">${injury.InjuryLocation || 'N/A'}</span></p>
+                            </div>
+                            <div class="info-item">
+                                <i class="icon fas fa-exclamation-triangle"></i>
+                                <p><strong>Severity:</strong> <span class="value">${injury.InjurySeverity || 'N/A'} / 10</span></p>
+                            </div>
+                            <div class="info-item">
+                                <i class="icon fas fa-head-side-virus"></i>
+                                <p><strong>Pain Level:</strong> <span class="value">${injury.PainLevel || 'N/A'} / 10</span></p>
+                            </div>
+                             <div class="info-item">
+                                <i class="icon fas fa-person-walking"></i>
+                                <p><strong>Mobility Level:</strong> <span class="value">${injury.MobilityLevel || 'N/A'} / 10</span></p>
+                            </div>
+                            <div class="info-item">
+                                <i class="icon fas fa-calendar-alt"></i>
+                                <p><strong>Date Logged:</strong> <span class="value">${formattedDate}</span></p>
+                            </div>
+                        </div>
+                        <div class="injury-actions">
+                            ${existingPlan
+                                ? `<button class="button button-primary" onclick="goToRecoveryPlan(${existingPlan.PlanId})">View Plan</button>`
+                                : `<button class="button button-secondary" onclick="goToPlanMaker(${injury.InjuryId})">Create Plan</button>`
+                            }
+                        </div>
                     `;
                     container.appendChild(div);
                 }
             } catch (error) {
                 console.error("Failed to fetch injuries:", error);
-                document.getElementById("injuryContainer").innerHTML = "<p>Error loading injuries.</p>";
-            }
-        }
-
-        async function checkRecoveryPlan(userId, injuryId) {
-            try {
-                const res = await fetch(`/api/recovery-plans?user_id=${userId}`);
-                const plans = await res.json();
-                const match = plans.find(plan => plan.InjuryId === injuryId);
-                return match ? match.PlanId : null;
-            } catch (err) {
-                console.error("Error checking recovery plan:", err);
-                return false;
+                container.innerHTML = '<p class="error-message">Error loading injuries. Please try refreshing the page.</p>';
             }
         }
 
