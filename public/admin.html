@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +22,8 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             margin-top: 0;
         }
 
@@ -185,14 +187,57 @@
             z-index: 1000;
             text-align: center;
         }
+
+        /* New styles for user list */
+        .user-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .user-list-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .user-list-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .user-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .refresh-button {
+            background: #6c757d;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>Admin User Management</h1>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
+                <a href="exercise-management.html" class="admin-menu-item">Exercise Management</a>
                 <a href="#" id="logoutButton">Logout</a>
             </div>
         </div>
@@ -203,14 +248,26 @@
         <!-- Debug Information -->
         <div id="debugInfo"></div>
 
+        <!-- User List Section -->
+        <div class="section">
+            <div class="user-list-header">
+                <h2>User List</h2>
+                <button id="refreshUserList" class="button refresh-button">Refresh</button>
+            </div>
+            <div id="userList" class="user-list">
+                <div class="loading">Loading users...</div>
+            </div>
+        </div>
+
         <!-- User Search and Selection -->
         <div class="section">
+            <h2>User Search</h2>
             <div id="userSearchContainer">
                 <input type="text" id="userSearch" placeholder="Search User ID">
                 <button id="searchButton" class="button">Search</button>
             </div>
             <div class="input-group">
-                <label for="userSelect">Select User:</label>
+                <label for="userSelect">Search Results:</label>
                 <select id="userSelect">
                     <option value="">Select a user</option>
                 </select>
@@ -218,7 +275,7 @@
         </div>
 
         <!-- Profile Information Section -->
-        <div class="section" id="profileSection" class="hidden">
+        <div class="section hidden" id="profileSection">
             <h2>User Profile Information</h2>
             <form id="profileForm">
                 <div class="input-group">
@@ -255,7 +312,7 @@
         </div>
 
         <!-- Account Deletion Section -->
-        <div class="section" id="deleteSection" class="hidden">
+        <div class="section hidden" id="deleteSection">
             <h2>Delete User Account</h2>
             <p>Warning: This action cannot be undone. All user data will be permanently deleted.</p>
             <div class="right-aligned">
@@ -387,6 +444,98 @@
             }
         }
 
+        async function fetchAllUsers() {
+    const userListElement = document.getElementById('userList');
+    userListElement.innerHTML = '<div class="loading">Loading users...</div>';
+
+    try {
+        const response = await fetch('/users/all', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            showDebug('Failed to fetch users', { status: response.status, error: errorText });
+            throw new Error('Failed to fetch users');
+        }
+
+        const data = await response.json();
+        
+        // Extract users array from the response object
+        const users = data.users || [];
+
+        if (users.length === 0) {
+            userListElement.innerHTML = '<div class="loading">No users found</div>';
+            return;
+        }
+
+        // Make sure the user list has scrolling capability
+        userListElement.style.maxHeight = '400px';
+        userListElement.style.overflowY = 'auto';
+        
+        // Clear and populate user list
+        userListElement.innerHTML = '';
+        
+        // Add a simple search input at the top
+        const searchDiv = document.createElement('div');
+        searchDiv.className = 'search-container';
+        searchDiv.innerHTML = `
+            <input type="text" id="userSearchInput" placeholder="Search users..." 
+                   style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        `;
+        userListElement.appendChild(searchDiv);
+        
+        // Add a container for the actual user list
+        const userListContainer = document.createElement('div');
+        userListContainer.className = 'user-list-container';
+        userListElement.appendChild(userListContainer);
+        
+        // Populate the user list
+        users.forEach(user => {
+            const userElement = document.createElement('div');
+            userElement.classList.add('user-list-item');
+            userElement.dataset.userId = user.UserId;
+            userElement.dataset.userEmail = user.Email || '';
+            userElement.dataset.userFirstName = user.FirstName || '';
+            userElement.dataset.userLastName = user.LastName || '';
+            userElement.textContent = `${user.Email} (${user.FirstName || ''} ${user.LastName || ''})`;
+            userElement.addEventListener('click', () => fetchSelectedUserData(user.UserId));
+            userElement.style.padding = '8px 12px';
+            userElement.style.borderBottom = '1px solid #eee';
+            userElement.style.cursor = 'pointer';
+            userListContainer.appendChild(userElement);
+        });
+        
+        // Add client-side search functionality
+        const searchInput = document.getElementById('userSearchInput');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const userItems = userListContainer.querySelectorAll('.user-list-item');
+            
+            userItems.forEach(item => {
+                const email = item.dataset.userEmail.toLowerCase();
+                const firstName = item.dataset.userFirstName.toLowerCase();
+                const lastName = item.dataset.userLastName.toLowerCase();
+                
+                if (email.includes(searchTerm) || 
+                    firstName.includes(searchTerm) || 
+                    lastName.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        userListElement.innerHTML = `<div class="loading">Error: ${error.message}</div>`;
+    }
+}
         // Search for users
         async function searchUsers() {
             const searchTerm = document.getElementById('userSearch').value.trim();
@@ -458,6 +607,26 @@
                 const data = await response.json();
                 selectedUserId = userId;
 
+                // Update the dropdown if needed
+                const userSelect = document.getElementById('userSelect');
+                let optionExists = false;
+
+                for (let i = 0; i < userSelect.options.length; i++) {
+                    if (userSelect.options[i].value === userId) {
+                        userSelect.selectedIndex = i;
+                        optionExists = true;
+                        break;
+                    }
+                }
+
+                if (!optionExists && data.Email) {
+                    const option = document.createElement('option');
+                    option.value = userId;
+                    option.textContent = `${data.Email} (ID: ${userId})`;
+                    userSelect.appendChild(option);
+                    userSelect.value = userId;
+                }
+
                 // Show sections
                 document.getElementById('profileSection').classList.remove('hidden');
                 document.getElementById('deleteSection').classList.remove('hidden');
@@ -507,6 +676,12 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const isAdmin = await verifyAdminStatus();
             if (isAdmin) {
+                // Fetch all users when page loads
+                fetchAllUsers();
+
+                // Add refresh button event listener
+                document.getElementById('refreshUserList').addEventListener('click', fetchAllUsers);
+
                 // Add search button event listener
                 document.getElementById('searchButton').addEventListener('click', searchUsers);
 
@@ -558,6 +733,9 @@
                         const responseData = await response.json();
                         showMessage('User profile updated successfully!');
 
+                        // Refresh user list after update
+                        fetchAllUsers();
+
                     } catch (error) {
                         console.error('Error updating profile:', error);
                         showMessage(error.message || 'Failed to update profile. Please try again.', true);
@@ -565,14 +743,14 @@
                 });
 
                 // Delete Account Modal Handling
-                document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+                document.getElementById('deleteAccountBtn').addEventListener('click', function () {
                     const confirmationModel = document.getElementById('confirmationModel');
                     confirmationModel.classList.remove('hidden');
                     confirmationModel.style.display = 'flex';
                 });
 
                 // Cancel Delete Button
-                document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+                document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
                     const confirmationModel = document.getElementById('confirmationModel');
                     confirmationModel.classList.add('hidden');
                     confirmationModel.style.display = 'none';
@@ -619,7 +797,7 @@
                         }
 
                         const responseData = await response.json();
-                        
+
                         // Hide confirmation modal
                         const confirmationModel = document.getElementById('confirmationModel');
                         confirmationModel.classList.add('hidden');
@@ -631,7 +809,7 @@
                         deletionPopup.style.display = 'block';
 
                         // Add event listener to confirmation popup
-                        document.getElementById('confirmDeletionPopupBtn').addEventListener('click', function() {
+                        document.getElementById('confirmDeletionPopupBtn').addEventListener('click', function () {
                             // Reload the page
                             window.location.reload();
                         });
@@ -652,4 +830,5 @@
         });
     </script>
 </body>
+
 </html>

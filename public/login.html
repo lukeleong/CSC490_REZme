@@ -132,71 +132,82 @@
 
     <script>
         // Google Sign-In callback function
-        function handleCredentialResponse(response) {
-            const credential = response.credential;
-            console.log("Google credential received");
+function handleCredentialResponse(response) {
+    const credential = response.credential;
+    console.log("Google credential received");
 
-            // Token check
-            fetch('/users/google-login', {
-                method: 'POST',
-                body: JSON.stringify({ id_token: credential }),
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.token) {
-                    localStorage.setItem('token', data.token);
-                    window.location.href = 'profile.html'; // Redirect to dashboard TEMPORARY 
-                } else {
-                    document.getElementById("message").innerText = 'Google login failed: ' + (data.error || 'Unknown error');
-                }
-            })
-            .catch(error => {
-                console.error("Google login error:", error);
-                document.getElementById("message").innerText = 'Error: ' + error.message;
-            });
+    // Token check
+    fetch('/users/google-login', {
+        method: 'POST',
+        body: JSON.stringify({ id_token: credential }),
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            
+            if (data.isAdmin) {
+                window.location.href = "admin.html";  // Redirect to admin page if admin
+            } else {
+                window.location.href = "dashboard.html";  // Regular user dashboard
+            }
+        } else {
+            document.getElementById("message").innerText = 'Google login failed: ' + (data.error || 'Unknown error');
+        }
+    })
+    .catch(error => {
+        console.error("Google login error:", error);
+        document.getElementById("message").innerText = 'Error: ' + error.message;
+    });
+}
+
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    const messageEl = document.getElementById("message");
+    const loadingEl = document.getElementById("loading");
+
+    messageEl.innerText = "";
+    loadingEl.style.display = "block";
+
+    try {
+        const response = await fetch("/users/login", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+        });
+
+        const result = await response.json();
+        loadingEl.style.display = "none";
+
+        if (!response.ok) {
+            messageEl.innerText = result.error || "Login failed. Please try again.";
+            return;
         }
 
-        // Regular login form submission
-        document.getElementById("loginForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+        localStorage.setItem("token", result.token);
 
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
-            const messageEl = document.getElementById("message");
-            const loadingEl = document.getElementById("loading");
+        // Check if the user is an admin
+        if (result.isAdmin) {
+            window.location.href = "admin.html";  // Redirect to admin page if admin
+        } else {
+            window.location.href = "dashboard.html";  // Regular user dashboard
+        }
+    } catch (error) {
+        loadingEl.style.display = "none";
+        messageEl.innerText = "An error occurred. Please try again.";
+        console.error("Login error:", error);
+    }
+});
 
-            messageEl.innerText = "";
-            loadingEl.style.display = "block";
-
-            try {
-                const response = await fetch("/users/login", {
-                    method: "POST",
-                    body: JSON.stringify(data),
-                    headers: { "Content-Type": "application/json" }
-                });
-
-                const result = await response.json();
-                loadingEl.style.display = "none";
-
-                if (!response.ok) {
-                    messageEl.innerText = result.error || "Login failed. Please try again.";
-                    return;
-                }
-
-                localStorage.setItem("token", result.token);
-                window.location.href = "dashboard.html"; //TEMPORARY CHNAG
-            } catch (error) {
-                loadingEl.style.display = "none";
-                messageEl.innerText = "An error occurred. Please try again.";
-                console.error("Login error:", error);
-            }
-        });
     </script>
 </body>
 </html>
