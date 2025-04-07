@@ -10,14 +10,22 @@
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
+                        background-image: url('images/backgroundimage.jpg'); 
+
         }
         .container {
             max-width: 600px;
             margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
+            padding: 30px 25px;
+            border-radius: 12px;
+            /* Subtle border */
+            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle light grey border */
+            text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            /* Optional: Add backdrop filter for frosted glass */
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Very subtle shadow */ 
         }
         h1 {
             text-align: center;
@@ -37,15 +45,30 @@
         }
         .button {
             display: block;
-            width: 100%;
+            width: 20%;
             padding: 10px;
             margin-top: 20px;
             text-align: center;
-            background: #007bff;
+            background: #198754;
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
+        .button:hover {
+            background: #157347;
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        .button:hover i {
+            color: #d4edda;
+        }
+        .button i {
+            margin-right: 8px;
+        }
+
     </style>
 </head>
 <body>
