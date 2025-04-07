@@ -14,7 +14,7 @@
 
         }
         .container {
-            max-width: 600px;
+            max-width: 400px;
             margin: auto;
             background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
             padding: 30px 25px;
@@ -29,6 +29,8 @@
         }
         h1 {
             text-align: center;
+            color: #198754;
+            
         }
         .input-group {
             margin: 10px 0;
@@ -40,10 +42,39 @@
         .input-group input {
             width: 100%;
             padding: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #198754; /* Green border */
             border-radius: 5px;
+            background: linear-gradient(145deg, #ffffff, #e6f4ea); /* Subtle gradient from white to light green */
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), /* Inner shadow for depth */
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.7), /* Inner highlight */
+                        0 4px 10px rgba(25, 135, 84, 0.2); /* Outer shadow with green tint */
+            transition: all 0.3s ease; /* Smooth transition for interactions */
+            outline: none; /* Remove default outline */
         }
+
+        /* Hover effect */
+        .input-group input:hover {
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.15),
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.8),
+                        0 6px 12px rgba(25, 135, 84, 0.25); /* Slightly stronger shadow */
+        }
+
+        /* Focus effect */
+        .input-group input:focus {
+            border-color: #157347; /* Darker green on focus */
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2),
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.9),
+                        0 6px 15px rgba(25, 135, 84, 0.3); /* Enhanced shadow */
+            background: #ffffff; /* Reset to white for clarity */
+        }
+
+
+       
+        
+
         .button {
+            margin-left: auto;  /* Centers the block element */
+            margin-right: auto; /* Centers the block element */
             display: block;
             width: 20%;
             padding: 10px;
@@ -69,11 +100,21 @@
             margin-right: 8px;
         }
 
+        input[type="checkbox"] {
+            accent-color: #198754;
+        }
+
+        /* center align SignUp button wrapper */
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Signup</h1>
+        <h1>Sign Up</h1>
         <form id="signupForm">
             <div class="input-group">
                 <label for="email">Email:</label>
@@ -103,7 +144,7 @@
                 <label for="terms">Agree to Terms:</label>
                 <input type="checkbox" id="terms" name="terms" required>
                 <label for="terms">I agree to the Terms and Conditions</label>
-            </div>
+            </div class="button-wrapper">
             <button type="submit" class="button">Sign Up</button>
         </form>
         <p id="message"></p>
