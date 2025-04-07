@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Recovery App</title>
     <meta name="google-signin-client_id" content="906566848123-sdli9gl94mlo6e5jkemcq4f6rpf59afa.apps.googleusercontent.com">
+    <!-- Font Awesome Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
+            background-image: url('images/backgroundimage.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+
         }
         .container {
             max-width: 400px;
@@ -38,19 +42,37 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        .input-group i {
+            margin-right: 8px;
+            color: #198754;
+        }
+
         .button {
             display: block;
             width: 100%;
             padding: 10px;
             margin-top: 20px;
             text-align: center;
-            background: #007bff;
+            background: #198754;
+            ;
             color: white;
             text-decoration: none;
             border-radius: 5px;
             border: none;
             cursor: pointer;
         }
+        .button:hover {
+            background: #157347; /* Darker green */
+            transform: scale(1.02); /* Slight scale effect */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+        }
+        .button:hover i {
+            color: #d4edda; /* Light green for the icon on hover */
+        }
+        .button i {
+            margin-right: 8px;
+        }
+        
         .loading {
             display: none;
             margin-top: 10px;
@@ -71,7 +93,8 @@
             display: block;
             width: 100%;
             height: 1px;
-            background: #ddd;
+            background: #198754;
+            ;
             position: absolute;
             top: 50%;
             z-index: 1;
@@ -90,14 +113,14 @@
         <h1>Login</h1>
         <form id="loginForm">
             <div class="input-group">
-                <label for="email">Email:</label>
+                <label for="email"><i class="fas fa-envelope"></i> Email:</label>
                 <input type="email" id="email" name="email" required>
             </div>
             <div class="input-group">
-                <label for="password">Password:</label>
+                <label for="password"><i class="fas fa-lock"></i> Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="button">Login</button>
+            <button type="submit" class="button"><i class="fas fa-sign-in-alt"></i> Login</button>
             <p class="loading" id="loading">Logging in...</p>
         </form>
         <p id="message" style="color: red;"></p>
