@@ -7,7 +7,8 @@ module.exports = function calculateProgressValue({ SetsCompleted, RepsCompleted,
     const normalizedSets = Math.min(SetsCompleted / 5, 1);  // normalize by expected max sets
     const normalizedReps = Math.min(RepsCompleted / 20, 1); // normalize by expected max reps
     const normalizedTime = 1 - Math.min(TimeTaken / 300, 1); // less time is better
-  
+    // Add expected metrics from exercise once implemented
+
     const value = (
       setWeight * normalizedSets +
       repWeight * normalizedReps +

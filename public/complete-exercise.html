@@ -36,7 +36,8 @@
       display: block;
       margin-bottom: 5px;
     }
-    .input-group input {
+    .input-group input,
+    .input-group textarea {
       width: 100%;
       padding: 8px;
       border: 1px solid #ddd;
@@ -59,10 +60,10 @@
 <body>
   <div class="container">
     <h1>Exercise Detail</h1>
-    <div class="exercise-details">
-      <h2>Leg Raises</h2>
-      <p>Sets: 3 | Reps: 15</p>
-      <img src="exercise-placeholder.jpg" alt="Exercise Image" width="100%">
+    
+    <!-- Exercise details (without sets and reps) -->
+    <div class="exercise-details" id="exerciseDetails">
+      <p>Loading exercise details...</p>
     </div>
     
     <h2>Log Progress</h2>
@@ -72,6 +73,10 @@
       <input type="hidden" id="exerciseId" name="ExerciseId">
 
       <div class="input-group">
+          <label for="timeTaken">Time Taken (seconds):</label>
+          <input type="number" id="timeTaken" name="TimeTaken" placeholder="Enter time spent">
+      </div>
+      <div class="input-group">
           <label for="setsCompleted">Sets Completed:</label>
           <input type="number" id="setsCompleted" name="SetsCompleted" placeholder="Enter sets completed">
       </div>
@@ -80,20 +85,29 @@
           <input type="number" id="repsCompleted" name="RepsCompleted" placeholder="Enter reps completed">
       </div>
       <div class="input-group">
-          <label for="timeTaken">Time Taken (seconds):</label>
-          <input type="number" id="timeTaken" name="TimeTaken" placeholder="Enter time spent">
+          <label for="painLevel">
+            Pain Level (0-10): <span id="painLevelDisplay">0</span>
+          </label>
+          <input type="range" id="painLevel" name="PainLevel" min="0" max="10" step="1" value="0"
+                 oninput="document.getElementById('painLevelDisplay').innerText = this.value">
       </div>
       <div class="input-group">
-          <label for="painLevel">Pain Level (0-10):</label>
-          <input type="number" id="painLevel" name="PainLevel" min="0" max="10" placeholder="Enter pain level">
+          <label for="mobilityLevel">
+            Post Mobility Level (0-10): <span id="mobilityLevelDisplay">0</span>
+          </label>
+          <input type="range" id="mobilityLevel" name="PostMobilityLevel" min="0" max="10" step="1" value="0"
+                 oninput="document.getElementById('mobilityLevelDisplay').innerText = this.value">
       </div>
       <div class="input-group">
-          <label for="mobilityLevel">Post Mobility Level (0-10):</label>
-          <input type="number" id="mobilityLevel" name="PostMobilityLevel" min="0" max="10" placeholder="Enter mobility level">
+          <label for="difficultyRating">
+            Difficulty Rating (1-4): <span id="difficultyRatingDisplay">1</span>
+          </label>
+          <input type="range" id="difficultyRating" name="DifficultyRating" min="1" max="4" step="0.5" value="1"
+                 oninput="document.getElementById('difficultyRatingDisplay').innerText = this.value">
       </div>
       <div class="input-group">
-          <label for="difficultyRating">Difficulty Rating (1-4):</label>
-          <input type="number" id="difficultyRating" name="DifficultyRating" min="1" max="4" placeholder="Enter difficulty rating">
+          <label for="progressFeedback">Progress Feedback:</label>
+          <textarea id="progressFeedback" name="ProgressFeedback" placeholder="Leave a note about your progress"></textarea>
       </div>
       <button type="submit" class="button">Complete</button>
     </form>
@@ -106,10 +120,28 @@
     const planId = urlParams.get('planId');
     const exerciseId = urlParams.get('exerciseId');
 
-    // Pre-fill the hidden fields if available
-    if(planId && exerciseId) {
+    // Pre-fill the hidden fields and fetch exercise details if available
+    if (planId && exerciseId) {
       document.getElementById('planId').value = planId;
       document.getElementById('exerciseId').value = exerciseId;
+      fetchExerciseDetails(exerciseId);
+    }
+
+    async function fetchExerciseDetails(exerciseId) {
+      try {
+        const response = await fetch(`/api/exercises/${exerciseId}`);
+        const exercise = await response.json();
+        const container = document.getElementById('exerciseDetails');
+        container.innerHTML = `
+          <h2>${exercise.ExerciseName}</h2>
+          <p><strong>Target:</strong> ${exercise.TargetMuscleGroup}</p>
+          <p><strong>Equipment:</strong> ${exercise.Equipment || 'N/A'}</p>
+          ${exercise.VideoGuide ? `<p><a href="${exercise.VideoGuide}" target="_blank">Watch Guide</a></p>` : ''}
+        `;
+      } catch (error) {
+        console.error("Error fetching exercise details:", error);
+        document.getElementById('exerciseDetails').innerText = "Error loading exercise details.";
+      }
     }
 
     document.getElementById("exerciseForm").addEventListener("submit", async function(event) {
@@ -118,15 +150,23 @@
       const formData = new FormData(this);
       const data = Object.fromEntries(formData);
 
-      // Update the endpoint if needed to match your backend routing
-      const response = await fetch("/api/exercise-completions", {
+      try {
+        const response = await fetch("/api/exercise-completions", {
           method: "POST",
           body: JSON.stringify(data),
           headers: { "Content-Type": "application/json" }
-      });
-
-      const result = await response.json();
-      document.getElementById("message").innerText = result.message || "Exercise completed!";
+        });
+        const result = await response.json();
+        document.getElementById("message").innerText = result.message || "Exercise completed!";
+        
+        // Delay of 2 seconds then redirect to recovery-plan.html
+        setTimeout(() => {
+          window.location.href = "recovery-plan.html?planId=" + planId;
+        }, 2000);
+      } catch (error) {
+        console.error("Error logging exercise completion:", error);
+        document.getElementById("message").innerText = "An error occurred. Please try again.";
+      }
     });
   </script>
 </body>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +11,6 @@
       padding: 20px;
       background-color: #f4f4f4;
     }
-
     .container {
       max-width: 800px;
       margin: auto;
@@ -21,19 +19,9 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
     h1 {
       text-align: center;
     }
-
-    .progress-bar {
-      width: 100%;
-      background-color: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-
     .progress-bar {
       width: 100%;
       background-color: #e0e0e0;
@@ -43,7 +31,6 @@
       margin-bottom: 20px;
       position: relative;
     }
-
     .progress {
       height: 100%;
       width: 0%;
@@ -56,7 +43,6 @@
       border-radius: 10px 0 0 10px;
       transition: width 0.6s ease;
     }
-
     .exercise {
       padding: 15px;
       border: 1px solid #ddd;
@@ -64,7 +50,6 @@
       border-radius: 5px;
       background: #f9f9f9;
     }
-
     .button {
       display: inline-block;
       padding: 10px;
@@ -77,7 +62,6 @@
       border: none;
       cursor: pointer;
     }
-
     #ratingModal {
       display: none;
       position: fixed;
@@ -87,7 +71,6 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.5);
     }
-
     #ratingModalContent {
       background: white;
       max-width: 400px;
@@ -96,16 +79,13 @@
       border-radius: 8px;
       position: relative;
     }
-
     .input-group {
       margin: 10px 0;
     }
-
     .input-group label {
       display: block;
       margin-bottom: 5px;
     }
-
     .input-group input,
     .input-group textarea {
       width: 100%;
@@ -113,29 +93,8 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
-
-    /* New styles for the feedback form */
-    #exCompleteModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    #exCompleteModalContent {
-      background: white;
-      max-width: 400px;
-      margin: 100px auto;
-      padding: 20px;
-      border-radius: 8px;
-      position: relative;
-    }
   </style>
 </head>
-
 <body>
   <div class="container">
     <h1 id="recoveryTitle">Recovery Plan</h1>
@@ -176,26 +135,6 @@
         </div>
         <button type="submit" class="button" id="ratingSubmitButton">Submit Rating</button>
         <button type="button" class="button" style="background: #ccc;" onclick="closeRatingModal()">Cancel</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="exCompleteModal">
-    <div id="exCompleteModalContent">
-      <h3>Exercise Complete</h3>
-      <form id="exerciseCompleteForm">
-        <input type="hidden" id="feedbackExerciseId">
-        <input type="hidden" id="feedbackPlanId">
-        <div class="input-group">
-          <label for="setsCompleted">Sets Completed:</label>
-          <input type="number" id="setsCompleted" name="setsCompleted" required>
-        </div>
-        <div class="input-group">
-          <label for="repsCompleted">Reps Completed:</label>
-          <input type="number" id="repsCompleted" name="repsCompleted" required>
-        </div>
-        <button type="submit" class="button" id="feedbackSubmitButton">Submit</button>
-        <button type="button" class="button" style="background: #ccc;" onclick="closeExCimpleteModal()">Cancel</button>
       </form>
     </div>
   </div>
@@ -276,12 +215,6 @@
       }
     }
 
-    async function markExerciseComplete(exerciseId, planId) {
-      document.getElementById("feedbackExerciseId").value = exerciseId;
-      document.getElementById("feedbackPlanId").value = planId;
-      document.getElementById("exCompleteModal").style.display = "block";
-    }
-
     async function openRatingModal(exerciseId) {
       document.getElementById("ratingExerciseId").value = exerciseId;
       const ratingSlider = document.getElementById("ratingValue");
@@ -323,10 +256,6 @@
       document.getElementById("ratingModal").style.display = "none";
     }
 
-    function closeExCimpleteModal() {
-      document.getElementById("exCompleteModal").style.display = "none";
-    }
-
     document.getElementById("ratingForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
@@ -364,42 +293,6 @@
       }
     });
 
-    document.getElementById("exerciseCompleteForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const exerciseId = document.getElementById("feedbackExerciseId").value;
-      const planId = document.getElementById("feedbackPlanId").value;
-      const setsCompleted = parseInt(document.getElementById("setsCompleted").value);
-      const repsCompleted = parseInt(document.getElementById("repsCompleted").value);
-
-      const payload = {
-        PlanId: planId,
-        ExerciseId: exerciseId,
-        SetsCompleted: setsCompleted,
-        RepsCompleted: repsCompleted,
-      };
-
-      try {
-        const res = await fetch("/api/exercise-completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const result = await res.json();
-        if (res.ok) {
-          alert("Exercise completion data saved successfully.");
-          closeExCimpleteModal();
-          fetchRecoveryPlan(); // Refresh UI
-        } else {
-          alert(result.error || "Failed to save exercise completion data.");
-        }
-      } catch (err) {
-        console.error("Error saving exercise completion data:", err);
-        alert("Something went wrong.");
-      }
-    });
-
     async function checkRatingExists(exerciseId) {
       try {
         const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
@@ -413,5 +306,4 @@
     fetchRecoveryPlan();
   </script>
 </body>
-
 </html>

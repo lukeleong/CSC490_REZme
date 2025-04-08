@@ -195,7 +195,7 @@ app.post('/reset-password', (req, res) => {
 });
 
 // Sync database and start server
-sequelize.sync({ force: false })
+sequelize.sync({ force: true })
   .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 
