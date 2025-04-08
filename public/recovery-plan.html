@@ -269,7 +269,7 @@
           <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
           <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
           ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-          <button class="button" onclick="markExerciseComplete(${ex.ExerciseId}, ${planId})">Complete</button>
+          <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
           <button class="button" style="background: ${userRating ? "#6c757d" : "#007bff"};" onclick="openRatingModal(${ex.ExerciseId})">${userRating ? "Change Rating" : "Rate"}</button>
         `;
         container.appendChild(div);
@@ -364,7 +364,7 @@
       }
     });
 
-      document.getElementById("exerciseCompleteForm").addEventListener("submit", async function (e) {
+    document.getElementById("exerciseCompleteForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const exerciseId = document.getElementById("feedbackExerciseId").value;
@@ -373,32 +373,32 @@
       const repsCompleted = parseInt(document.getElementById("repsCompleted").value);
 
       const payload = {
-          PlanId: planId,
-          ExerciseId: exerciseId,
-          SetsCompleted: setsCompleted,
-          RepsCompleted: repsCompleted,
+        PlanId: planId,
+        ExerciseId: exerciseId,
+        SetsCompleted: setsCompleted,
+        RepsCompleted: repsCompleted,
       };
 
       try {
-          const res = await fetch("/api/exercise-completions", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-          });
+        const res = await fetch("/api/exercise-completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
 
-          const result = await res.json();
-          if (res.ok) {
-              alert("Exercise completion data saved successfully.");
-              closeExCimpleteModal();
-              fetchRecoveryPlan(); // Refresh UI
-          } else {
-              alert(result.error || "Failed to save exercise completion data.");
-          }
+        const result = await res.json();
+        if (res.ok) {
+          alert("Exercise completion data saved successfully.");
+          closeExCimpleteModal();
+          fetchRecoveryPlan(); // Refresh UI
+        } else {
+          alert(result.error || "Failed to save exercise completion data.");
+        }
       } catch (err) {
-          console.error("Error saving exercise completion data:", err);
-          alert("Something went wrong.");
+        console.error("Error saving exercise completion data:", err);
+        alert("Something went wrong.");
       }
-  });
+    });
 
     async function checkRatingExists(exerciseId) {
       try {

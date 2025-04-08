@@ -14,7 +14,7 @@ const seedUsers = async () => {
 
     const users = [
       {
-        Email: "test",
+        Email: "test@test.com",
         Password: "1234",
         TermsAgreed: 1,
         FirstName: "Alice",

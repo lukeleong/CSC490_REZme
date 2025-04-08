@@ -1,12 +1,13 @@
 const { ExerciseCompletion, RecoveryPlanExercise } = require("../models");
 const { updatePlanProgress } = require("../services/recoveryPlanUpdater");
+const calculateProgressValue = require('../services/calculateProgressValue');
 
-// Create a new ExerciseCompletion record
+
 exports.createExerciseCompletion = async (req, res) => {
   try {
-    const { PlanId, ExerciseId } = req.body;
+    const { PlanId, ExerciseId, SetsCompleted, RepsCompleted, TimeTaken } = req.body;
 
-    // Validate the association between RecoveryPlan and Exercise
+    // Validate association between RecoveryPlan and Exercise
     const isLinked = await RecoveryPlanExercise.findOne({
       where: {
         RecoveryPlanId: PlanId,
@@ -20,10 +21,20 @@ exports.createExerciseCompletion = async (req, res) => {
       });
     }
 
-    const completion = await ExerciseCompletion.create(req.body);
+    // Calculate progress value BEFORE saving
+    const progressValue = calculateProgressValue({
+      SetsCompleted,
+      RepsCompleted,
+      TimeTaken: TimeTaken || 0,
+    });
 
-    // Dynamically update the recovery plan's progress
-    await updatePlanProgress(completion.PlanId);
+    const completion = await ExerciseCompletion.create({
+      ...req.body,
+      ProgressValue: progressValue,
+    });
+
+    // Update plan progress
+    await updatePlanProgress(PlanId);
 
     res.status(201).json(completion);
   } catch (error) {
