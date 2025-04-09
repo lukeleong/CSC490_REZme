@@ -1,72 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <title>Exercise Ratings</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
-    }
 
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
 
-    .review {
-      border-bottom: 1px solid #ccc;
-      padding: 10px 0;
-    }
-
-    .review:last-child {
-      border-bottom: none;
-    }
-
-    .review h4 {
-      margin: 0;
-    }
-
-    .rating {
-      font-weight: bold;
-      color: #4CAF50;
-    }
-
-    .timestamp {
-      font-size: 0.9em;
-      color: #888;
-    }
-
-    .button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-  </style>
 </head>
+<style>
+    .star {
+    font-size: 50px;
+    cursor: pointer;
+    color: gray;
+}
+.star:hover,
+.star.selected {
+    color: gold;
+}
+
+@keyframes fadeText {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.quote {
+    font-size: 18px;
+    font-style: italic;
+    animation: fadeText 5s infinite;
+}
+
+
+.rating {
+    font-size: 50px; /* Adjust size as needed */
+    animation: pop 0.3s ease-in-out;
+    @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+}
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.confirmation-message {
+    display: none;
+    font-size: 18px;
+    color: green;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+body {
+    background: linear-gradient(to right, #5c709c, #feb47b);
+}
+
+
+.card{
+    width: 80%; /* Makes the card medium-sized */
+    max-width: 600px;
+     margin: auto;
+    background-color: #a9bdbd; /* Light gray */
+    justify-content: center;
+    align-items: center;
+
+}
+.quick-tips {
+    width: 25%; /* Makes it noticeably smaller */
+    max-width: 250px; /* Keeps it compact */
+    font-size: 14px; /* Adjusts text size for a subtle look */
+}
+
+#moodResponse {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+#moodResponse.show {
+    opacity: 1;
+}
+
+
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.container {
+    max-width: 800px; /* Controls overall container size */
+    width: 95%;
+
+}
+
+.inner-container {
+      width: 95%;
+    padding: 0; /* Removes extra padding */
+
+}
+
+
+
+</style>
 <body>
-  <div class="container">
-    <h1 id="exerciseName">Loading...</h1>
-    <div id="reviewsContainer">
-      <p>Loading reviews...</p>
+
+
+    <!-- Centered inner container -->
+   <div class="center-container d-flex justify-content-center">
+        <div class="quick-tips p-4 shadow rounded">
+            <h4>Recovery Tips</h4>
+            <p>🔥 Stretch before and after each session.</p>
+            <p>💧 Hydrate well for muscle recovery.</p>
+            <p>⏳ Rest between sets to avoid strain.</p>
+        </div>
+
+
+    <div class="container mt-4 d-flex flex-column align-items-center">
+        <h1 class="text-start" id="exerciseName">Loading...</h1>
+     <div class="inner-container container p-4 shadow rounded w-100 d-flex flex-wrap">
+    <div id="reviewsContainer" class="w-100">
+        <p class="text-muted">Loading reviews...</p>
     </div>
-    <a href="javascript:history.back()" class="button">Back</a>
-  </div>
+         <div id="quoteDisplay" class="quote">Loading quote...</div>
+         <div id="confirmationMsg" class="confirmation-message"> Rating submitted successfully!</div>
+
+</div>
+
+        </div>
+    </div>
 
   <script>
     async function loadRatings() {
       const exerciseId = new URLSearchParams(window.location.search).get("exerciseId");
       if (!exerciseId) return;
-
       try {
         const exerciseRes = await fetch(`/api/exercises/${exerciseId}`);
         if (!exerciseRes.ok) throw new Error(`Failed to fetch exercise: ${exerciseRes.status}`);
@@ -85,18 +160,31 @@
           return;
         }
 
+
         for (const r of ratings) {
           const div = document.createElement("div");
-          div.className = "review";
+          div.className = "col-12 mb-3";
 
           const userName = r.User ? `${r.User.FirstName} ${r.User.LastName}` : `User ${r.UserId}`;
           const createdAt = r.createdAt ? new Date(r.createdAt).toLocaleString() : "Unknown date";
-
+          const stars = "★".repeat(r.Rating) + "☆".repeat(5 - r.Rating);
           div.innerHTML = `
-            <h4>${userName} <span class="rating">${r.Rating}★</span></h4>
-            <p>${r.Comment || "No comment"}</p>
-            <div class="timestamp">Posted on ${createdAt}</div>
-          `;
+
+            <div class="card shadow-sm">
+            <div class="card-body">
+            <h4 class="card-title">${userName}</h4>
+            <p class="card-text">${r.Comment || "No comment"}</p>
+            <div class="rating text-warning">${stars}</div>
+            <div class="text-muted small">Posted on ${createdAt}</div>
+            <div class="text-center mt-4">
+            <a href="recovery-plan.html" class="btn btn-primary mt-2">Back to Recovery Plan</a>
+
+
+            </div>
+            </div>
+            </div>
+            `;
+
           container.appendChild(div);
         }
       } catch (err) {
@@ -105,7 +193,44 @@
       }
     }
 
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const quotes = [
+        "Recovery is a journey, not a race!",
+        "Your body achieves what your mind believes!",
+        "Small progress is still progress!"
+    ];
+
+    let index = 0;
+    function changeQuote() {
+        document.getElementById("quoteDisplay").innerText = quotes[index];
+        index = (index + 1) % quotes.length;
+    }
+
+    changeQuote(); // Show first quote immediately
+    setInterval(changeQuote, 5000); // Change quote every 5 seconds
+});
+    function showMood(feeling) {
+    const moodText = document.getElementById("moodResponse");
+    moodText.innerText = `You feel ${feeling}!`;
+    moodText.classList.add("show");
+}
+
+
+    function setRating(value) {
+    const stars = document.querySelectorAll(".star");
+    stars.forEach((star, index) => {
+        star.classList.toggle("selected", index < value);
+            star.style.fontSize = "100px";
+    });
+    console.log("User selected rating:", value); // Send to backend
+}
+
+
     loadRatings();
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
