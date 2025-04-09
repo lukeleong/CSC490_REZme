@@ -24,6 +24,7 @@ exports.createRecoveryPlan = async (req, res) => {
 
     const matchingExercises = await Exercise.findAll({
       where: {
+        Public: true,
         TargetMuscleGroup: targetMuscleGroup,
         Difficulty: difficulty,
         Equipment: equipment

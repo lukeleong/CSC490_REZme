@@ -50,6 +50,7 @@
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 5px;
+      resize: none;
     }
 
     .button {
@@ -64,10 +65,54 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      cursor: pointer;
+      color: #007bff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 280px;
+      background-color: #333;
+      color: #fff;
+      text-align: left;
+      padding: 10px;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      top: -5px;
+      left: 110%;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 13px;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-bottom: 15px;
+      background: #007bff;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+    }
   </style>
 </head>
 
 <body>
+  <a id="backToPlanBtn" href="#" class="back-button">← Back to Recovery Plan</a>
   <div class="container">
     <h1>Exercise Detail</h1>
 
@@ -83,43 +128,101 @@
       <input type="hidden" id="exerciseId" name="ExerciseId">
 
       <div class="input-group">
-        <label for="timeTaken">Time Taken (seconds):</label>
+        <label for="timeTaken">
+          Time Taken (seconds):
+          <span class="tooltip">?
+            <span class="tooltiptext">How long you spent doing this exercise, in seconds. (Total Time)</span>
+          </span>
+        </label>
         <input type="number" id="timeTaken" name="TimeTaken" placeholder="Enter time spent">
       </div>
+
       <div class="input-group">
-        <label for="setsCompleted">Sets Completed:</label>
+        <label for="setsCompleted">
+          Sets Completed:
+          <span class="tooltip">?
+            <span class="tooltiptext">Total number of sets you completed during this session.</span>
+          </span>
+        </label>
         <input type="number" id="setsCompleted" name="SetsCompleted" placeholder="Enter sets completed">
       </div>
+
       <div class="input-group">
-        <label for="repsCompleted">Reps Completed:</label>
+        <label for="repsCompleted">
+          Reps Completed:
+          <span class="tooltip">?
+            <span class="tooltiptext">Average number of reps you did per set.</span>
+          </span>
+        </label>
         <input type="number" id="repsCompleted" name="RepsCompleted" placeholder="Enter reps completed">
       </div>
+
       <div class="input-group">
         <label for="painLevel">
-          Pain Level (0-10): <span id="painLevelDisplay">0</span>
+          Pain Level (0-10):
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              <strong>0:</strong> No pain at all<br>
+              <strong>1–2:</strong> Very mild — barely noticeable<br>
+              <strong>3–4:</strong> Mild — feels uncomfortable but manageable<br>
+              <strong>5–6:</strong> Moderate — noticeable pain, may limit full motion<br>
+              <strong>7–8:</strong> Severe — painful enough to disrupt movement<br>
+              <strong>9–10:</strong> Intense or sharp pain — stop the exercise and seek help
+            </span>
+          </span>
+          <span id="painLevelDisplay">0</span>
         </label>
         <input type="range" id="painLevel" name="PainLevel" min="0" max="10" step="1" value="0"
           oninput="document.getElementById('painLevelDisplay').innerText = this.value">
       </div>
+
       <div class="input-group">
         <label for="mobilityLevel">
-          Post Mobility Level (0-10): <span id="mobilityLevelDisplay">0</span>
+          Post Mobility Level (0-10):
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              <strong>0:</strong> Completely stiff or locked — no movement<br>
+              <strong>1–2:</strong> Barely able to move<br>
+              <strong>3–4:</strong> Limited range — movement feels very tight<br>
+              <strong>5–6:</strong> Moderate — can move but feel some restriction<br>
+              <strong>7–8:</strong> Good — mostly normal range, light tightness<br>
+              <strong>9–10:</strong> Full mobility — no restriction or stiffness
+            </span>
+          </span>
+          <span id="mobilityLevelDisplay">0</span>
         </label>
         <input type="range" id="mobilityLevel" name="PostMobilityLevel" min="0" max="10" step="1" value="0"
           oninput="document.getElementById('mobilityLevelDisplay').innerText = this.value">
       </div>
+
       <div class="input-group">
         <label for="difficultyRating">
-          Difficulty Rating (1-4): <span id="difficultyRatingDisplay">1</span>
+          Difficulty Rating (1-4):
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              <strong>1:</strong> Easy — no strain, very light effort<br>
+              <strong>2:</strong> Moderate — some challenge, good form maintained<br>
+              <strong>3:</strong> Hard — requires focus and strength, but manageable<br>
+              <strong>4:</strong> Very hard — pushing limits, close to max effort
+            </span>
+          </span>
+          <span id="difficultyRatingDisplay">1</span>
         </label>
         <input type="range" id="difficultyRating" name="DifficultyRating" min="1" max="4" step="0.5" value="1"
           oninput="document.getElementById('difficultyRatingDisplay').innerText = this.value">
       </div>
+
       <div class="input-group">
-        <label for="progressFeedback">Progress Feedback:</label>
+        <label for="progressFeedback">
+          Progress Feedback:
+          <span class="tooltip">?
+            <span class="tooltiptext">Any notes about how the session went or how you're feeling.</span>
+          </span>
+        </label>
         <textarea id="progressFeedback" name="ProgressFeedback"
           placeholder="Leave a note about your progress"></textarea>
       </div>
+
       <button type="submit" class="button">Complete</button>
     </form>
     <p id="message"></p>
@@ -130,6 +233,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('planId');
     const exerciseId = urlParams.get('exerciseId');
+    document.getElementById("backToPlanBtn").href = `recovery-plan.html?planId=${planId}`;
 
     // Pre-fill the hidden fields and fetch exercise details if available
     if (planId && exerciseId) {

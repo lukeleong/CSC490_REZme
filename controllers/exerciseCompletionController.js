@@ -1,4 +1,4 @@
-const { ExerciseCompletion, RecoveryPlanExercise } = require("../models");
+const { ExerciseCompletion, RecoveryPlanExercise, Exercise } = require("../models");
 const { updatePlanProgress } = require("../services/recoveryPlanUpdater");
 const calculateProgressValue = require('../services/calculateProgressValue');
 
@@ -21,11 +21,18 @@ exports.createExerciseCompletion = async (req, res) => {
       });
     }
 
-    // Calculate progress value BEFORE saving
+    // Load full Exercise object to use in progress calculation
+    const exercise = await Exercise.findByPk(ExerciseId);
+    if (!exercise) {
+      return res.status(404).json({ error: "Exercise not found." });
+    }
+
+    // Calculate progress value using actual exercise details
     const progressValue = calculateProgressValue({
       SetsCompleted,
       RepsCompleted,
       TimeTaken: TimeTaken || 0,
+      Exercise: exercise
     });
 
     const completion = await ExerciseCompletion.create({

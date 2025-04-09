@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +12,7 @@
       padding: 20px;
       background-color: #f4f4f4;
     }
+
     .container {
       max-width: 800px;
       margin: auto;
@@ -19,9 +21,11 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
     h1 {
       text-align: center;
     }
+
     .progress-bar {
       width: 100%;
       background-color: #e0e0e0;
@@ -31,6 +35,7 @@
       margin-bottom: 20px;
       position: relative;
     }
+
     .progress {
       height: 100%;
       width: 0%;
@@ -43,6 +48,7 @@
       border-radius: 10px 0 0 10px;
       transition: width 0.6s ease;
     }
+
     .exercise {
       padding: 15px;
       border: 1px solid #ddd;
@@ -50,6 +56,7 @@
       border-radius: 5px;
       background: #f9f9f9;
     }
+
     .button {
       display: inline-block;
       padding: 10px;
@@ -62,6 +69,7 @@
       border: none;
       cursor: pointer;
     }
+
     #ratingModal {
       display: none;
       position: fixed;
@@ -71,6 +79,7 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.5);
     }
+
     #ratingModalContent {
       background: white;
       max-width: 400px;
@@ -79,13 +88,16 @@
       border-radius: 8px;
       position: relative;
     }
+
     .input-group {
       margin: 10px 0;
     }
+
     .input-group label {
       display: block;
       margin-bottom: 5px;
     }
+
     .input-group input,
     .input-group textarea {
       width: 100%;
@@ -95,6 +107,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1 id="recoveryTitle">Recovery Plan</h1>
@@ -180,40 +193,48 @@
     }
 
     async function fetchExercises(planId) {
-      const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
-      const exercises = await res.json();
-      const container = document.getElementById("exercisesContainer");
-      container.innerHTML = "";
+  const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+  const exercises = await res.json();
+  const container = document.getElementById("exercisesContainer");
+  container.innerHTML = "";
 
-      if (!exercises.length) {
-        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-        return;
-      }
+  if (!exercises.length) {
+    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+    return;
+  }
 
-      for (const ex of exercises) {
-        const ratingsRes = await fetch(`/api/exercise-ratings/${ex.ExerciseId}`);
-        const allRatings = await ratingsRes.json();
-        const userRating = allRatings.find(r => r.UserId === userId);
-        const avg = allRatings.length > 0
-          ? (allRatings.reduce((sum, r) => sum + r.Rating, 0) / allRatings.length).toFixed(1)
-          : "No ratings";
+  for (const ex of exercises) {
+    // Fetch completions for the user (this may return all completions for the user)
+    const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
+    const allCompletions = await completionsRes.json();
 
-        const div = document.createElement("div");
-        div.className = "exercise";
-        div.innerHTML = `
-          <h3>${ex.ExerciseName} <small style="font-weight:normal;">(${avg === "No ratings"
-            ? avg
-            : `<a href="exercise-rating.html?exerciseId=${ex.ExerciseId}" style="text-decoration:none;">Avg: ${avg}★</a>`
-          })</small></h3>
-          <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-          <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-          ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-          <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
-          <button class="button" style="background: ${userRating ? "#6c757d" : "#007bff"};" onclick="openRatingModal(${ex.ExerciseId})">${userRating ? "Change Rating" : "Rate"}</button>
-        `;
-        container.appendChild(div);
-      }
-    }
+    // Filter completions to include only those for the current exercise
+    const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
+
+    // Get the highest progress value among completions for this exercise, or default to 0
+    const highestProgress = completionsForExercise.length > 0
+      ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
+      : 0;
+
+    // Create the exercise element with highest progress displayed on the right.
+    const div = document.createElement("div");
+    div.className = "exercise";
+    div.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+         <h3 style="margin:0;">${ex.ExerciseName}</h3>
+         <div style="font-weight: bold;">${highestProgress}%</div>
+      </div>
+      <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+      <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+      ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+      <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
+      <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
+    `;
+    container.appendChild(div);
+  }
+}
+
+
 
     async function openRatingModal(exerciseId) {
       document.getElementById("ratingExerciseId").value = exerciseId;
@@ -306,4 +327,5 @@
     fetchRecoveryPlan();
   </script>
 </body>
+
 </html>
