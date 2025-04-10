@@ -1,56 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Exercise Ratings</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .review {
-      border-bottom: 1px solid #ccc;
-      padding: 10px 0;
-    }
-
-    .review:last-child {
-      border-bottom: none;
-    }
-
-    .review h4 {
-      margin: 0;
-    }
-
-    .rating {
-      font-weight: bold;
-      color: #4CAF50;
-    }
-
-    .timestamp {
-      font-size: 0.9em;
-      color: #888;
-    }
-
-    .button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Ratings</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      /* --- Core Styles --- */
+      :root {
+        --primary-blue: #007bff;
+        --primary-green: #17a2b8;
+        --text-dark: #343a40;
+        --text-muted: #5f6368;
+        --card-bg: rgba(255, 255, 255, 0.7);
+        --card-bg-hover: rgba(255, 255, 255, 0.85);
+        --border-color-light: rgba(0, 0, 0, 0.08);
+      }
+  
+      body {
+        font-family: 'Nunito Sans', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        text-align: center;
+      }
+  
+      .container {
+        max-width: 800px;
+        padding: 30px 20px;
+        border-radius: 8px;
+        background: var(--card-bg);
+        backdrop-filter: blur(4px);
+        border: 1px solid var(--border-color-light);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: left;
+        transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+  
+      .container:hover {
+        transform: translateY(-5px);
+        background-color: var(--card-bg-hover);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+  
+      h1 {
+        text-align: center;
+        color: var(--primary-green);
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+  
+      .review {
+        border-bottom: 1px solid var(--border-color-light);
+        padding: 15px 0;
+      }
+  
+      .review:last-child {
+        border-bottom: none;
+      }
+  
+      .review h4 {
+        margin: 0;
+        color: var(--text-dark);
+      }
+  
+      .review h4 .rating {
+        font-weight: bold;
+        color: var(--primary-green);
+        margin-left: 8px;
+      }
+  
+      .review p {
+        margin: 8px 0;
+        color: var(--text-muted);
+      }
+  
+      .timestamp {
+        font-size: 0.9em;
+        color: var(--text-muted);
+      }
+  
+      .button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 25px;
+        background: var(--primary-blue);
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+  
+      .button:hover {
+        background-color: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 7px rgba(0, 0, 0, 0.12);
+      }
+  
+      #reviewsContainer p {
+        text-align: center;
+        color: var(--text-muted);
+      }
   </style>
 </head>
 <body>

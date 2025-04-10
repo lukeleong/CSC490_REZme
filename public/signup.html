@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
-                        background-image: url('images/backgroundimage.jpg'); 
+                        background-image: url('images/backgroundimage2.jpg'); 
+                        
 
         }
         .container {
@@ -27,47 +30,35 @@
             backdrop-filter: blur(4px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Very subtle shadow */ 
         }
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
         h1 {
             text-align: center;
-            color: #198754;
+            color: #17a2b8;
             
         }
+
         .input-group {
-            margin: 10px 0;
+            margin: 15px 0;
         }
         .input-group label {
             display: block;
             margin-bottom: 5px;
+            font-weight: bold;
+            color: #17a2b8;
         }
         .input-group input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #198754; /* Green border */
+            padding: 10px 10px;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            background: linear-gradient(145deg, #ffffff, #e6f4ea); /* Subtle gradient from white to light green */
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1), /* Inner shadow for depth */
-                        inset -2px -2px 5px rgba(255, 255, 255, 0.7), /* Inner highlight */
-                        0 4px 10px rgba(25, 135, 84, 0.2); /* Outer shadow with green tint */
-            transition: all 0.3s ease; /* Smooth transition for interactions */
-            outline: none; /* Remove default outline */
+            box-sizing: border-box;
+            text-indent: 0;
+            text-align: left;
         }
-
-        /* Hover effect */
-        .input-group input:hover {
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.15),
-                        inset -2px -2px 5px rgba(255, 255, 255, 0.8),
-                        0 6px 12px rgba(25, 135, 84, 0.25); /* Slightly stronger shadow */
-        }
-
-        /* Focus effect */
-        .input-group input:focus {
-            border-color: #157347; /* Darker green on focus */
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2),
-                        inset -2px -2px 5px rgba(255, 255, 255, 0.9),
-                        0 6px 15px rgba(25, 135, 84, 0.3); /* Enhanced shadow */
-            background: #ffffff; /* Reset to white for clarity */
-        }
-
 
        
         
@@ -80,7 +71,7 @@
             padding: 10px;
             margin-top: 20px;
             text-align: center;
-            background: #198754;
+            background: #17a2b8;
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -89,7 +80,7 @@
             transition: all 0.3s ease;
         }
         .button:hover {
-            background: #157347;
+            background: #1770b8;
             transform: scale(1.02);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
         }
@@ -101,7 +92,7 @@
         }
 
         input[type="checkbox"] {
-            accent-color: #198754;
+            accent-color: #17a2b8;
         }
 
         /* center align SignUp button wrapper */
@@ -114,7 +105,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Sign Up</h1>
+        <h1><i class="fas fa-user"></i> Sign Up</h1>
         <form id="signupForm">
             <div class="input-group">
                 <label for="email">Email:</label>
