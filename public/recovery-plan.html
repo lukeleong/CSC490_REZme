@@ -105,6 +105,21 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 1000;
+    }
   </style>
 </head>
 
@@ -124,33 +139,15 @@
     </div>
 
     <h2>Assigned Exercises</h2>
-    <div id="exercisesContainer">
-      <p>Loading exercises...</p>
-    </div>
-
+    <div id="exercisesContainer"><p>Loading exercises...</p></div>
     <a href="dashboard.html" class="button" style="width: 100%; text-align: center;">Back to Dashboard</a>
   </div>
 
   <div id="ratingModal">
-    <div id="ratingModalContent">
-      <h3>Rate Exercise</h3>
-      <form id="ratingForm">
-        <input type="hidden" id="ratingExerciseId">
-        <div class="input-group">
-          <label for="ratingValue">Rating (0–5):</label>
-          <input type="range" id="ratingValue" name="rating" min="0" max="5" step="0.5" value="0"
-            oninput="document.getElementById('ratingDisplay').innerText = this.value">
-          <span id="ratingDisplay">0</span>
-        </div>
-        <div class="input-group">
-          <label for="ratingComment">Comment:</label>
-          <textarea id="ratingComment" name="comment" rows="3"></textarea>
-        </div>
-        <button type="submit" class="button" id="ratingSubmitButton">Submit Rating</button>
-        <button type="button" class="button" style="background: #ccc;" onclick="closeRatingModal()">Cancel</button>
-      </form>
-    </div>
+    <div id="ratingModalContent"></div>
   </div>
+
+  <div id="toast"></div>
 
   <script>
     const userId = getUserIdFromToken();
@@ -166,14 +163,21 @@
       }
     }
 
+    function getStarHTML(rating) {
+      if (!rating || rating === 'No ratings') return '';
+      const rounded = Math.round(rating * 2) / 2;
+      const fullStars = Math.floor(rounded);
+      const halfStar = rounded % 1 !== 0;
+      const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+      return '★'.repeat(fullStars) + (halfStar ? '⯪' : '') + '☆'.repeat(emptyStars);
+    }
+
     async function fetchRecoveryPlan() {
       const planId = new URLSearchParams(window.location.search).get("planId");
       if (!planId) return;
-
       const res = await fetch(`/api/recovery-plans/${planId}`);
       const plan = await res.json();
       window.currentPlan = plan;
-
       document.getElementById("injuryType").innerText = plan.Injury?.InjuryType || "N/A";
       document.getElementById("recoveryTitle").innerText = `Recovery Plan – ${plan.Injury?.InjuryType || "Unknown Injury"}`;
       document.getElementById("startDate").innerText = new Date(plan.StartDate).toLocaleDateString();
@@ -185,11 +189,8 @@
         endDateEl.innerText = plan.EndDate ? new Date(plan.EndDate).toLocaleDateString() : "Not set";
       }
       document.getElementById("isActive").innerText = plan.IsActive ? "Active" : "Completed";
-
-      const progress = document.getElementById("progress");
-      progress.style.width = `${plan.ProgressStatus}%`;
-      progress.innerText = `${plan.ProgressStatus}%`;
-
+      document.getElementById("progress").style.width = `${plan.ProgressStatus}%`;
+      document.getElementById("progress").innerText = `${plan.ProgressStatus}%`;
       fetchExercises(planId);
     }
 
@@ -199,84 +200,80 @@
       const container = document.getElementById("exercisesContainer");
       container.innerHTML = "";
 
-      if (!exercises.length) {
-        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-        return;
-      }
-
       for (const ex of exercises) {
-        // Fetch completions and ratings in parallel
         const [completionsRes, ratingsRes] = await Promise.all([
           fetch(`/api/exercise-completions?user_id=${userId}`),
           fetch(`/api/exercise-ratings/${ex.ExerciseId}`)
         ]);
-
-        const allCompletions = await completionsRes.json();
+        const completions = await completionsRes.json();
         const ratings = await ratingsRes.json();
 
-        const completionsForExercise = allCompletions.filter(c =>
-          c.ExerciseId === ex.ExerciseId && c.PlanId == planId
-        );
-
-        const highestProgress = completionsForExercise.length > 0
-          ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
-          : 0;
-
-        const avgRating = ratings.length > 0 ?
-          (ratings.reduce((sum, r) => sum + r.Rating, 0) / ratings.length).toFixed(1) : 'No ratings';
+        const progress = completions.filter(c => c.ExerciseId === ex.ExerciseId && c.PlanId == planId)
+                                     .reduce((max, c) => Math.max(max, c.ProgressValue || 0), 0);
+        const avgRating = ratings.length > 0
+          ? (ratings.reduce((sum, r) => sum + r.Rating, 0) / ratings.length).toFixed(1)
+          : 'No ratings';
+        const userRating = ratings.find(r => r.UserId === userId);
 
         const div = document.createElement("div");
         div.className = "exercise";
         div.innerHTML = `
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <h3 style="margin:0;">
-      ${ex.ExerciseName}
-      <span
-        style="cursor:pointer;color:#007bff;font-size:0.9em;margin-left:5px;"
-        onclick="showAllRatings(${ex.ExerciseId}, '${ex.ExerciseName}')"
-        data-exercise-id="${ex.ExerciseId}"
-      >
-        ${getStarHTML(avgRating)}
-      </span>
-    </h3>
-    <div style="font-weight: bold;">${highestProgress}%</div>
-  </div>
-  <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-  <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-  ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-  ${window.currentPlan?.IsActive ?
-            `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>` : ''}
-  <button class="button" onclick="openRatingModal(${ex.ExerciseId}, '${ex.ExerciseName}')">Rate</button>
-`;
-
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin:0;">
+              ${ex.ExerciseName}
+              <span
+                style="cursor:pointer;color:#ffc107;font-size:0.9em;margin-left:5px;"
+                onclick="showAllRatings(${ex.ExerciseId}, '${ex.ExerciseName}')"
+                data-exercise-id="${ex.ExerciseId}"
+                title="${ratings.length ? `${avgRating}/5` : 'No ratings yet'}"
+              >${getStarHTML(avgRating)}</span>
+            </h3>
+            <div style="font-weight: bold;">${progress}%</div>
+          </div>
+          <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+          <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+          ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+          ${window.currentPlan?.IsActive ?
+            `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>`
+            : ""}
+          <button class="button rate-button" style="${userRating ? 'background-color:#6c757d;' : ''}" 
+            data-id="${ex.ExerciseId}" data-name="${ex.ExerciseName}">
+            ${userRating ? 'Rerate' : 'Rate'}
+          </button>
+        `;
         container.appendChild(div);
       }
+
+      document.querySelectorAll('.rate-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          openRatingModal(btn.dataset.id, btn.dataset.name);
+        });
+      });
     }
 
-    // Rating modal - original content preserved
     async function openRatingModal(exerciseId, exerciseName) {
       const ratingModalContent = document.getElementById("ratingModalContent");
       ratingModalContent.innerHTML = `
-    <h3>Rate Exercise: ${exerciseName}</h3>
-    <form id="ratingForm">
-      <input type="hidden" id="ratingExerciseId" value="${exerciseId}">
-      <div class="input-group">
-        <label>Rating (0–5):</label>
-        <input type="range" id="ratingValue" min="0" max="5" step="0.5" value="0"
-          oninput="document.getElementById('ratingDisplay').innerText = this.value">
-        <span id="ratingDisplay">0</span>
-      </div>
-      <div class="input-group">
-        <label>Comment:</label>
-        <textarea id="ratingComment" rows="3"></textarea>
-      </div>
-      <button type="submit" class="button">Submit Rating</button>
-      <button type="button" class="button" style="background:#ccc;" onclick="closeRatingModal()">Cancel</button>
-    </form>
-  `;
+        <h3>Rate Exercise: ${exerciseName}</h3>
+        <form id="ratingForm">
+          <input type="hidden" id="ratingExerciseId" value="${exerciseId}">
+          <div class="input-group">
+            <label>Rating (0–5):</label>
+            <input type="range" id="ratingValue" min="0" max="5" step="0.5" value="0"
+              oninput="document.getElementById('ratingDisplay').innerText = this.value">
+            <span id="ratingDisplay">0</span>
+          </div>
+          <div class="input-group">
+            <label>Comment:</label>
+            <textarea id="ratingComment" rows="3"></textarea>
+          </div>
+          <button type="submit" class="button">Submit Rating</button>
+          <button type="button" class="button" style="background:#ccc;" onclick="closeRatingModal()">Cancel</button>
+        </form>
+      `;
 
-      const ratingsRes = await fetch(`/api/exercise-ratings/${exerciseId}`);
-      const allRatings = await ratingsRes.json();
+      const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
+      const allRatings = await res.json();
       const userRating = allRatings.find(r => r.UserId === userId);
 
       if (userRating) {
@@ -305,72 +302,21 @@
       if (res.ok) {
         closeRatingModal();
         showToast("Rating submitted successfully.");
-
-        // Refresh the rating text for that exercise
-        const ratingsRes = await fetch(`/api/exercise-ratings/${exerciseId}`);
-        const ratings = await ratingsRes.json();
-        const avgRating = ratings.length > 0 ?
-          (ratings.reduce((sum, r) => sum + r.Rating, 0) / ratings.length).toFixed(1) : 'No ratings';
-
-        const ratingSpan = document.querySelector(`span[data-exercise-id="${exerciseId}"]`);
-        if (ratingSpan) {
-          ratingSpan.textContent = `(Rating: ${avgRating})`;
-        }
-
+        fetchExercises(new URLSearchParams(window.location.search).get("planId"));
       } else {
         const result = await res.json();
         alert(result.error || "Failed to save rating.");
       }
     }
 
-
     async function checkRatingExists(exerciseId) {
       try {
         const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
         const ratings = await res.json();
         return ratings.some(r => r.UserId === userId);
-      } catch { return false; }
-    }
-
-    async function showAllRatings(exerciseId, exerciseName) {
-      const ratingsRes = await fetch(`/api/exercise-ratings/${exerciseId}`);
-      const ratings = await ratingsRes.json();
-
-      const ratingModalContent = document.getElementById("ratingModalContent");
-
-      const reviewsHtml = ratings.length
-        ? ratings.map(r => {
-          const stars = getStarHTML(r.Rating);
-          return `
-          <div style="padding:10px 0; border-bottom:1px solid #ddd;">
-            <div style="font-size: 1.1em; color: #ffc107;">${stars}</div>
-            <div style="margin-top: 5px;">${r.Comment || '<em>No comment</em>'}</div>
-            <div style="text-align: right; font-style: italic; color: #555;">– ${r.User?.FirstName || 'Anonymous'}</div>
-          </div>
-        `;
-        }).join('')
-        : '<p>No ratings available.</p>';
-
-      ratingModalContent.innerHTML = `
-    <h3>All Ratings for: ${exerciseName}</h3>
-    <div style="max-height: 300px; overflow-y: auto;">
-      ${reviewsHtml}
-    </div>
-    <button class="button" onclick="closeRatingModal()" style="margin-top: 10px;">Close</button>
-  `;
-
-      document.getElementById("ratingModal").style.display = "block";
-    }
-
-    function getStarHTML(rating) {
-      const rounded = Math.round(rating * 2) / 2;
-      const fullStars = Math.floor(rounded);
-      const halfStar = rounded % 1 !== 0;
-      const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-      return '★'.repeat(fullStars) +
-        (halfStar ? '⯪' : '') +
-        '☆'.repeat(emptyStars);
+      } catch {
+        return false;
+      }
     }
 
     function closeRatingModal() {
@@ -382,29 +328,11 @@
       const toast = document.getElementById("toast");
       toast.textContent = message;
       toast.style.opacity = "1";
-
-      setTimeout(() => {
-        toast.style.opacity = "0";
-      }, 2500);
+      setTimeout(() => { toast.style.opacity = "0"; }, 2500);
     }
-
 
     fetchRecoveryPlan();
   </script>
-  <div id="toast" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #28a745;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 6px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-  z-index: 1000;
-"></div>
 </body>
 
 </html>
