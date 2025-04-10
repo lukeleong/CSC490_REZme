@@ -13,64 +13,83 @@
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
-            background-image: url('images/backgroundimage.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+            background-image: url('images/backgroundimage2.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+            background-size: cover; /* Ensures the image covers the entire body without distortion */
+            background-position: center center; /* Keeps the image centered */
 
         }
         .container {
             max-width: 400px;
             margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
+            padding: 30px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .container:hover {
+            transform: translateY(-5px); /* Keep the lift */
+            background-color: rgba(230, 230, 230, 0.7); /* Slightly darker grey tint, same opacity */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Keep the stronger shadow */
         }
         h1 {
             text-align: center;
+            color: #17a2b8;
         }
         .input-group {
             margin: 15px 0;
             text-align: left;
         }
+
+        /*input field label*/
         .input-group label {
             display: block;
             margin-bottom: 5px;
+            color: #646672; 
         }
+
+        /* fit input bar perfectly at center */
         .input-group input {
-            width: 100%;
-            padding: 10px;
+            width: calc(100% - 10px); /* Slightly less than 100% to create equal gaps */
+            margin: 0 5px; /* 5px margin on left and right for consistent gaps */
+            padding: 10px; /* Keep padding equal */
             border: 1px solid #ddd;
             border-radius: 5px;
+            box-sizing: border-box; /* Ensure padding and border are included in width */
         }
         .input-group i {
             margin-right: 8px;
-            color: #198754;
+            color: #17a2b8;
         }
 
+        /* Refined Button Styles */
         .button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-top: 20px;
+            display: inline-block;
+            padding: 12px 28px; /* Slightly adjusted padding */
             text-align: center;
-            background: #198754;
-            ;
-            color: white;
             text-decoration: none;
-            border-radius: 5px;
-            border: none;
+            border-radius: 8px;
+            border: 2px solid transparent; /* Base border */
             cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease; /* Smoother transition */
+            margin: 5px; /* Margin for spacing */
+            font-size: 1rem;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: white;
         }
+
+       
+
         .button:hover {
-            background: #157347; /* Darker green */
-            transform: scale(1.02); /* Slight scale effect */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
-        }
-        .button:hover i {
-            color: #d4edda; /* Light green for the icon on hover */
-        }
-        .button i {
-            margin-right: 8px;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            transform: translateY(-2px); /* Subtle lift */
         }
         
         .loading {
@@ -92,8 +111,8 @@
             content: "";
             display: block;
             width: 100%;
-            height: 1px;
-            background: #198754;
+            height: 3px;
+            background: #d1d8e0;
             ;
             position: absolute;
             top: 50%;

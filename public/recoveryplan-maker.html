@@ -41,15 +41,7 @@
         line-height: 1.6; /* Slightly adjusted for forms */
         color: var(--text-muted);
         /* --- Background --- */
-        /* Use Gradient */
-         background: linear-gradient(135deg, var(--light-green-bg-start) 0%, var(--light-green-bg-end) 100%);
-        /* OR Use Image */
-        /* background-image: url('images/backgroundimage.jpg');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-color: var(--light-green-bg-start); */
+        background-image: url('images/backgroundimage.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
         /* --- End Background --- */
         padding: 40px 20px;
         min-height: 100vh;
@@ -64,12 +56,32 @@
         max-width: 650px; /* Suitable width for a form */
         width: 100%;
         margin: 20px auto;
-        background: var(--card-bg); /* White background for the form area */
+        background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background (80% opacity) */
         padding: 35px 45px; /* Generous padding */
         border-radius: 10px; /* Consistent border radius */
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Consistent shadow */
         border: 1px solid var(--border-color-light); /* Subtle border */
         text-align: left; /* Override body center align */
+        transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out, opacity 0.2s ease-in-out; /* Add opacity transition */
+    }
+
+    .container:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Slightly stronger shadow on hover */
+        transform: translateY(-2px); /* Subtle lift on hover */
+        opacity: 1; /* Make it fully opaque on hover */
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Select dropdown hover effect */
+    .input-group select:hover {
+        border-color: var(--primary-green); /* Highlight border on hover */
+        box-shadow: 0 0 5px rgba(56, 142, 60, 0.3); /* Subtle shadow on hover */
+    }
+
+    /* Custom checkbox hover effect */
+    .checkbox-group label:hover::before {
+        border-color: #5cb85c; /* Slightly darker than primary green for distinction */
+        background-color: #f0fff0; /* Very light green background on hover */
     }
 
     .header-nav { /* Wrapper for the back button */
@@ -144,7 +156,29 @@
         transform: translateY(-1px);
     }
 
+    
+
     /* --- Form Styles --- */
+    
+
+    .input-group select#difficulty {
+        width: 40%; /* Adjust this percentage to control the width */
+        /* If you need to position something to its right, you might consider using flexbox on the parent .input-group */
+        display: flex;
+        flex-direction: row; /* Ensure items are in a row */
+        align-items: center; /* Vertically align items if needed */
+    }
+
+    .input-group label[for="difficulty"] {
+        /* Keep the label styles as they are, or adjust if needed */
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-form-label);
+        font-weight: 600;
+        font-size: 0.95rem;
+        width: 100%; /* Ensure label still takes full width above the select */
+    }
+    
     .input-group {
         margin-bottom: 22px; /* Consistent spacing */
     }
@@ -172,6 +206,7 @@
         background-position: right 15px center;
         background-size: 10px auto;
         padding-right: 40px;
+        background: rgba(255, 255, 255, 0.6);
     }
 
     .input-group select:focus {

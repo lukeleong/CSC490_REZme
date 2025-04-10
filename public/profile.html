@@ -5,25 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - Recovery App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
+            background-image: url('images/backgroundimage2.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+            background-size: cover; /* Ensures the image covers the entire body without distortion */
+            background-position: center center; /* Keeps the image centered */
         }
 
         .container {
-            max-width: 800px;
+            max-width: 700px;
             margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
+            padding: 30px 25px;
+            border-radius: 12px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* Subtle border */
+            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle light grey border */
+            text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            /* Optional: Add backdrop filter for frosted glass */
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Very subtle shadow */ 
         }
 
         h1, h2 {
             margin-top: 0;
+            color: #17a2b8;
+        }
+        h1 .icon {
+            margin-right: 10px; /* Space between the icon and the text */
+            color: #17a2b8; /* Match the heading color */
+            font-size: 1.2em; /* Slightly larger than the text for emphasis */
+            vertical-align: middle; /* Align the icon vertically with the text */
         }
 
         .header {
@@ -39,7 +58,7 @@
 
         .nav-links a {
             margin-left: 15px;
-            color: #007bff;
+            color: #17a2b8 !important;
             text-decoration: none;
         }
 
@@ -58,23 +77,26 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #17a2b8;
         }
 
         .input-group input {
             width: 100%;
-            padding: 10px;
+            padding: 10px 10px; /* Explicitly set top/bottom to 10px, left/right to 10px */
             border: 1px solid #ddd;
             border-radius: 5px;
+            box-sizing: border-box; /* Ensure padding is included in the width */
+            text-indent: 0; /* Reset any text indentation */
+            text-align: left; /* Ensure text starts from the left */
         }
 
         .button {
             display: inline-block;
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
+            padding: 12px 28px; /* Slightly adjusted padding */
+            text-align: center;
             text-decoration: none;
-            border-radius: 5px;
-            border: none;
+            border-radius: 8px;
+            border: 2px solid transparent; /* Base border */
             cursor: pointer;
             font-size: 14px;
         }
@@ -94,16 +116,17 @@
             display: none;
         }
 
+        /* "save change" button */
         .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #d6dce7;
+            color: #1770b8;
+            border: 1px solid #d6dce7;
         }
 
         .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #e3ced0;
+            color: #1770b8;
+            border: 1px solid #e3ced0;
         }
 
         .form-buttons {
@@ -156,13 +179,34 @@
             border-radius: 5px;
             margin-bottom: 15px;
         }
+
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: rgba(229, 237, 239, 0.6); /* Match the semi-transparent background */
+            backdrop-filter: blur(5px); /* Match the frosted glass effect */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Add transition for smooth hover */
+        }
+
+        .section:hover {
+            transform: translateY(-5px); /* Lift the section 5px upward */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07); /* Add subtle shadow on hover */
+        }
+        
+
+
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <h1>User Profile</h1>
+            <h1>
+                <i class="fas fa-user-circle icon"></i>User Profile
+            </h1>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
                 <a href="#" id="logoutButton">Logout</a>

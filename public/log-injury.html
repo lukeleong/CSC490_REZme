@@ -19,14 +19,14 @@
 
         /* --- Core Theme Styles (Copied from Dashboard) --- */
         :root {
-            --primary-green: #388e3c; /* Darker green like buttons/icons */
+            --primary-green: #17a2b8; /* Darker green like buttons/icons */
             --light-green-bg-start: #d1f0d9; /* Lightest green for bg */
             --light-green-bg-end: #a8e0b0;   /* Slightly darker green for bg */
             --card-bg: #ffffff;             /* Use white for the form container */
             --card-bg-popup: #f8f9fa;      /* Off-white for popup */
             --text-dark: #343a40;           /* Dark text for headings */
             --text-muted: #5f6368;          /* Muted text for paragraphs/labels */
-            --text-form-label: #388e3c;     /* Green for form labels */
+            --text-form-label: #17a2b8;     /* Green for form labels */
             --border-color-light: #e0e0e0;   /* Light border for dividers/cards */
             --border-color-input: #ced4da;   /* Standard input border */
             --input-bg: #ffffff;            /* White input background */
@@ -43,7 +43,7 @@
             /* --- Background Image Settings --- */
             /* V V V V V V V V V V V V V V V V V V V V V V V V V V V */
             /*      REPLACE THIS URL WITH YOUR IMAGE PATH       */
-            background-image: url('images/backgroundimage.jpg');
+            background-image: url('images/backgroundimage2.jpg');
             /* ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ */
 
             /* --- Ensure Gradient is Commented Out or Removed --- */
@@ -62,30 +62,46 @@
             overflow-x: hidden;
         }
 
-        /* Main container for the form */
         .container {
-            max-width: 700px; /* Suitable width for a form */
+            max-width: 700px;
             width: 100%;
             margin: 20px auto;
-            background: var(--card-bg); /* White background for the form area */
-            padding: 30px 40px; /* Good padding */
-            border-radius: 10px; /* Consistent border radius */
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Consistent shadow */
-            border: 1px solid var(--border-color-light); /* Subtle border */
+            background: rgba(255, 255, 255, 0.7); /* Semi-transparent white, 70% opacity */
+            padding: 30px 40px; /* Keep existing padding */
+            border-radius: 10px; /* Keep existing border radius */
+            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle border like .useful-element */
+            backdrop-filter: blur(4px); /* Frosted glass effect */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Lighter shadow like .useful-element */
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Updated transition */
         }
 
-        /* Header specific to this page */
-        .page-header { /* Renamed from .header to avoid conflicts if structure differs */
-            max-width: 950px; /* Match dashboard width */
+        .container:hover {
+            transform: translateY(-5px); /* More pronounced lift like .useful-element */
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly less transparent on hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Stronger shadow on hover */
+        }
+
+        .page-header {
+            max-width: 700px; /* Match the container's max-width */
             width: 100%;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Keep button left, greeting right */
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 30px; /* Space below header */
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(56, 142, 60, 0.3); /* Subtle green border */
+            margin: 0 auto; /* Center the header to align with container */
+            margin-bottom: 30px;
+            padding-bottom: 5px; /* Keep it close to the line as per previous request */
+            border-bottom: 1px solid rgba(56, 142, 60, 0.3);
+        }
+        
+
+        #greeting {
+            font-weight: 600;
+            color: var(--primary-green);
+            font-size: 1.05rem;
+            text-align: right; /* Align text to the right */
+            margin-bottom: 0; /* Keep it close to the line */
         }
 
         h1 {
@@ -98,26 +114,10 @@
             letter-spacing: normal;
         }
 
-        /* --- Button Styles (Copied from Dashboard) --- */
-        .button, .back-button {
-            display: inline-block;
-            padding: 10px 24px;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease-in-out;
-            font-size: 0.95rem;
-            margin: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-        }
-
         /* PRIMARY BUTTON STYLE (Submit) */
         .button.button-primary {
             background-color: var(--primary-green);
-            border-color: var(--primary-green);
+            border: none;
             color: white;
         }
         .button.button-primary:hover {
@@ -128,18 +128,35 @@
         }
 
         /* SECONDARY OUTLINE BUTTON STYLE (Back Button) */
-        .button.button-secondary, .back-button { /* Apply to back button */
-            background-color: transparent;
-            border: 1.5px solid var(--primary-green);
-            color: var(--primary-green);
-            box-shadow: none;
-        }
-        .button.button-secondary:hover, .back-button:hover {
-            background-color: rgba(56, 142, 60, 0.08);
-            color: #2e7d32;
-            border-color: #2e7d32;
-            transform: translateY(-1px);
-        }
+        .back-button {
+    display: inline-block;
+    padding: 10px 24px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px;
+    border: 1.5px solid var(--primary-green);
+    color: var(--primary-green);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.95rem;
+    margin: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.button.button-secondary, .back-button {
+    background-color: transparent;
+    border: 1.5px solid var(--primary-green);
+    color: var(--primary-green);
+    box-shadow: none;
+}
+
+.button.button-secondary:hover, .back-button:hover {
+    background-color: #17a2b8; /* White background on hover */
+    color: white; /* Keep text color as #17a2b8 */
+    border-color: #17a2b8; /* Keep border color as #17a2b8 */
+    transform: translateY(-1px);
+}
 
         /* --- Form Styles --- */
         .input-group {
@@ -154,37 +171,54 @@
             font-size: 0.9rem;
         }
 
+
+
+
+
+
         .input-group input[type="text"],
-        .input-group input[type="date"],
-        .input-group select {
-            width: 100%;
-            padding: 10px 12px; /* Adjusted padding */
-            border: 1px solid var(--border-color-input); /* Standard input border */
-            border-radius: 5px; /* Slightly less rounded */
-            background: var(--input-bg); /* White background */
-            color: var(--text-dark); /* Dark text for input */
-            font-size: 1rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
+.input-group input[type="date"],
+.input-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 5px;
+    background: var(--input-bg);
+    color: var(--text-dark);
+    font-size: 1rem;
+    transition: all 0.2s ease;
 
-        .input-group input[type="text"]:focus,
-        .input-group input[type="date"]:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--primary-green); /* Green border on focus */
-            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.15); /* Subtle green glow */
-        }
+    outline: none;
+    border: 2px solid var(--primary-green); /* Thicker border on focus */
+    box-shadow: none;
+    transform: none;
+    padding: 9px 9px; /* Adjust padding to maintain size */
+}
 
-        /* Style for dropdown arrow */
-        .input-group select {
-            appearance: none; /* Remove default arrow */
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23388E3C%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 10px auto;
-            padding-right: 30px; /* Make space for arrow */
-        }
+.input-group input[type="text"]:hover,
+.input-group input[type="date"]:hover,
+.input-group select:hover {
+    border-color: #138496; /* Darker blue */
+    background: rgba(23, 162, 184, 0.02); /* Light blue tint */
+    transform: scale(1.01);
+}
 
+.input-group input[type="text"]:focus,
+.input-group input[type="date"]:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.15); /* Blue glow */
+    transform: none;
+}
+
+.input-group select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2317a2b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px auto;
+    padding-right: 30px;
+}
         /* Range Slider Styles */
         .input-group input[type="range"] {
             width: 100%;
@@ -196,6 +230,11 @@
             padding: 0; /* Remove default padding */
             border: none; /* Remove default border */
             margin-top: 8px; /* Space above slider */
+            transition: background 0.2s ease; /* Added for track hover effect */
+        }
+
+        .input-group input[type="range"]:hover {
+            background: #d1d5db; /* Slightly darker track on hover */
         }
 
         .input-group input[type="range"]::-webkit-slider-thumb {
@@ -206,10 +245,18 @@
             border-radius: 50%;
             cursor: pointer;
             border: none;
-             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease; /* Added for thumb hover effects */
         }
 
-         /* Firefox Thumb */
+        .input-group input[type="range"]:hover::-webkit-slider-thumb {
+            width: 20px; /* Slightly larger thumb */
+            height: 20px;
+            background: #17a2b8; /* Darker green */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+        }
+
+        /* Firefox Thumb */
         .input-group input[type="range"]::-moz-range-thumb {
             width: 18px;
             height: 18px;
@@ -217,9 +264,16 @@
             border-radius: 50%;
             cursor: pointer;
             border: none;
-             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease; /* Added for thumb hover effects */
         }
 
+        .input-group input[type="range"]:hover::-moz-range-thumb {
+            width: 20px; /* Slightly larger thumb */
+            height: 20px;
+            background: #2e7d32; /* Darker green */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+        }
         .range-value {
             text-align: right;
             font-weight: 600; /* Bolder value */
@@ -234,6 +288,13 @@
             margin-top: 15px; /* Space above submit */
             padding: 12px 25px; /* Larger padding */
             font-size: 1rem;
+            border-radius: 6px; /* Add to match .button and dashboard */
+        }
+        #injuryForm button[type="submit"]:hover {
+            background-color: var(--primary-green); /* Ensure it stays #17a2b8 */
+            border-color: var(--primary-green);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 7px rgba(17, 96, 149, 0.15);
         }
 
         #message {
@@ -241,13 +302,6 @@
           margin-top: 20px;
           color: var(--logout-red); /* Use red for error messages */
           font-weight: 500;
-        }
-
-        /* Greeting Style */
-        #greeting {
-            font-weight: 600;
-            color: var(--primary-green); /* Match H1 color */
-            font-size: 1.05rem;
         }
 
         /* --- Popup Modal Styles --- */
@@ -311,25 +365,37 @@
             border: 1.5px solid var(--primary-green);
             color: var(--primary-green);
             box-shadow: none;
+            border-radius: 6px; /* Explicitly set to match .button */
         }
          #popupBox .dashboard-btn:hover {
-             background-color: rgba(56, 142, 60, 0.08);
-             color: #2e7d32;
-             border-color: #2e7d32;
+             background-color: #17a2b8;
+             color: white;
+             border-color: #1770b8;
              transform: translateY(-1px);
+             border-radius: 6px; /* Explicitly set to match .button */
         }
 
-        #popupBox .view-btn { /* Primary solid green */
-             background-color: var(--primary-green);
-             border-color: var(--primary-green);
-             color: white;
-        }
-         #popupBox .view-btn:hover {
-             background-color: #2e7d32;
-             border-color: #2e7d32;
-             transform: translateY(-1px);
-             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-        }
+        #popupBox .view-btn {
+    background-color: var(--primary-green); /* #17a2b8 */
+    border: none; /* Already none, kept for clarity */
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Soften the shadow to reduce border-like effect */
+    border-radius: 6px; /* Explicitly set to match .button */}
+
+#popupBox .view-btn:hover {
+    background-color: var(--primary-green);
+    border: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12); /* Slightly larger shadow on hover, less border-like */
+    border-radius: 6px; /* Explicitly set to match .button */
+}
+
+#popupBox .view-btn:focus {
+    outline: none; /* Remove browser default focus outline */
+    border: none; /* Ensure no border on focus */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Keep the same shadow as base state */
+    border-radius: 6px; /* Explicitly set to match .button */
+}
 
 
         /* Animation */

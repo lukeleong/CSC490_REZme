@@ -21,13 +21,13 @@
 
         /* --- Core Theme Styles --- */
         :root {
-            --primary-green: #388e3c; /* Darker green like buttons/icons */
+            --primary-green: #17a2b8; /* Darker green like buttons/icons */
             --light-green-bg-start: #d1f0d9; /* Lightest green for bg */
             --light-green-bg-end: #a8e0b0;   /* Slightly darker green for bg */
 
             /* UPDATED Card Backgrounds for semi-transparency */
-            --card-bg: rgba(255, 255, 255, 0.75);  /* Semi-transparent white (Adjust opacity 0.7-0.85) */
-            --card-bg-hover: rgba(255, 255, 255, 0.9); /* Slightly less transparent on hover */
+            --card-bg: rgba(255, 255, 255, 0.6);  /* Semi-transparent white (Adjust opacity 0.7-0.85) */
+            --card-bg-hover: rgba(255, 255, 255, 0.8); /* Slightly less transparent on hover */
 
             --text-dark: #343a40;           /* Dark text for headings */
             --text-muted: #5f6368;          /* Muted text for paragraphs */
@@ -35,9 +35,9 @@
             /* Use subtle dark border like welcome page */
             --border-color-light: rgba(0, 0, 0, 0.08);
 
-            --status-active-green: #28a745;  /* Brighter green for status/progress */
+            --status-active-green: #1770b8;  /* Brighter green for status/progress */
             --status-completed-grey: #6c757d;/* Grey for completed status */
-            --logout-red: #dc3545;           /* Red for logout */
+            --logout-red: #17a2b8;           /* Red for logout */
              --button-back-bg: #e0f2e2; /* From other pages */
              --button-back-bg-hover: #cfe8d1; /* From other pages */
              --separator-color: rgba(56, 142, 60, 0.3); /* From other pages */
@@ -48,10 +48,8 @@
             line-height: 1.7;
             color: var(--text-muted);
 
-            /* --- Background Image Settings --- */
-            background-image: url('images/backgroundimage.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
-            /* --- OR use Gradient Background --- */
-            /* background: linear-gradient(135deg, var(--light-green-bg-start) 0%, var(--light-green-bg-end) 100%); */
+            background-image: url('images/backgroundimage2.jpg'); 
+
 
             background-size: cover;
             background-position: center center;
@@ -126,8 +124,8 @@
         }
         .button.button-primary:hover,
         .plan .button:hover {
-            background-color: #2e7d32;
-            border-color: #2e7d32;
+            background-color: #1770b8;
+            border-color: #1770b8;
             transform: translateY(-1px);
             box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
         }
@@ -151,13 +149,13 @@
         .button.logout-btn {
             background-color: transparent;
             border: 1.5px solid var(--logout-red);
-            color: var(--logout-red);
+            color: white;
             box-shadow: none;
         }
         .button.logout-btn:hover {
             background-color: rgba(220, 53, 69, 0.08);
-            color: #b02a37;
-            border-color: #b02a37;
+            color: #17a2b8;
+            border-color: #f8f2f2;
             transform: translateY(-1px);
         }
 
@@ -277,6 +275,15 @@
              /* text-shadow: 0 1px 2px rgba(0,0,0,0.1); */
          }
 
+         .assigned-exercises-title {
+            font-size: 1.1rem; /* Smaller than the h2 (1.4rem) */
+            font-weight: 600; /* Match the weight of other headings */
+            color: var(--primary-green); /* Match the primary color (#17a2b8) */
+            margin-bottom: 8px; /* Space between the title and the injury type */
+            text-transform: uppercase; /* Make it stand out */
+            letter-spacing: 0.5px; /* Slight letter spacing for a modern look */
+        }
+
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
@@ -332,28 +339,10 @@
 
         <div id="plansContainer">
             <p style="text-align: center; color: var(--text-muted);">Loading recovery plans...</p>
-            <!-- Example Plan structure (JS will populate this) -->
-            <!-- Icons could be added here like in injuries.html if desired -->
-            <!--
-            <div class="plan">
-                <h2>Example Injury Type</h2>
-                <p><strong>Start Date:</strong> Mon Jan 01 2024</p>
-                <p><strong>Progress:</strong> 75%
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 75%"></div>
-                    </div>
-                </p>
-                <p><strong>Status:</strong>
-                    <span class="status-badge status-active">Active</span>
-                </p>
-                <button class="button" onclick="viewPlan(1)">View Details</button>
-            </div>
-             -->
         </div>
     </div>
 
     <script>
-        // --- Javascript remains the same as previous correct version ---
         function getUserIdFromToken() {
             const token = localStorage.getItem("token");
             if (!token) return null;
@@ -447,6 +436,7 @@
                     const isActive = plan.IsActive === true;
 
                     planElement.innerHTML = `
+                    <h3 class="assigned-exercises-title">Assigned Exercises</h3>
                         <h2>${injuryType}</h2>
                         <p><strong>Start Date:</strong> ${startDate}</p>
                         <p><strong>Progress:</strong> ${progress}%

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to Recovery App</title>
-    <!-- Font Awesome Link -->
+    <!-- Added Font Awesome Link -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
@@ -13,228 +13,290 @@
             padding: 0;
         }
 
-        /* Change #1: Updated Body Style for Immersive LIGHT Green Theme */
-                /* Change #1: Updated Body Style for Immersive Image Background */
+        /* Refined Body Style */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.8;
-            color: #34495e; /* Keep dark text color - MIGHT NEED ADJUSTMENT based on image! */
-            background-color: #e8f5e9; /* Keep light green fallback */
-            min-height: 100vh;
+            color: #333;
+            background-color: #f8f9fa;
+            min-height: 100vh; /* Changed from height to min-height */
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center; /* Still center horizontally */
+            align-items: flex-start; /* Start from the top instead of centering vertically */
             text-align: center;
             overflow-x: hidden;
-            padding: 70px 30px 50px 30px;
-
-            /* --- Background Image Settings --- */
-            /* Replace gradient with image */
-            background-image: url('images/backgroundimage.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
-            background-size: cover; /* Scale image to cover the whole area */
-            background-position: center center; /* Center the image */
-            background-repeat: no-repeat; /* Don't tile the image */
-            background-attachment: fixed; /* Optional: Image stays fixed when scrolling */
+            background-image: url('images/backgroundimage2.jpg');
+            background-size: cover;
+            background-position: 0 0, 10px 10px;
+            padding: 20px;
         }
-
-        /* Container still acts mainly as a width constraint */
         .container {
-            max-width: 900px;
-            width: 100%;
-            margin: 0 auto;
+            padding-top: 20px; /* Add padding to the top */
         }
-
-        /* Adjusted welcome-text styles */
+       
+        /* Added styles for new structure */
         .welcome-text {
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            /* Light grey border */
-            border-bottom: 1px solid #d1d8e0;
+            margin-bottom: 10px; /* Space below text before buttons */
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e9ecef; /* Lighter separator */
         }
 
         .action-buttons {
-            margin-bottom: 50px;
+            margin-bottom: 20px; /* Space below buttons before useful elements */
         }
 
-        /* Change #2: H1 Style - Using primary green color */
+        /* Refined H1 Style */
         h1 {
-            color: #198754; /* Primary green heading */
-            font-weight: 700;
-            margin-bottom: 15px;
-            font-size: 2.8rem;
+            color: #17a2b8;
+            font-weight: 700; /* Slightly bolder */
+            margin-bottom: 5px; /* Less margin, controlled by parent */
+            font-size: 2.6rem; /* Slightly smaller */
             text-transform: none;
             letter-spacing: -0.5px;
             text-align: center;
-            /* Removed text shadow, less effective on light bg */
         }
 
-        /* Change #3: General paragraph style for light background */
+        /* Refined Paragraph Style */
+        /* General paragraph style */
         p {
-            color: #5a6a7d; /* Slightly muted dark grey */
-            margin-bottom: 1em;
+            color: #8b8ea5;
+            margin-bottom: 1em; /* Use em for relative spacing */
             font-size: 1.1rem;
-            line-height: 1.8;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 400;
+            line-height: 1.8; /* Adjusted from body */
+            max-width: 650px; /* Constrain line length for readability */
+            margin-left: auto; /* Center paragraphs */
+            margin-right: auto; /* Center paragraphs */
+        }
+        /* Specific style for intro paragraph */
+        .welcome-text p {
+             margin-bottom: 0; /* No margin below intro p itself */
         }
 
-        /* Change #4: Buttons adjusted slightly if needed */
+        /* Refined Button Styles */
         .button {
             display: inline-block;
-            padding: 12px 28px;
+            padding: 12px 28px; /* Slightly adjusted padding */
             text-align: center;
             text-decoration: none;
             border-radius: 8px;
-            border: 2px solid transparent;
+            border: 2px solid transparent; /* Base border */
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.3s ease;
-            margin: 5px;
+            transition: all 0.3s ease; /* Smoother transition */
+            margin: 5px; /* Margin for spacing */
             font-size: 1rem;
-        }
-        /* Primary Button (Login) */
-        .button {
-            background-color: #198754;
-            border-color: #198754;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
             color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Lighter shadow */
         }
         .button:hover {
-            background-color: #157347;
-            border-color: #157347;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            transform: translateY(-2px); /* Subtle lift */
         }
+
         /* Secondary Button (Sign Up - Outline) */
         .button-secondary {
             background-color: transparent;
-            border-color: #198754;
-            color: #198754; /* Green text */
-            box-shadow: none;
+            border-color: #17a2b8;
+            color: #17a2b8;
         }
+
         .button-secondary:hover {
-            background-color: rgba(25, 135, 84, 0.05); /* Even subtler tint */
-            color: #157347; /* Darker green text on hover */
-            border-color: #157347;
-            transform: translateY(-2px);
+            background-color: #17a2b8;
+            color: white;
+            transform: translateY(-2px); /* Subtle lift */
         }
 
-        /* Adjusted useful elements grid container */
+        /* Ensure consistent card sizes */
+       /* Refined Useful Elements Styles */
         .useful-elements {
-            margin-top: 50px;
-            padding-top: 40px;
-            /* Lighter border */
-            border-top: 1px solid #d1d8e0;
+            margin-top: 10px;
+            padding-top: 30px;
+            border-top: 1px solid #e9ecef;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(3, 1fr); /* Force 3 columns on larger screens */
+            gap: 20px;
+            justify-items: center;
         }
 
-        /* Change #5: Styling for the useful element cards - MORE TRANSPARENT */
+        /* Ensure consistent card sizes */
         .useful-element {
-            /* Light, more transparent background */
-            background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
-            padding: 30px 25px;
-            border-radius: 12px;
-            /* Subtle border */
-            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle light grey border */
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
             text-align: center;
-            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-            /* Optional: Add backdrop filter for frosted glass */
-            backdrop-filter: blur(4px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Very subtle shadow */
-        }
-        .useful-element:hover {
-            transform: translateY(-5px);
-            background-color: rgba(255, 255, 255, 0.85); /* Slightly less transparent on hover */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            backdrop-filter: blur(5px);
+            width: 100%;
+            max-width: 300px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* Change #6: Card Content Colors for Light Background */
-        .useful-element .icon {
-            font-size: 2.8rem;
-            color: #198754; /* Keep icon color green */
-            margin-bottom: 20px;
-            display: block;
-        }
-        .useful-element h3 {
-            color: #2c3e50; /* Darker heading for contrast */
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
+        /* Ensure the description text has a consistent height */
         .useful-element p {
-            color: #5a6a7d; /* Muted dark grey for card text */
-            font-size: 0.95rem;
+            color: #6c757d;
+            font-size: 0.9rem;
             line-height: 1.6;
             margin-bottom: 0;
             max-width: none;
             margin-left: 0;
             margin-right: 0;
-            font-weight: 400;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Media Query remains largely the same */
+
+
+/* Optional: If you want to try fitting 3 columns on slightly larger mobile screens */
+@media (min-width: 500px) and (max-width: 768px) {
+    .useful-elements {
+        grid-template-columns: repeat(3, 1fr); /* Try 3 columns on larger mobile screens */
+        gap: 10px; /* Reduce gap to fit better */
+    }
+    .useful-element {
+        padding: 15px; /* Reduce padding to fit better */
+        min-height: 180px; /* Slightly smaller height */
+    }
+}
+
+        .useful-element:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .useful-element .icon { /* Style for icons */
+            font-size: 2.5rem; /* Icon size */
+            color: #17a2b8; /* Icon color */
+            margin-bottom: 15px;
+            display: block; /* Ensure it takes space */
+        }
+
+        .useful-element h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.15rem; /* Slightly adjusted size */
+            font-weight: 600;
+        }
+
+        .useful-element p {
+            color: #6c757d; /* Standard bootstrap secondary text color */
+            font-size: 0.9rem; /* Slightly smaller */
+            line-height: 1.6; /* Adjust line height */
+            margin-bottom: 0; /* Remove default p margin */
+            max-width: none; /* Override general p max-width */
+            margin-left: 0; /* Override general p margin */
+            margin-right: 0; /* Override general p margin */
+        }
+
+        /* styles for logo */
+        .logo {
+            margin-bottom: 5px; /* Space between logo and welcome text */
+            text-align: center;
+        }
+
+        .logo-rez, .logo-me {
+            font-size: 2.5rem; /* Slightly larger than the h1 for prominence */
+            font-weight: 700; /* Bold to match the h1 */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Match existing font */
+            letter-spacing: 2px; /* Add spacing for a modern look */
+            text-transform: uppercase; /* Uppercase for a logo feel */
+            transition: transform 0.3s ease; /* Smooth hover effect */
+            display: inline; /* Ensures the logo stays inline and doesn't create block space */
+            margin: 0; /* Removes any margins */
+            padding: 0; /* Removes any padding */
+        }
+        
+
+        .logo-rez {
+            color: #17a2b8; /* Primary color for "REZ" */
+        }
+
+        .logo-me {
+            color: #fff; /* White for "me" to contrast */
+        }
+
+        .logo:hover .logo-rez, .logo:hover .logo-me {
+            transform: scale(1.05); /* Slight scale on hover for interactivity */
+        }
+
         @media (max-width: 768px) {
-            body {
-                padding: 60px 15px 40px 15px;
+            .container {
+                padding: 30px 25px; /* Adjusted padding */
+                border-radius: 10px;
+                margin: 10px; /* Less margin on small screens */
             }
             h1 {
-                font-size: 2.2rem;
+                font-size: 2.2rem; /* Adjusted size */
             }
             p {
-                font-size: 1rem;
+                font-size: 1rem; /* Adjust paragraph size */
             }
             .button { /* Stack buttons */
                 display: block;
-                width: calc(100% - 20px);
-                margin: 15px 10px;
+                width: calc(100% - 10px); /* Full width minus margin */
+                margin: 10px 5px;
             }
             .useful-elements {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .useful-element {
-                padding: 25px;
+                grid-template-columns: 1fr; /* Single column */
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Structure remains the same -->
+        <!-- New Logo Section -->
+        <div class="logo">
+            <span class="logo-rez">REZ</span><span class="logo-me">me</span>
+        </div>
+
+        <!-- Updated Structure -->
         <div class="welcome-text">
-            <h1>Welcome to Your Recovery Journey</h1>
+            <h1>Your Recovery Journey</h1>
             <p>Empowering you to track your progress and achieve your rehabilitation goals.</p>
         </div>
 
         <div class="action-buttons">
             <a href="login.html" class="button">Login</a>
+            <!-- Added button-secondary class -->
             <a href="signup.html" class="button button-secondary">Sign Up</a>
         </div>
 
         <div class="useful-elements">
             <div class="useful-element">
+                <!-- Added Icon -->
                 <i class="fas fa-notes-medical icon"></i>
                 <h3>Track Your Injuries</h3>
                 <p>Log new injuries and monitor their healing progress over time.</p>
             </div>
             <div class="useful-element">
+                <!-- Added Icon -->
                 <i class="fas fa-clipboard-list icon"></i>
                 <h3>Personalized Recovery Plans</h3>
                 <p>Access tailored exercise and treatment plans designed for your specific needs.</p>
             </div>
             <div class="useful-element">
+                <!-- Added Icon -->
                 <i class="fas fa-dumbbell icon"></i>
                 <h3>Exercise Library</h3>
                 <p>Explore a library of guided exercises with clear instructions and visuals.</p>
             </div>
             <div class="useful-element">
+                <!-- Added Icon -->
                 <i class="fas fa-chart-line icon"></i>
                 <h3>Progress Visualization</h3>
                 <p>View charts and reports to see your recovery trends and stay motivated.</p>
+            </div>
+            <div class="useful-element">
+                <i class="fas fa-bullseye icon"></i>
+                <h3>Set Recovery Goals</h3>
+                <p>Define and track your rehabilitation goals to stay focused and motivated.</p>
             </div>
         </div>
     </div>

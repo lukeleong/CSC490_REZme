@@ -49,7 +49,7 @@
             color: var(--text-muted); /* Default text color */
 
             /* --- Background Image Settings --- */
-            background-image: url('images/backgroundimage.jpg');
+            background-image: url('images/backgroundimage2.jpg');
             /* --- OR use Gradient Background --- */
             /* background: linear-gradient(135deg, var(--light-green-bg-start) 0%, var(--light-green-bg-end) 100%); */
 
@@ -142,29 +142,34 @@
 
         /* Styles for the absolutely positioned back button */
         .back-button {
-            position: absolute;
-            top: 0px;
-            left: 40px;
-            background-color: var(--button-back-bg);
-            border: 1.5px solid var(--primary-green);
-            color: var(--primary-green);
-            box-shadow: none;
-            border-radius: 8px;
-            padding: 9px 20px;
-            text-decoration: none; /* Ensure no underline */
-            transition: all 0.2s ease-in-out;
-            margin: 0;
-            z-index: 2;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .back-button:hover {
-            background-color: var(--button-back-bg-hover);
-            color: #2e7d32;
-            border-color: #2e7d32;
-            transform: translateY(-1px);
-        }
+    display: inline-block;
+    padding: 10px 24px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px;
+    border: 1.5px solid var(--primary-green);
+    color: var(--primary-green);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.95rem;
+    margin: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.button.button-secondary, .back-button {
+    background-color: transparent;
+    border: 1.5px solid var(--primary-green);
+    color: var(--primary-green);
+    box-shadow: none;
+}
+
+.button.button-secondary:hover, .back-button:hover {
+    background-color: #17a2b8; /* White background on hover */
+    color: white; /* Keep text color as #17a2b8 */
+    border-color: #17a2b8; /* Keep border color as #17a2b8 */
+    transform: translateY(-1px);
+}
 
 
         /* --- Injury Card Styles (Subtle Semi-Transparent) --- */
