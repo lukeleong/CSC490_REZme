@@ -205,129 +205,206 @@
       }
 
       for (const ex of exercises) {
-        // Fetch completions for the user
-        const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
-        const allCompletions = await completionsRes.json();
+        // Fetch completions and ratings in parallel
+        const [completionsRes, ratingsRes] = await Promise.all([
+          fetch(`/api/exercise-completions?user_id=${userId}`),
+          fetch(`/api/exercise-ratings/${ex.ExerciseId}`)
+        ]);
 
-        // Now filter completions by the specific exercise and recovery plan
+        const allCompletions = await completionsRes.json();
+        const ratings = await ratingsRes.json();
+
         const completionsForExercise = allCompletions.filter(c =>
           c.ExerciseId === ex.ExerciseId && c.PlanId == planId
         );
 
-        // Get the highest progress value among completions for this exercise, or default to 0
         const highestProgress = completionsForExercise.length > 0
           ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
           : 0;
 
-        // Create the exercise element with highest progress displayed on the right.
+        const avgRating = ratings.length > 0 ?
+          (ratings.reduce((sum, r) => sum + r.Rating, 0) / ratings.length).toFixed(1) : 'No ratings';
+
         const div = document.createElement("div");
         div.className = "exercise";
         div.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-         <h3 style="margin:0;">${ex.ExerciseName}</h3>
-         <div style="font-weight: bold;">${highestProgress}%</div>
-      </div>
-      <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-      <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-      ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-      ${window.currentPlan && window.currentPlan.IsActive ? `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>` : ''}
-      <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
-    `;
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3 style="margin:0;">
+      ${ex.ExerciseName}
+      <span
+        style="cursor:pointer;color:#007bff;font-size:0.9em;margin-left:5px;"
+        onclick="showAllRatings(${ex.ExerciseId}, '${ex.ExerciseName}')"
+        data-exercise-id="${ex.ExerciseId}"
+      >
+        ${getStarHTML(avgRating)}
+      </span>
+    </h3>
+    <div style="font-weight: bold;">${highestProgress}%</div>
+  </div>
+  <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+  <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+  ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+  ${window.currentPlan?.IsActive ?
+            `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>` : ''}
+  <button class="button" onclick="openRatingModal(${ex.ExerciseId}, '${ex.ExerciseName}')">Rate</button>
+`;
+
         container.appendChild(div);
       }
     }
 
+    // Rating modal - original content preserved
+    async function openRatingModal(exerciseId, exerciseName) {
+      const ratingModalContent = document.getElementById("ratingModalContent");
+      ratingModalContent.innerHTML = `
+    <h3>Rate Exercise: ${exerciseName}</h3>
+    <form id="ratingForm">
+      <input type="hidden" id="ratingExerciseId" value="${exerciseId}">
+      <div class="input-group">
+        <label>Rating (0–5):</label>
+        <input type="range" id="ratingValue" min="0" max="5" step="0.5" value="0"
+          oninput="document.getElementById('ratingDisplay').innerText = this.value">
+        <span id="ratingDisplay">0</span>
+      </div>
+      <div class="input-group">
+        <label>Comment:</label>
+        <textarea id="ratingComment" rows="3"></textarea>
+      </div>
+      <button type="submit" class="button">Submit Rating</button>
+      <button type="button" class="button" style="background:#ccc;" onclick="closeRatingModal()">Cancel</button>
+    </form>
+  `;
 
-    async function openRatingModal(exerciseId) {
-      document.getElementById("ratingExerciseId").value = exerciseId;
-      const ratingSlider = document.getElementById("ratingValue");
-      const ratingDisplay = document.getElementById("ratingDisplay");
-      const commentBox = document.getElementById("ratingComment");
-      const submitBtn = document.getElementById("ratingSubmitButton");
-      const heading = document.querySelector("#ratingModalContent h3");
+      const ratingsRes = await fetch(`/api/exercise-ratings/${exerciseId}`);
+      const allRatings = await ratingsRes.json();
+      const userRating = allRatings.find(r => r.UserId === userId);
 
-      ratingSlider.value = 0;
-      ratingDisplay.innerText = "0";
-      commentBox.value = "";
-      submitBtn.innerText = "Submit Rating";
-      submitBtn.style.background = "#007bff";
-      heading.innerText = "Rate Exercise";
-
-      document.getElementById("ratingModal").style.display = "block";
-
-      if (!userId) return;
-
-      try {
-        const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
-        const allRatings = await res.json();
-        const userRating = allRatings.find(r => r.UserId === userId);
-
-        if (userRating) {
-          ratingSlider.value = userRating.Rating;
-          ratingDisplay.innerText = userRating.Rating;
-          commentBox.value = userRating.Comment || "";
-          submitBtn.innerText = "Update Rating";
-          submitBtn.style.background = "#6c757d";
-          heading.innerText = "Update Rating";
-        }
-      } catch (err) {
-        console.error("Error preloading rating:", err);
+      if (userRating) {
+        document.getElementById("ratingValue").value = userRating.Rating;
+        document.getElementById("ratingDisplay").innerText = userRating.Rating;
+        document.getElementById("ratingComment").value = userRating.Comment || "";
       }
+
+      document.getElementById("ratingForm").onsubmit = submitRating;
+      document.getElementById("ratingModal").style.display = "block";
     }
 
-    function closeRatingModal() {
-      document.getElementById("ratingModal").style.display = "none";
-    }
-
-    document.getElementById("ratingForm").addEventListener("submit", async function (e) {
+    async function submitRating(e) {
       e.preventDefault();
-
       const exerciseId = document.getElementById("ratingExerciseId").value;
       const rating = parseFloat(document.getElementById("ratingValue").value);
       const comment = document.getElementById("ratingComment").value;
 
-      const url = `/api/exercise-ratings/${exerciseId}/${userId}`;
-      const payload = { Rating: rating, Comment: comment };
+      const exists = await checkRatingExists(exerciseId);
+      const res = await fetch(exists ? `/api/exercise-ratings/${exerciseId}/${userId}` : `/api/exercise-ratings`, {
+        method: exists ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, exerciseId, Rating: rating, Comment: comment })
+      });
 
-      try {
-        const method = await checkRatingExists(exerciseId) ? "PUT" : "POST";
-        const endpoint = method === "POST" ? "/api/exercise-ratings" : url;
+      if (res.ok) {
+        closeRatingModal();
+        showToast("Rating submitted successfully.");
 
-        const res = await fetch(endpoint, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...(method === "POST" ? { userId, exerciseId } : {}),
-            ...payload
-          })
-        });
+        // Refresh the rating text for that exercise
+        const ratingsRes = await fetch(`/api/exercise-ratings/${exerciseId}`);
+        const ratings = await ratingsRes.json();
+        const avgRating = ratings.length > 0 ?
+          (ratings.reduce((sum, r) => sum + r.Rating, 0) / ratings.length).toFixed(1) : 'No ratings';
 
-        const result = await res.json();
-        if (res.ok) {
-          alert("Rating saved successfully.");
-          closeRatingModal();
-          fetchRecoveryPlan(); // Refresh UI
-        } else {
-          alert(result.error || "Failed to save rating.");
+        const ratingSpan = document.querySelector(`span[data-exercise-id="${exerciseId}"]`);
+        if (ratingSpan) {
+          ratingSpan.textContent = `(Rating: ${avgRating})`;
         }
-      } catch (err) {
-        console.error("Error saving rating:", err);
-        alert("Something went wrong.");
+
+      } else {
+        const result = await res.json();
+        alert(result.error || "Failed to save rating.");
       }
-    });
+    }
+
 
     async function checkRatingExists(exerciseId) {
       try {
         const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
         const ratings = await res.json();
         return ratings.some(r => r.UserId === userId);
-      } catch (err) {
-        return false;
-      }
+      } catch { return false; }
     }
+
+    async function showAllRatings(exerciseId, exerciseName) {
+      const ratingsRes = await fetch(`/api/exercise-ratings/${exerciseId}`);
+      const ratings = await ratingsRes.json();
+
+      const ratingModalContent = document.getElementById("ratingModalContent");
+
+      const reviewsHtml = ratings.length
+        ? ratings.map(r => {
+          const stars = getStarHTML(r.Rating);
+          return `
+          <div style="padding:10px 0; border-bottom:1px solid #ddd;">
+            <div style="font-size: 1.1em; color: #ffc107;">${stars}</div>
+            <div style="margin-top: 5px;">${r.Comment || '<em>No comment</em>'}</div>
+            <div style="text-align: right; font-style: italic; color: #555;">– ${r.User?.FirstName || 'Anonymous'}</div>
+          </div>
+        `;
+        }).join('')
+        : '<p>No ratings available.</p>';
+
+      ratingModalContent.innerHTML = `
+    <h3>All Ratings for: ${exerciseName}</h3>
+    <div style="max-height: 300px; overflow-y: auto;">
+      ${reviewsHtml}
+    </div>
+    <button class="button" onclick="closeRatingModal()" style="margin-top: 10px;">Close</button>
+  `;
+
+      document.getElementById("ratingModal").style.display = "block";
+    }
+
+    function getStarHTML(rating) {
+      const rounded = Math.round(rating * 2) / 2;
+      const fullStars = Math.floor(rounded);
+      const halfStar = rounded % 1 !== 0;
+      const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+      return '★'.repeat(fullStars) +
+        (halfStar ? '⯪' : '') +
+        '☆'.repeat(emptyStars);
+    }
+
+    function closeRatingModal() {
+      document.getElementById("ratingModal").style.display = "none";
+      document.getElementById("ratingModalContent").innerHTML = "";
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.opacity = "1";
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+      }, 2500);
+    }
+
 
     fetchRecoveryPlan();
   </script>
+  <div id="toast" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #28a745;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 1000;
+"></div>
 </body>
 
 </html>
