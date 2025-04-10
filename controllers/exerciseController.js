@@ -110,3 +110,21 @@ exports.getMuscleGroups = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+// New: Get exercises by body part
+exports.getExercisesByBodyPart = async (req, res) => {
+  try {
+    const { bodyPart } = req.params;
+    // Adjust the property name to match your database schema (e.g., BodyPart vs. bodyPart)
+    const exercises = await Exercise.findAll({
+      where: { BodyPart: bodyPart }
+    });
+    if (!exercises.length) {
+      return res.status(404).json({ message: "No exercises found for this body part" });
+    }
+    res.json(exercises);
+  } catch (error) {
+    console.error("Failed to fetch exercises by body part:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};

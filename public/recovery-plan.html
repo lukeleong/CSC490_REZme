@@ -193,33 +193,35 @@
     }
 
     async function fetchExercises(planId) {
-  const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
-  const exercises = await res.json();
-  const container = document.getElementById("exercisesContainer");
-  container.innerHTML = "";
+      const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+      const exercises = await res.json();
+      const container = document.getElementById("exercisesContainer");
+      container.innerHTML = "";
 
-  if (!exercises.length) {
-    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-    return;
-  }
+      if (!exercises.length) {
+        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+        return;
+      }
 
-  for (const ex of exercises) {
-    // Fetch completions for the user (this may return all completions for the user)
-    const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
-    const allCompletions = await completionsRes.json();
+      for (const ex of exercises) {
+        // Fetch completions for the user
+        const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
+        const allCompletions = await completionsRes.json();
 
-    // Filter completions to include only those for the current exercise
-    const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
+        // Now filter completions by the specific exercise and recovery plan
+        const completionsForExercise = allCompletions.filter(c =>
+          c.ExerciseId === ex.ExerciseId && c.PlanId == planId
+        );
 
-    // Get the highest progress value among completions for this exercise, or default to 0
-    const highestProgress = completionsForExercise.length > 0
-      ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
-      : 0;
+        // Get the highest progress value among completions for this exercise, or default to 0
+        const highestProgress = completionsForExercise.length > 0
+          ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
+          : 0;
 
-    // Create the exercise element with highest progress displayed on the right.
-    const div = document.createElement("div");
-    div.className = "exercise";
-    div.innerHTML = `
+        // Create the exercise element with highest progress displayed on the right.
+        const div = document.createElement("div");
+        div.className = "exercise";
+        div.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center;">
          <h3 style="margin:0;">${ex.ExerciseName}</h3>
          <div style="font-weight: bold;">${highestProgress}%</div>
@@ -230,9 +232,10 @@
       <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
       <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
     `;
-    container.appendChild(div);
-  }
-}
+        container.appendChild(div);
+      }
+    }
+
 
     async function openRatingModal(exerciseId) {
       document.getElementById("ratingExerciseId").value = exerciseId;

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise Detail</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .back-button {
+        display: inline-block;
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .detail-item {
+        margin-bottom: 10px;
+      }
+      .detail-label {
+        font-weight: bold;
+      }
+      .ratings-section {
+        margin-top: 30px;
+      }
+      .rating {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #f9f9f9;
+      }
+      .rating .rating-user {
+        font-weight: bold;
+      }
+      .rating .rating-comment {
+        margin-top: 5px;
+      }
+      .rating .rating-date {
+        font-size: 12px;
+        color: #555;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="exercise-list.html" class="back-button">Back to Exercise List</a>
+      <h1>Exercise Detail</h1>
+      <div id="exerciseDetail">
+        <!-- Exercise details will be loaded here -->
+        <p>Loading exercise details...</p>
+      </div>
+      <div class="ratings-section">
+        <h2>Exercise Ratings</h2>
+        <div id="ratingsContainer">
+          <p>Loading ratings...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Helper to get query parameter values
+      function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      }
+
+      const exerciseId = getQueryParam('exerciseId');
+
+      if (!exerciseId) {
+        document.getElementById('exerciseDetail').innerHTML = '<p>Error: No exerciseId provided in URL.</p>';
+      } else {
+        // Fetch exercise details using the API endpoint
+        fetch(`/api/exercises/${exerciseId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch exercise details.');
+            }
+            return response.json();
+          })
+          .then(exercise => {
+            // Build the HTML for exercise details (do not show the Public field)
+            const detailHTML = `
+              <div class="detail-item"><span class="detail-label">Exercise Name:</span> ${exercise.ExerciseName}</div>
+              <div class="detail-item"><span class="detail-label">Target Muscle Group:</span> ${exercise.TargetMuscleGroup || 'N/A'}</div>
+              <div class="detail-item"><span class="detail-label">Equipment:</span> ${exercise.Equipment || 'N/A'}</div>
+              <div class="detail-item"><span class="detail-label">Difficulty:</span> ${exercise.Difficulty || 'N/A'}</div>
+              ${exercise.VideoGuide ? `<div class="detail-item"><span class="detail-label">Video Guide:</span> <a href="${exercise.VideoGuide}" target="_blank">Watch Video</a></div>` : ''}
+              ${exercise.Sets ? `<div class="detail-item"><span class="detail-label">Sets:</span> ${exercise.Sets}</div>` : ''}
+              ${exercise.Reps ? `<div class="detail-item"><span class="detail-label">Reps:</span> ${exercise.Reps}</div>` : ''}
+              ${exercise.TargetTime ? `<div class="detail-item"><span class="detail-label">Target Time (secs):</span> ${exercise.TargetTime}</div>` : ''}
+              ${exercise.RestTime ? `<div class="detail-item"><span class="detail-label">Rest Time (secs):</span> ${exercise.RestTime}</div>` : ''}
+              ${exercise.Instruction ? `<div class="detail-item"><span class="detail-label">Instructions:</span> ${exercise.Instruction}</div>` : ''}
+            `;
+            document.getElementById('exerciseDetail').innerHTML = detailHTML;
+          })
+          .catch(error => {
+            document.getElementById('exerciseDetail').innerHTML = `<p>Error: ${error.message}</p>`;
+          });
+
+        // Fetch exercise ratings from the corresponding API endpoint
+        fetch(`/api/exercise-ratings/${exerciseId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch exercise ratings.');
+            }
+            return response.json();
+          })
+          .then(ratings => {
+            const ratingsContainer = document.getElementById('ratingsContainer');
+            ratingsContainer.innerHTML = "";
+            if (!ratings.length) {
+              ratingsContainer.innerHTML = "<p>No ratings found for this exercise.</p>";
+              return;
+            }
+            ratings.forEach(rating => {
+              // Show the rating's score, comment, and date. Don't display a Public field.
+              const userName = rating.User
+                ? `${rating.User.FirstName} ${rating.User.LastName}`.trim()
+                : 'Anonymous';
+              const ratingHTML = `
+                <div class="rating">
+                  <div class="rating-user">${userName}</div>
+                  <div class="rating-score"><strong>Rating:</strong> ${rating.Rating}</div>
+                  ${rating.Comment ? `<div class="rating-comment"><strong>Comment:</strong> ${rating.Comment}</div>` : ''}
+                  <div class="rating-date"><strong>Date:</strong> ${new Date(rating.createdAt).toLocaleDateString()}</div>
+                </div>
+              `;
+              ratingsContainer.innerHTML += ratingHTML;
+            });
+          })
+          .catch(error => {
+            document.getElementById('ratingsContainer').innerHTML = `<p>Error: ${error.message}</p>`;
+          });
+      }
+    </script>
+  </body>
+</html>

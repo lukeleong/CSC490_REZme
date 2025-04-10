@@ -1,92 +1,65 @@
 const { RecoveryPlan, ExerciseCompletion, RecoveryPlanExercise } = require("../models");
 
 async function updatePlanProgress(planId) {
+  // Get all completions for the plan
   const completions = await ExerciseCompletion.findAll({ where: { PlanId: planId } });
-  if (!completions.length) return;
-
-  const plannedExercises = await RecoveryPlanExercise.count({ where: { RecoveryPlanId: planId } });
-
-  let totalAdjustedProgress = 0;
-  let totalCompletionRate = 0;
-  let totalDifficulty = 0;
-  let exerciseCount = 0;
-  let completedExercises = 0; // Keep track of completed exercises
-
+  
   // Group completions by ExerciseId
   const exerciseGroups = {};
-
   completions.forEach(completion => {
-    const { ExerciseId, ProgressValue, DifficultyRating } = completion;
-
+    const { ExerciseId, ProgressValue } = completion;
     if (!exerciseGroups[ExerciseId]) {
       exerciseGroups[ExerciseId] = [];
     }
     exerciseGroups[ExerciseId].push(completion);
   });
-
-  // Process each exercise's completion data
-  for (const exerciseId in exerciseGroups) {
-    const exerciseCompletions = exerciseGroups[exerciseId];
-
-    // Calculate the average ProgressValue for all completions of the exercise
-    const avgProgressValue = exerciseCompletions.reduce((acc, cur) => acc + cur.ProgressValue, 0) / exerciseCompletions.length;
-
-    // Calculate completion rate based on the average progress value
-    const completionRate = avgProgressValue < 75 ? avgProgressValue / 75 : 1; // Scaled up to 100% if Progress is 75 or above
-
-    // Sum the values for weighted calculation
-    totalAdjustedProgress += avgProgressValue;
-    totalCompletionRate += completionRate;
-    totalDifficulty += exerciseCompletions[0].DifficultyRating || 0; // Assuming the difficulty is the same for all completions of a specific exercise
-    exerciseCount++;
-
-    // Increment the completed exercises counter
-    completedExercises++;
-  }
-
-  // Calculate averages for all exercises
-  const avgProgress = totalAdjustedProgress / exerciseCount;
-  const avgCompletionRate = totalCompletionRate / exerciseCount; // Average completion rate across all exercises
-
-  // Difficulty penalty (exponentially scaled based on difficulty)
-  const avgDifficulty = totalDifficulty / exerciseCount;
-  const difficultyPenaltyFactor = avgDifficulty >= 3
-    ? Math.pow((4.5 - avgDifficulty) / 4.5, 1.5)
-    : 1;
-
-  const adjustedProgress = avgProgress * difficultyPenaltyFactor;
-
-  // Calculate progress status as the average of the adjusted progress and completion rate
-  const progressStatus = (adjustedProgress + (avgCompletionRate * 100)) / 2;
-
-  // Calculate completion rate for the entire plan
-  const completionRateForPlan = completedExercises / plannedExercises;
-  const cappedCompletionRate = Math.min(completionRateForPlan, 1);
-
-  // Ensure the progress can reach 100% if both conditions are met:
-  if (progressStatus < 100 && cappedCompletionRate >= 0.95 && adjustedProgress >= 90) {
-    progressStatus = 100; // Mark as complete if both conditions are met
-  }
-
-  let feedback = "You're making good progress.";
-  if (avgDifficulty >= 3.5) {
-    feedback = "Difficulty is high. Consider easier exercises or reduce intensity.";
-  } else if (avgCompletionRate < 0.5) {
-    feedback = "Try to stay consistent with your exercises.";
-  } else if (progressStatus >= 100) {
+  
+  // Get all planned exercises for the recovery plan.
+  // This will include exercises even if they have no completion logs.
+  const plannedExercises = await RecoveryPlanExercise.findAll({ where: { RecoveryPlanId: planId } });
+  
+  // If there are no planned exercises, nothing to update.
+  if (!plannedExercises.length) return;
+  
+  let sumMaxProgress = 0;
+  let countExercises = plannedExercises.length;
+  
+  // Loop through each planned exercise and determine its progress
+  plannedExercises.forEach(planExercise => {
+    const exerciseId = planExercise.ExerciseId;
+    let maxProgress = 0;
+    if (exerciseGroups[exerciseId]) {
+      // If there are completions for this exercise, pick the highest ProgressValue
+      maxProgress = Math.max(...exerciseGroups[exerciseId].map(c => c.ProgressValue));
+    }
+    // Otherwise, keep maxProgress = 0 for exercises without completions
+    sumMaxProgress += maxProgress;
+  });
+  
+  // Calculate the average status score, ensuring it doesn't exceed 100.
+  const averageMaxProgress = sumMaxProgress / countExercises;
+  let progressStatus = averageMaxProgress > 100 ? 100 : averageMaxProgress;
+  
+  // Optionally, set feedback based on the calculated progress.
+  let feedback = "Keep it up!";
+  if (progressStatus >= 100) {
     feedback = "Recovery complete! Great job.";
+  } else if (progressStatus < 50) {
+    feedback = "Try to improve consistency.";
   }
-
+  
+  // Build update data for the recovery plan.
   const updateData = {
-    ProgressStatus: Math.min(100, Math.round(progressStatus)),
+    ProgressStatus: Math.round(progressStatus),
     ProgressFeedback: feedback
   };
-
+  
+  // If progress reaches 100, mark the plan as complete.
   if (progressStatus >= 100) {
     updateData.IsActive = false;
     updateData.EndDate = new Date();
   }
-
+  
   await RecoveryPlan.update(updateData, { where: { PlanId: planId } });
 }
 
