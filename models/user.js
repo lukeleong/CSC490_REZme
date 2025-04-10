@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const ExerciseRatings = require('./ExerciseRating'); 
 
 const User = sequelize.define("User", {
   UserId: {
@@ -68,6 +69,13 @@ const User = sequelize.define("User", {
     type: DataTypes.DATE, 
     allowNull: true }
 
+    
 });
+
+User.hasMany(ExerciseRatings, {
+  foreignKey: 'UserId',
+  onDelete: 'CASCADE', // Automatically delete related ratings
+});
+
 
 module.exports = User;

@@ -2,7 +2,6 @@ const { ExerciseCompletion, RecoveryPlanExercise, Exercise } = require("../model
 const { updatePlanProgress } = require("../services/recoveryPlanUpdater");
 const calculateProgressValue = require('../services/calculateProgressValue');
 
-
 exports.createExerciseCompletion = async (req, res) => {
   try {
     const { PlanId, ExerciseId, SetsCompleted, RepsCompleted, TimeTaken } = req.body;
