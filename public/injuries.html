@@ -1,172 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Your Injuries - REZme</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .injury {
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: #fff;
-        }
-
-        .button {
-            background: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-
-        .button.green {
-            background: #28a745;
-        }
-
-        .button.orange {
-            background: #fd7e14;
-        }
-
-        .button-group {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        text-align: center;
+      }
+      .injury {
+        padding: 15px;
+        border: 1px solid #ddd;
+        margin: 10px 0;
+        border-radius: 5px;
+        background: #fff;
+      }
+      .button {
+        background: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+      /* Gray button style for completed injuries */
+      .button.gray {
+        background: #6c757d;
+      }
+      .button.green {
+        background: #28a745;
+      }
+      .button.orange {
+        background: #fd7e14;
+      }
+      .button-group {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      /* Styles for the toggle button for completed injuries */
+      #toggleCompleted {
+        display: block;
+        margin: 10px 0;
+        width: auto;
+      }
     </style>
-</head>
-
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <a href="/dashboard.html" class="button">Back to Dashboard</a>
-            <h1>Your Injuries</h1>
-        </div>
-        <div id="injuryContainer">
-            <p>Loading injuries...</p>
-        </div>
+      <div class="header">
+        <a href="/dashboard.html" class="button">Back to Dashboard</a>
+        <h1>Your Injuries</h1>
+      </div>
+      <div id="injuryContainer">
+        <p>Loading injuries...</p>
+      </div>
+      <!-- Toggle button for completed injuries -->
+      <button id="toggleCompleted" class="button" onclick="toggleCompletedInjuries()" style="display: none;">Show Completed Injuries</button>
+      <!-- Container for completed injuries (hidden by default) -->
+      <div id="completedInjuryContainer" style="display: none;"></div>
     </div>
 
     <script>
-        function getUserIdFromToken() {
-            const token = localStorage.getItem("token");
-            if (!token) return null;
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                return payload.id || payload.UserId || payload.user_id;
-            } catch (err) {
-                console.error("Failed to decode token:", err);
-                return null;
-            }
-        }
+      function getUserIdFromToken() {
+          const token = localStorage.getItem("token");
+          if (!token) return null;
+          try {
+              const payload = JSON.parse(atob(token.split('.')[1]));
+              return payload.id || payload.UserId || payload.user_id;
+          } catch (err) {
+              console.error("Failed to decode token:", err);
+              return null;
+          }
+      }
 
-        function goToRecoveryPlan(planId) {
-            window.location.href = `/recovery-plan.html?planId=${planId}`;
-        }
+      // Updated checkRecoveryPlan to return the entire plan object (if any) so we can check if it's active
+      async function checkRecoveryPlan(userId, injuryId) {
+          try {
+              const res = await fetch(`/api/recovery-plans?user_id=${userId}`);
+              const plans = await res.json();
+              // Look for a plan that matches this injury
+              const match = plans.find(plan => plan.InjuryId === injuryId);
+              return match ? match : null;
+          } catch (err) {
+              console.error("Error checking recovery plan:", err);
+              return null;
+          }
+      }
 
-        function goToPlanMaker(injuryId) {
-            window.location.href = `/recoveryplan-maker.html?injury_id=${injuryId}`;
-        }
+      async function fetchInjuries() {
+          const userId = getUserIdFromToken();
+          if (!userId) {
+              document.getElementById("injuryContainer").innerHTML = "<p>Please log in to view injuries.</p>";
+              return;
+          }
 
-        function goToUpdateInjury(injuryId, injuryData) {
-            // Store injury data in session storage
-            sessionStorage.setItem('updateInjuryData', JSON.stringify(injuryData));
-            window.location.href = `/update-injury.html?injury_id=${injuryId}`;
-        }
+          try {
+              const response = await fetch(`/api/injuries?user_id=${userId}`);
+              const injuries = await response.json();
+              const container = document.getElementById("injuryContainer");
+              container.innerHTML = "";
+              
+              if (!injuries.length) {
+                  container.innerHTML = "<p>No injuries logged.</p>";
+                  return;
+              }
+              
+              // Arrays to collect noncompleted and completed injuries
+              let nonCompletedInjuries = [];
+              let completedInjuries = [];
+              
+              // Process each injury and check its recovery plan status
+              for (const injury of injuries) {
+                  const plan = await checkRecoveryPlan(userId, injury.InjuryId);
+                  // Consider an injury as completed if a recovery plan exists and is not active
+                  if (plan && plan.IsActive === false) {
+                      injury.plan = plan;
+                      completedInjuries.push(injury);
+                  } else {
+                      injury.plan = plan;
+                      nonCompletedInjuries.push(injury);
+                  }
+              }
+              
+              // Render noncompleted injuries first
+              nonCompletedInjuries.forEach(injury => {
+                  const div = document.createElement("div");
+                  div.className = "injury";
+                  div.innerHTML = `
+                      <p><strong>Type:</strong> ${injury.InjuryType}</p>
+                      <p><strong>Location:</strong> ${injury.InjuryLocation}</p>
+                      <p><strong>Severity:</strong> ${injury.InjurySeverity}</p>
+                      <p><strong>Pain Level:</strong> ${injury.PainLevel}</p>
+                      <p><strong>Mobility Level:</strong> ${injury.MobilityLevel}</p>
+                      <p><strong>Start Date:</strong> ${new Date(injury.StartDate).toDateString()}</p>
+                      <div class="button-group">
+                          ${
+                            injury.plan
+                            ? `<button class="button" onclick="goToRecoveryPlan(${injury.plan.PlanId})">View Recovery Plan</button>`
+                            : `<button class="button green" onclick="goToPlanMaker(${injury.InjuryId})">Create Recovery Plan</button>`
+                          }
+                          <button class="button orange" onclick="goToUpdateInjury(${injury.InjuryId}, ${JSON.stringify(injury).replace(/"/g, '&quot;')})">Update Injury</button>
+                          <button class="button" onclick="goToJournal(${injury.InjuryId})">View Journal</button>
+                      </div>
+                  `;
+                  container.appendChild(div);
+              });
+              
+              // Render completed injuries in a separate container if any exist
+              const completedContainer = document.getElementById("completedInjuryContainer");
+              completedContainer.innerHTML = "";
+              if (completedInjuries.length) {
+                  completedInjuries.forEach(injury => {
+                      const div = document.createElement("div");
+                      div.className = "injury";
+                      div.innerHTML = `
+                          <p><strong>Type:</strong> ${injury.InjuryType}</p>
+                          <p><strong>Location:</strong> ${injury.InjuryLocation}</p>
+                          <p><strong>Severity:</strong> ${injury.InjurySeverity}</p>
+                          <p><strong>Pain Level:</strong> ${injury.PainLevel}</p>
+                          <p><strong>Mobility Level:</strong> ${injury.MobilityLevel}</p>
+                          <p><strong>Start Date:</strong> ${new Date(injury.StartDate).toDateString()}</p>
+                          <div class="button-group">
+                              <!-- Completed injuries: View Recovery Plan button is gray. Remove Update Injury button -->
+                              <button class="button gray" onclick="goToRecoveryPlan(${injury.plan.PlanId})">View Recovery Plan</button>
+                              <button class="button gray" onclick="goToJournal(${injury.InjuryId})">View Journal</button>
+                          </div>
+                      `;
+                      completedContainer.appendChild(div);
+                  });
+                  // Show the toggle button for completed injuries
+                  document.getElementById("toggleCompleted").style.display = "block";
+              } else {
+                  // Hide toggle button if there are no completed injuries
+                  document.getElementById("toggleCompleted").style.display = "none";
+              }
+          } catch (error) {
+              console.error("Failed to fetch injuries:", error);
+              document.getElementById("injuryContainer").innerHTML = "<p>Error loading injuries.</p>";
+          }
+      }
 
-        async function fetchInjuries() {
-            const userId = getUserIdFromToken();
-            if (!userId) {
-                document.getElementById("injuryContainer").innerHTML = "<p>Please log in to view injuries.</p>";
-                return;
-            }
+      function goToRecoveryPlan(planId) {
+          window.location.href = `/recovery-plan.html?planId=${planId}`;
+      }
 
-            try {
-                const response = await fetch(`/api/injuries?user_id=${userId}`);
-                const injuries = await response.json();
+      function goToPlanMaker(injuryId) {
+          window.location.href = `/recoveryplan-maker.html?injury_id=${injuryId}`;
+      }
 
-                const container = document.getElementById("injuryContainer");
-                container.innerHTML = "";
+      function goToUpdateInjury(injuryId, injuryData) {
+          sessionStorage.setItem('updateInjuryData', JSON.stringify(injuryData));
+          window.location.href = `/update-injury.html?injury_id=${injuryId}`;
+      }
 
-                if (!injuries.length) {
-                    container.innerHTML = "<p>No injuries logged.</p>";
-                    return;
-                }
+      function goToJournal(injuryId) {
+          window.location.href = `/injury-journal.html?injury_id=${injuryId}`;
+      }
 
-                for (const injury of injuries) {
-                    const hasPlan = await checkRecoveryPlan(userId, injury.InjuryId);
+      // Toggle the display of completed injuries
+      function toggleCompletedInjuries() {
+          const completedContainer = document.getElementById("completedInjuryContainer");
+          const toggleBtn = document.getElementById("toggleCompleted");
+          if (completedContainer.style.display === "none") {
+              completedContainer.style.display = "block";
+              toggleBtn.textContent = "Hide Completed Injuries";
+          } else {
+              completedContainer.style.display = "none";
+              toggleBtn.textContent = "Show Completed Injuries";
+          }
+      }
 
-                    const div = document.createElement("div");
-                    div.className = "injury";
-                    div.innerHTML = `
-                        <p><strong>Type:</strong> ${injury.InjuryType}</p>
-                        <p><strong>Location:</strong> ${injury.InjuryLocation}</p>
-                        <p><strong>Severity:</strong> ${injury.InjurySeverity}</p>
-                        <p><strong>Pain Level:</strong> ${injury.PainLevel}</p>
-                        <p><strong>Mobility Level:</strong> ${injury.MobilityLevel}</p>
-                        <p><strong>Start Date:</strong> ${new Date(injury.StartDate).toDateString()}</p>
-                        <div class="button-group">
-                            ${hasPlan
-                                ? `<button class="button" onclick="goToRecoveryPlan(${hasPlan})">View Recovery Plan</button>`
-                                : `<button class="button green" onclick="goToPlanMaker(${injury.InjuryId})">Create Recovery Plan</button>`
-                            }
-                            <button class="button orange" onclick="goToUpdateInjury(${injury.InjuryId}, ${JSON.stringify(injury).replace(/"/g, '&quot;')})">Update Injury</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                }
-            } catch (error) {
-                console.error("Failed to fetch injuries:", error);
-                document.getElementById("injuryContainer").innerHTML = "<p>Error loading injuries.</p>";
-            }
-        }
-
-        async function checkRecoveryPlan(userId, injuryId) {
-            try {
-                const res = await fetch(`/api/recovery-plans?user_id=${userId}`);
-                const plans = await res.json();
-                const match = plans.find(plan => plan.InjuryId === injuryId);
-                return match ? match.PlanId : null;
-            } catch (err) {
-                console.error("Error checking recovery plan:", err);
-                return false;
-            }
-        }
-
-        fetchInjuries();
+      fetchInjuries();
     </script>
-</body>
-
+  </body>
 </html>

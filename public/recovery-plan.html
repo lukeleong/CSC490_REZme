@@ -172,6 +172,7 @@
 
       const res = await fetch(`/api/recovery-plans/${planId}`);
       const plan = await res.json();
+      window.currentPlan = plan;
 
       document.getElementById("injuryType").innerText = plan.Injury?.InjuryType || "N/A";
       document.getElementById("recoveryTitle").innerText = `Recovery Plan – ${plan.Injury?.InjuryType || "Unknown Injury"}`;
@@ -229,7 +230,7 @@
       <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
       <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
       ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-      <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
+      ${window.currentPlan && window.currentPlan.IsActive ? `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>` : ''}
       <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
     `;
         container.appendChild(div);

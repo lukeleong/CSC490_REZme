@@ -31,24 +31,8 @@ const ProgressTracker = sequelize.define('ProgressTracker', {
         type: DataTypes.INTEGER, // Scale: 1–10
         allowNull: false,
     },
-    Strength: {
-        type: DataTypes.INTEGER, // Optional, scale: 1–10
-        allowNull: true,
-    },
-    Endurance: {
-        type: DataTypes.INTEGER, // Optional, scale: 1–10
-        allowNull: true,
-    },
-    Mobility: {
-        type: DataTypes.INTEGER, // scale: 1–10
-        allowNull: true,
-    },
     ProgressNotes: {
         type: DataTypes.TEXT, // Additional notes for context
-        allowNull: true,
-    },
-    ProgressFeedback: {
-        type: DataTypes.TEXT, // User feedback for recovery progress
         allowNull: true,
     },
     RecordedAt: {
