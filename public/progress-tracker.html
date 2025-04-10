@@ -4,61 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progress Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
-        body {
-           font-family: 'Segoe UI', 'Nunito Sans', Tahoma, Geneva, Verdana, sans-serif;
+       body {
+            font-family: 'Segoe UI', 'Nunito Sans', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.7;
-            color: var(--text-muted);
-
-            background-image: url('images/backgroundimage.jpg'); 
-
-
+            background-image: url('images/backgroundimage2.jpg');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: var(--light-green-bg-start); /* Fallback */
-
+            background-color: #f4f4f4; /* Fallback */
             padding: 50px 20px;
             min-height: 100vh;
-            overflow-x: hidden;
             text-align: center;
         }
+
         h1 {
-            color: #198754; /* Primary green heading */
+            color: #17a2b8; /* Primary turquoise heading */
             font-weight: 700;
             margin-bottom: 15px;
             font-size: 2rem;
-            text-transform: none;
-            letter-spacing: -0.5px;
             text-align: center;
-            /* Removed text shadow, less effective on light bg */
         }
 
-
-        /* semi-transparent form*/
+        /* Semi-transparent form */
         form {
             max-width: 500px;
             margin: 0 auto;
-            padding: 30px 25px; /* Match padding from .useful-element */
-            background: rgba(255, 255, 255, 0.7); /* White with 70% opacity, matching semi-transparency */
-            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle light grey border */
-            border-radius: 12px; /* Match border-radius */
-            backdrop-filter: blur(4px); /* Frosted glass effect */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Very subtle shadow */
-            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+            padding: 30px 25px; 
+            background: rgba(255, 255, 255, 0.7); 
+            border: 1px solid rgba(0, 0, 0, 0.08); 
+            border-radius: 12px; 
+            backdrop-filter: blur(4px); 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; 
         }
 
-        /* Hover effect to match .useful-element:hover */
         form:hover {
-            transform: translateY(-5px); /* Slight lift on hover */
-            background-color: rgba(255, 255, 255, 0.85); /* Slightly less transparent */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Slightly stronger shadow */
+            transform: translateY(-5px); 
+            background-color: rgba(255, 255, 255, 0.85); 
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); 
         }
 
         .form-group {
             margin-bottom: 15px;
-            color: #046537; /* Primary green heading */
+            color: #17a2b8; /* Primary turquoise text */
         }
 
         label {
@@ -67,30 +59,26 @@
         }
 
         input[type="number"], textarea {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-        border: 1px solid #198754;
-        border-radius: 4px;
-        background: linear-gradient(145deg, #ffffff, #e6f4ea);
-        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1),
-                    inset -2px -2px 5px rgba(255, 255, 255, 0.7),
-                    0 4px 10px rgba(25, 135, 84, 0.2);
-        transition: all 0.3s ease;
-        outline: none;
+            width: 100%;
+            padding: 10px 12px; 
+            box-sizing: border-box;
+            border: 2px solid rgba(23, 162, 184, 0.4); /* Transparent turquoise border */
+            border-radius: 8px;
+            background: linear-gradient(145deg, #ffffff, #e6f4ea); 
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+                        inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            outline: none;
         }
 
         input[type="number"]:hover, textarea:hover {
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.15),
-                        inset -2px -2px 5px rgba(255, 255, 255, 0.8),
-                        0 6px 12px rgba(25, 135, 84, 0.25);
+            border-color: #17a2b8; 
+            box-shadow: 0 6px 12px rgba(23, 162, 184, 0.2); 
         }
 
         input[type="number"]:focus, textarea:focus {
-            border-color: #157347;
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2),
-                        inset -2px -2px 5px rgba(255, 255, 255, 0.9),
-                        0 6px 15px rgba(25, 135, 84, 0.3);
+            border-color: #1770b8; 
+            box-shadow: 0 6px 15px rgba(23, 112, 184, 0.3); 
             background: #ffffff;
         }
 
@@ -103,31 +91,36 @@
         }
 
         input[type="number"]::placeholder, textarea::placeholder {
-            color: #198754;
+            color: #17a2b8;
             opacity: 0.7;
         }
+
         button {
-            padding: 10px 20px;
-            background-color: #198754;
+            padding: 12px 28px;
+            background-color: #17a2b8;
             color: white;
-            border: none;
-            border-radius: 4px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease; /* Broader transition for all properties */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
         }
 
         button:hover {
-            background-color: #157347;
-            transform: translateY(-2px); /* Slight lift */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+            background-color: #1770b8;
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
         }
     </style>
 </head>
 <body>
-<h1>Progress Tracker Form</h1>
+
 
 <form id="progressForm">
+    <h1><i class="fa-solid fa-clipboard-check"></i>
+         Progress Tracker Form</h1>
     <div class="form-group">
         <label for="UserId">User ID:</label>
         <input type="number" id="UserId" name="UserId" value="1" disabled>
