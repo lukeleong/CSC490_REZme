@@ -28,14 +28,6 @@
 
     .progress-bar {
       width: 100%;
-      background-color: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-
-    .progress-bar {
-      width: 100%;
       background-color: #e0e0e0;
       border-radius: 10px;
       overflow: hidden;
@@ -113,26 +105,6 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
-
-    /* New styles for the feedback form */
-    #exCompleteModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    #exCompleteModalContent {
-      background: white;
-      max-width: 400px;
-      margin: 100px auto;
-      padding: 20px;
-      border-radius: 8px;
-      position: relative;
-    }
   </style>
 </head>
 
@@ -180,26 +152,6 @@
     </div>
   </div>
 
-  <div id="exCompleteModal">
-    <div id="exCompleteModalContent">
-      <h3>Exercise Complete</h3>
-      <form id="exerciseCompleteForm">
-        <input type="hidden" id="feedbackExerciseId">
-        <input type="hidden" id="feedbackPlanId">
-        <div class="input-group">
-          <label for="setsCompleted">Sets Completed:</label>
-          <input type="number" id="setsCompleted" name="setsCompleted" required>
-        </div>
-        <div class="input-group">
-          <label for="repsCompleted">Reps Completed:</label>
-          <input type="number" id="repsCompleted" name="repsCompleted" required>
-        </div>
-        <button type="submit" class="button" id="feedbackSubmitButton">Submit</button>
-        <button type="button" class="button" style="background: #ccc;" onclick="closeExCimpleteModal()">Cancel</button>
-      </form>
-    </div>
-  </div>
-
   <script>
     const userId = getUserIdFromToken();
 
@@ -241,46 +193,46 @@
     }
 
     async function fetchExercises(planId) {
-      const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
-      const exercises = await res.json();
-      const container = document.getElementById("exercisesContainer");
-      container.innerHTML = "";
+  const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+  const exercises = await res.json();
+  const container = document.getElementById("exercisesContainer");
+  container.innerHTML = "";
 
-      if (!exercises.length) {
-        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-        return;
-      }
+  if (!exercises.length) {
+    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+    return;
+  }
 
-      for (const ex of exercises) {
-        const ratingsRes = await fetch(`/api/exercise-ratings/${ex.ExerciseId}`);
-        const allRatings = await ratingsRes.json();
-        const userRating = allRatings.find(r => r.UserId === userId);
-        const avg = allRatings.length > 0
-          ? (allRatings.reduce((sum, r) => sum + r.Rating, 0) / allRatings.length).toFixed(1)
-          : "No ratings";
+  for (const ex of exercises) {
+    // Fetch completions for the user (this may return all completions for the user)
+    const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
+    const allCompletions = await completionsRes.json();
 
-        const div = document.createElement("div");
-        div.className = "exercise";
-        div.innerHTML = `
-          <h3>${ex.ExerciseName} <small style="font-weight:normal;">(${avg === "No ratings"
-            ? avg
-            : `<a href="exercise-rating.html?exerciseId=${ex.ExerciseId}" style="text-decoration:none;">Avg: ${avg}★</a>`
-          })</small></h3>
-          <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-          <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-          ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-          <button class="button" onclick="markExerciseComplete(${ex.ExerciseId}, ${planId})">Complete</button>
-          <button class="button" style="background: ${userRating ? "#6c757d" : "#007bff"};" onclick="openRatingModal(${ex.ExerciseId})">${userRating ? "Change Rating" : "Rate"}</button>
-        `;
-        container.appendChild(div);
-      }
-    }
+    // Filter completions to include only those for the current exercise
+    const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
 
-    async function markExerciseComplete(exerciseId, planId) {
-      document.getElementById("feedbackExerciseId").value = exerciseId;
-      document.getElementById("feedbackPlanId").value = planId;
-      document.getElementById("exCompleteModal").style.display = "block";
-    }
+    // Get the highest progress value among completions for this exercise, or default to 0
+    const highestProgress = completionsForExercise.length > 0
+      ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
+      : 0;
+
+    // Create the exercise element with highest progress displayed on the right.
+    const div = document.createElement("div");
+    div.className = "exercise";
+    div.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+         <h3 style="margin:0;">${ex.ExerciseName}</h3>
+         <div style="font-weight: bold;">${highestProgress}%</div>
+      </div>
+      <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+      <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+      ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+      <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
+      <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
+    `;
+    container.appendChild(div);
+  }
+}
 
     async function openRatingModal(exerciseId) {
       document.getElementById("ratingExerciseId").value = exerciseId;
@@ -323,10 +275,6 @@
       document.getElementById("ratingModal").style.display = "none";
     }
 
-    function closeExCimpleteModal() {
-      document.getElementById("exCompleteModal").style.display = "none";
-    }
-
     document.getElementById("ratingForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
@@ -363,42 +311,6 @@
         alert("Something went wrong.");
       }
     });
-
-      document.getElementById("exerciseCompleteForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const exerciseId = document.getElementById("feedbackExerciseId").value;
-      const planId = document.getElementById("feedbackPlanId").value;
-      const setsCompleted = parseInt(document.getElementById("setsCompleted").value);
-      const repsCompleted = parseInt(document.getElementById("repsCompleted").value);
-
-      const payload = {
-          PlanId: planId,
-          ExerciseId: exerciseId,
-          SetsCompleted: setsCompleted,
-          RepsCompleted: repsCompleted,
-      };
-
-      try {
-          const res = await fetch("/api/exercise-completions", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-          });
-
-          const result = await res.json();
-          if (res.ok) {
-              alert("Exercise completion data saved successfully.");
-              closeExCimpleteModal();
-              fetchRecoveryPlan(); // Refresh UI
-          } else {
-              alert(result.error || "Failed to save exercise completion data.");
-          }
-      } catch (err) {
-          console.error("Error saving exercise completion data:", err);
-          alert("Something went wrong.");
-      }
-  });
 
     async function checkRatingExists(exerciseId) {
       try {

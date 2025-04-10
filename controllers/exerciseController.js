@@ -74,7 +74,7 @@ exports.deleteExercise = async (req, res) => {
   }
 };
 
-// Get exercise by muscle group
+// Get exercises by muscle group
 exports.getExercisesByMuscleGroup = async (req, res) => {
   try {
     const { muscleGroup } = req.params;
@@ -92,39 +92,6 @@ exports.getExercisesByMuscleGroup = async (req, res) => {
   } catch (error) {
     console.error("Failed to fetch exercises by muscle group:", error);
     res.status(500).json({ error: "Server error" });
-  }
-};
-
-// Get exercises from external API by body part
-exports.getExercisesByBodyPart = async (req, res) => {
-  try {
-    const { bodyPart } = req.params;
-    const API_URL = `https://exercisedb.p.rapidapi.com/exercises/bodyPart/${bodyPart}?limit=10&offset=0`;
-
-    console.log(`Fetching exercises for body part: ${bodyPart}`);
-
-    const response = await fetch(API_URL, {
-        method: "GET",
-        headers: {
-            "x-rapidapi-host": "exercisedb.p.rapidapi.com",
-            "x-rapidapi-key": "2bc91b2016msh93b040a88587a17p1d2e18jsn1bee8209e531", 
-        },
-    });
-
-    console.log("API Response Status:", response.status);
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error("ExerciseDB API Error Response:", errorText);
-        return res.status(response.status).json({ error: errorText });
-    }
-
-    const data = await response.json();
-    console.log("ExerciseDB API Data:", data);
-    res.json(data);
-  } catch (error) {
-      console.error("Error fetching exercises:", error.message);
-      res.status(500).json({ error: "Failed to fetch exercises", details: error.message });
   }
 };
 

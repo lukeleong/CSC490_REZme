@@ -1,116 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercise Detail</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        .exercise-details {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            border-radius: 5px;
-            background: #fff;
-        }
-        .input-group {
-            margin: 10px 0;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            text-align: center;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercise Detail</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1,
+    h2 {
+      text-align: center;
+    }
+
+    .exercise-details {
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin: 10px 0;
+      border-radius: 5px;
+      background: #fff;
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      resize: none;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      text-align: center;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      cursor: pointer;
+      color: #007bff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 280px;
+      background-color: #333;
+      color: #fff;
+      text-align: left;
+      padding: 10px;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      top: -5px;
+      left: 110%;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 13px;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-bottom: 15px;
+      background: #007bff;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Exercise Detail</h1>
-        <div class="exercise-details">
-            <h2>Leg Raises</h2>
-            <p>Sets: 3 | Reps: 15</p>
-            <img src="exercise-placeholder.jpg" alt="Exercise Image" width="100%">
-        </div>
-        
-        <h2>Log Progress</h2>
-        <form id="exerciseForm">
-            <div class="input-group">
-                <label for="setsCompleted">Sets Completed:</label>
-                <input type="number" id="setsCompleted" name="sets_completed" placeholder="Enter sets completed">
-            </div>
-            <div class="input-group">
-                <label for="repsCompleted">Reps Completed:</label>
-                <input type="number" id="repsCompleted" name="reps_completed" placeholder="Enter reps completed">
-            </div>
-            <div class="input-group">
-                <label for="timeTaken">Time Taken (seconds):</label>
-                <input type="number" id="timeTaken" name="time_taken" placeholder="Enter time spent">
-            </div>
-            <div class="input-group">
-                <label for="painLevel">Pain Level (0-10):</label>
-                <input type="number" id="painLevel" name="post_pain_level" min="0" max="10" placeholder="Enter pain level">
-            </div>
-            <div class="input-group">
-                <label for="mobilityLevel">Post Mobility Level (0-10):</label>
-                <input type="number" id="mobilityLevel" name="post_mobility_level" min="0" max="10" placeholder="Enter mobility level">
-            </div>
-            <div class="input-group">
-                <label for="difficultyRating">Difficulty Rating (1-4):</label>
-                <input type="number" id="difficultyRating" name="difficulty_rating" min="1" max="4" placeholder="Enter difficulty rating">
-            </div>
-            <button type="submit" class="button">Complete</button>
-        </form>
-        <p id="message"></p>
+  <a id="backToPlanBtn" href="#" class="back-button">← Back to Recovery Plan</a>
+  <div class="container">
+    <h1>Exercise Detail</h1>
+
+    <!-- Exercise details (without sets and reps) -->
+    <div class="exercise-details" id="exerciseDetails">
+      <p>Loading exercise details...</p>
     </div>
 
-    <script>
-        document.getElementById("exerciseForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+    <h2>Log Progress</h2>
+    <form id="exerciseForm">
+      <!-- Hidden fields to capture plan and exercise IDs from the URL -->
+      <input type="hidden" id="planId" name="PlanId">
+      <input type="hidden" id="exerciseId" name="ExerciseId">
 
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+      <div class="input-group">
+        <label for="timeTaken">
+          Time Taken (seconds):
+          <span class="tooltip">?
+            <span class="tooltiptext">How long you spent doing this exercise, in seconds. (Total Time)</span>
+          </span>
+        </label>
+        <input type="number" id="timeTaken" name="TimeTaken" placeholder="Enter time spent">
+      </div>
 
-            const response = await fetch("/complete-exercise", {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: { "Content-Type": "application/json" }
-            });
+      <div class="input-group">
+        <label for="setsCompleted">
+          Sets Completed:
+          <span class="tooltip">?
+            <span class="tooltiptext">Total number of sets you completed during this session.</span>
+          </span>
+        </label>
+        <input type="number" id="setsCompleted" name="SetsCompleted" placeholder="Enter sets completed">
+      </div>
 
-            const result = await response.json();
-            document.getElementById("message").innerText = result.message;
+      <div class="input-group">
+        <label for="repsCompleted">
+          Reps Completed:
+          <span class="tooltip">?
+            <span class="tooltiptext">Average number of reps you did per set.</span>
+          </span>
+        </label>
+        <input type="number" id="repsCompleted" name="RepsCompleted" placeholder="Enter reps completed">
+      </div>
+
+      <div class="input-group">
+        <label for="painLevel">
+          Pain Level (0-10):
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              <strong>0:</strong> No pain at all<br>
+              <strong>1–2:</strong> Very mild — barely noticeable<br>
+              <strong>3–4:</strong> Mild — feels uncomfortable but manageable<br>
+              <strong>5–6:</strong> Moderate — noticeable pain, may limit full motion<br>
+              <strong>7–8:</strong> Severe — painful enough to disrupt movement<br>
+              <strong>9–10:</strong> Intense or sharp pain — stop the exercise and seek help
+            </span>
+          </span>
+          <span id="painLevelDisplay">0</span>
+        </label>
+        <input type="range" id="painLevel" name="PainLevel" min="0" max="10" step="1" value="0"
+          oninput="document.getElementById('painLevelDisplay').innerText = this.value">
+      </div>
+
+      <div class="input-group">
+        <label for="mobilityLevel">
+          Post Mobility Level (0-10):
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              <strong>0:</strong> Completely stiff or locked — no movement<br>
+              <strong>1–2:</strong> Barely able to move<br>
+              <strong>3–4:</strong> Limited range — movement feels very tight<br>
+              <strong>5–6:</strong> Moderate — can move but feel some restriction<br>
+              <strong>7–8:</strong> Good — mostly normal range, light tightness<br>
+              <strong>9–10:</strong> Full mobility — no restriction or stiffness
+            </span>
+          </span>
+          <span id="mobilityLevelDisplay">0</span>
+        </label>
+        <input type="range" id="mobilityLevel" name="PostMobilityLevel" min="0" max="10" step="1" value="0"
+          oninput="document.getElementById('mobilityLevelDisplay').innerText = this.value">
+      </div>
+
+      <div class="input-group">
+        <label for="difficultyRating">
+          Difficulty Rating (1-4):
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              <strong>1:</strong> Easy — no strain, very light effort<br>
+              <strong>2:</strong> Moderate — some challenge, good form maintained<br>
+              <strong>3:</strong> Hard — requires focus and strength, but manageable<br>
+              <strong>4:</strong> Very hard — pushing limits, close to max effort
+            </span>
+          </span>
+          <span id="difficultyRatingDisplay">1</span>
+        </label>
+        <input type="range" id="difficultyRating" name="DifficultyRating" min="1" max="4" step="0.5" value="1"
+          oninput="document.getElementById('difficultyRatingDisplay').innerText = this.value">
+      </div>
+
+      <div class="input-group">
+        <label for="progressFeedback">
+          Progress Feedback:
+          <span class="tooltip">?
+            <span class="tooltiptext">Any notes about how the session went or how you're feeling.</span>
+          </span>
+        </label>
+        <textarea id="progressFeedback" name="ProgressFeedback"
+          placeholder="Leave a note about your progress"></textarea>
+      </div>
+
+      <button type="submit" class="button">Complete</button>
+    </form>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    // Parse the URL for the planId and exerciseId query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const planId = urlParams.get('planId');
+    const exerciseId = urlParams.get('exerciseId');
+    document.getElementById("backToPlanBtn").href = `recovery-plan.html?planId=${planId}`;
+
+    // Pre-fill the hidden fields and fetch exercise details if available
+    if (planId && exerciseId) {
+      document.getElementById('planId').value = planId;
+      document.getElementById('exerciseId').value = exerciseId;
+      fetchExerciseDetails(exerciseId);
+    }
+
+    async function fetchExerciseDetails(exerciseId) {
+      try {
+        const response = await fetch(`/api/exercises/${exerciseId}`);
+        const exercise = await response.json();
+        const container = document.getElementById('exerciseDetails');
+        container.innerHTML = `
+          <h2>${exercise.ExerciseName}</h2>
+          <p><strong>Target:</strong> ${exercise.TargetMuscleGroup}</p>
+          <p><strong>Equipment:</strong> ${exercise.Equipment || 'N/A'}</p>
+          <p><strong>Sets:</strong> ${exercise.Sets ?? 'N/A'}</p>
+          <p><strong>Reps:</strong> ${exercise.Reps ?? 'N/A'}</p>
+          <p><strong>Target Time:</strong> ${exercise.TargetTime != null ? exercise.TargetTime + " seconds" : 'N/A'}</p>
+          <p><strong>Rest Time:</strong> ${exercise.RestTime != null ? exercise.RestTime + " seconds" : 'N/A'}</p>
+          ${exercise.Instruction ? `<p><strong>Instruction:</strong> ${exercise.Instruction}</p>` : ""}
+          ${exercise.VideoGuide ? `<p><a href="${exercise.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+        `;
+      } catch (error) {
+        console.error("Error fetching exercise details:", error);
+        document.getElementById('exerciseDetails').innerText = "Error loading exercise details.";
+      }
+    }
+
+    document.getElementById("exerciseForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch("/api/exercise-completions", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
         });
-    </script>
+        const result = await response.json();
+        document.getElementById("message").innerText = result.message || "Exercise completed!";
+
+        // Delay of 2 seconds then redirect to recovery-plan.html
+        setTimeout(() => {
+          window.location.href = "recovery-plan.html?planId=" + planId;
+        }, 2000);
+      } catch (error) {
+        console.error("Error logging exercise completion:", error);
+        document.getElementById("message").innerText = "An error occurred. Please try again.";
+      }
+    });
+  </script>
 </body>
+
 </html>
