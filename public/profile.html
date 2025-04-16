@@ -305,6 +305,13 @@
                     <label for="dob">Date of Birth:</label>
                     <input type="date" id="dob" name="dob">
                 </div>
+                <div class="input-group">
+                    <label for="unitPreference">Unit Preference:</label>
+                    <select id="unitPreference" name="unitPreference">
+                        <option value="Metric">Metric</option>
+                        <option value="Imperial">Imperial</option>
+                    </select>
+                </div>
                 <div class="right-aligned">
                     <button type="submit" class="button"> <i class="fas fa-save"></i> Save Changes</button>
                 </div>
@@ -456,6 +463,9 @@
                         document.getElementById('dob').value = date.toISOString().split('T')[0];
                     }
                 }
+                if (data.UnitPreference) {
+                    document.getElementById('unitPreference').value = data.UnitPreference;
+                }
 
                 return data;
             } catch (error) {
@@ -482,7 +492,8 @@
             const updatedProfile = {
                 FirstName: document.getElementById('firstName').value,
                 LastName: document.getElementById('lastName').value,
-                DateOfBirth: document.getElementById('dob').value
+                DateOfBirth: document.getElementById('dob').value,
+                UnitPreference: document.getElementById('unitPreference').value
             };
 
             try {

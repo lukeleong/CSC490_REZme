@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update Injury - Recovery App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .back-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .input-group {
+      margin: 15px 0;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .input-group input[type="range"] {
+      padding: 0;
+    }
+
+    .range-value {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      text-align: center;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Popup Modal */
+    #popupOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    #popupBox {
+      background: white;
+      max-width: 300px;
+      margin: 150px auto;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+    }
+
+    #popupBox button {
+      margin-top: 15px;
+      margin-right: 10px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #popupBox .dashboard-btn {
+      background-color: #007bff;
+      color: white;
+    }
+
+    #popupBox .view-btn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      cursor: pointer;
+      color: #007bff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 280px;
+      background-color: #333;
+      color: #fff;
+      text-align: left;
+      padding: 10px;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      top: -5px;
+      left: 110%;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 13px;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <a href="/injuries.html" class="back-button">← Back to Injuries</a>
+    <div id="greeting">Welcome!</div>
+  </div>
+
+  <div class="container">
+    <h1>Update Your Injury</h1>
+    <form id="injuryForm">
+      <input type="hidden" id="UserId" name="UserId" value="" />
+      <input type="hidden" id="InjuryId" name="InjuryId" value="" />
+
+      <div class="input-group">
+        <label for="InjuryType">Injury Type:</label>
+        <input type="text" id="InjuryType" name="InjuryType" required />
+      </div>
+
+      <div class="input-group">
+        <label for="InjuryLocation">Injury Location:</label>
+        <select id="InjuryLocation" name="InjuryLocation" required>
+          <option value="">Loading...</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="InjurySeverity">
+          Injury Severity:
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              0 – No injury<br>
+              1–2 – Very minor (e.g., mild strain)<br>
+              3–4 – Moderate (sprain, no fracture)<br>
+              5–6 – Serious (torn ligament)<br>
+              7–8 – Severe (surgery likely)<br>
+              9–10 – Critical injury
+            </span>
+          </span>
+        </label>
+        <input type="range" id="InjurySeverity" name="InjurySeverity" min="1" max="10" value="5" required
+          oninput="updateLabel('severityValue', this.value)" />
+        <div class="range-value" id="severityValue">5</div>
+      </div>
+
+      <div class="input-group">
+        <label for="PainLevel">
+          Pain Level:
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              0 – No pain<br>
+              1–2 – Barely noticeable<br>
+              3–4 – Mild discomfort<br>
+              5–6 – Moderate, affects daily tasks<br>
+              7–8 – Severe, hard to move<br>
+              9–10 – Extreme, unbearable
+            </span>
+          </span>
+        </label>
+        <input type="range" id="PainLevel" name="PainLevel" min="1" max="10" value="5" required
+          oninput="updateLabel('painValue', this.value)" />
+        <div class="range-value" id="painValue">5</div>
+      </div>
+
+      <div class="input-group">
+        <label for="MobilityLevel">
+          Mobility Level:
+          <span class="tooltip">?
+            <span class="tooltiptext">
+              0 – No movement<br>
+              1–2 – Extremely limited<br>
+              3–4 – Heavily restricted<br>
+              5–6 – Some movement, painful<br>
+              7–8 – Mostly functional<br>
+              9–10 – Full mobility
+            </span>
+          </span>
+        </label>
+        <input type="range" id="MobilityLevel" name="MobilityLevel" min="1" max="10" value="5" required
+          oninput="updateLabel('mobilityValue', this.value)" />
+        <div class="range-value" id="mobilityValue">5</div>
+      </div>
+
+      <div class="input-group">
+        <label for="StartDate">Date of Injury:</label>
+        <input type="date" id="StartDate" name="StartDate" required />
+      </div>
+
+      <button type="submit" class="button">Update Injury</button>
+    </form>
+    <p id="message"></p>
+  </div>
+
+  <!-- Success Popup -->
+  <div id="popupOverlay">
+    <div id="popupBox">
+      <p>Injury updated successfully!</p>
+      <button class="dashboard-btn" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+      <button class="view-btn" onclick="window.location.href='/injuries.html'">View Injuries</button>
+    </div>
+  </div>
+
+  <script>
+    function updateLabel(id, value) {
+      document.getElementById(id).innerText = value;
+    }
+
+    function getUserIdFromToken() {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload.UserId || payload.user_id;
+      } catch (err) {
+        console.error("Failed to decode token:", err);
+        return null;
+      }
+    }
+
+    function getInjuryIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('injury_id');
+    }
+
+    async function fetchUserName(userId) {
+      try {
+        const res = await fetch(`/users/${userId}`);
+        const data = await res.json();
+        if (res.ok && data.FirstName) {
+          document.getElementById("greeting").innerText = `Welcome, ${data.FirstName}!`;
+        }
+      } catch (err) {
+        console.error("Failed to fetch user name:", err);
+      }
+    }
+
+    async function populateMuscleGroups() {
+      try {
+        const res = await fetch("/api/exercises/muscle-groups");
+        const groups = await res.json();
+        const dropdown = document.getElementById("InjuryLocation");
+
+        dropdown.innerHTML = '<option value="">Select Location</option>';
+        groups.forEach(group => {
+          const option = document.createElement("option");
+          option.value = group;
+          option.textContent = group.charAt(0).toUpperCase() + group.slice(1);
+          dropdown.appendChild(option);
+        });
+
+        // After populating dropdown, load injury data
+        loadInjuryData();
+      } catch (err) {
+        console.error("Failed to load muscle groups:", err);
+      }
+    }
+
+    function loadInjuryData() {
+      // Get injury data from session storage
+      const storedData = sessionStorage.getItem('updateInjuryData');
+      if (!storedData) {
+        document.getElementById("message").innerText = "No injury data found to update";
+        return;
+      }
+
+      const injuryData = JSON.parse(storedData);
+      
+      // Fill the form with existing data
+      document.getElementById("InjuryId").value = injuryData.InjuryId;
+      document.getElementById("InjuryType").value = injuryData.InjuryType;
+      document.getElementById("InjuryLocation").value = injuryData.InjuryLocation;
+      
+      // Set range values and update labels
+      document.getElementById("InjurySeverity").value = injuryData.InjurySeverity;
+      updateLabel('severityValue', injuryData.InjurySeverity);
+      
+      document.getElementById("PainLevel").value = injuryData.PainLevel;
+      updateLabel('painValue', injuryData.PainLevel);
+      
+      document.getElementById("MobilityLevel").value = injuryData.MobilityLevel;
+      updateLabel('mobilityValue', injuryData.MobilityLevel);
+      
+      // Format date for the input
+      if (injuryData.StartDate) {
+        const date = new Date(injuryData.StartDate);
+        const formattedDate = date.toISOString().split('T')[0];
+        document.getElementById("StartDate").value = formattedDate;
+      }
+
+      // Clear session storage after loading
+      sessionStorage.removeItem('updateInjuryData');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const userId = getUserIdFromToken();
+      if (userId) {
+        document.getElementById("UserId").value = userId;
+        fetchUserName(userId);
+      } else {
+        document.getElementById("greeting").innerText = "Please log in.";
+        document.getElementById("message").innerText = "You need to be logged in to update an injury.";
+      }
+      
+      populateMuscleGroups();
+    });
+
+    document.getElementById("injuryForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+      const injuryId = data.InjuryId;
+      
+      if (!injuryId) {
+        document.getElementById("message").innerText = "No injury ID found to update";
+        return;
+      }
+
+      const response = await fetch(`/api/injuries/${injuryId}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Show success popup
+        document.getElementById("popupOverlay").style.display = "block";
+      } else {
+        document.getElementById("message").innerText = result.message || "Failed to update injury.";
+        console.error("Failed to update injury:", result);
+      }
+    });
+  </script>
+</body>
+
+</html>

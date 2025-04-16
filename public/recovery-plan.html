@@ -426,7 +426,6 @@
              margin: 10px 0 0 0;
          }
     }
-
   </style>
 </head>
 
@@ -601,6 +600,9 @@
           for (const ex of exercises) {
             let userRating = null;
             let avgRatingText = "No ratings";
+            let highestProgress = 0;
+
+            // Fetch ratings
              try {
                  const ratingsRes = await fetch(`/api/exercise-ratings/exercise/${ex.ExerciseId}`, { headers });
                  if (ratingsRes.ok) {
@@ -616,6 +618,19 @@
              } catch (ratingError) {
                  console.warn(`Could not fetch ratings for exercise ${ex.ExerciseId}:`, ratingError);
              }
+             // Fetch completions
+              try {
+                const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
+                if (completionsRes.ok) {
+                  const allCompletions = await completionsRes.json();
+                  const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
+                  highestProgress = completionsForExercise.length > 0
+                    ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
+                    : 0;
+                }
+              } catch (completionError) {
+                console.warn(`Could not fetch completions for exercise ${ex.ExerciseId}:`, completionError);
+              }
 
             const div = document.createElement("div");
             div.className = "exercise";
@@ -737,7 +752,6 @@
            return;
        }
 
-
       submitBtn.disabled = true;
       submitBtn.innerText = "Saving...";
       console.log("Submit button disabled, text set to 'Saving...'."); // DEBUG
@@ -799,28 +813,7 @@
 
         console.log("Fetch response received. Status:", res.status); // DEBUG
 
-        const contentType = res.headers.get("content-type");
-        let result = null;
-        let responseText = await res.text(); // Get text response regardless
-
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-            try {
-                result = JSON.parse(responseText); // Parse if JSON
-                console.log("Response JSON:", result); // DEBUG
-            } catch (parseError){
-                 console.error("Error parsing JSON response:", parseError); // DEBUG
-                 result = { error: "Failed to parse server response." };
-            }
-        } else {
-             // Handle non-JSON responses
-             console.log("Response Text (Non-JSON):", responseText); // DEBUG
-             if (!res.ok) {
-                 result = { error: `Server responded with status: ${res.status}. Response: ${responseText}` };
-             } else {
-                 // Handle successful non-JSON (e.g., 204 No Content)
-                 console.log("Successful non-JSON response."); //DEBUG
-             }
-        }
+       
 
         if (res.ok) {
           console.log("Request successful (status OK). Closing modal and refreshing."); // DEBUG
@@ -903,6 +896,17 @@
   });
 
     // Initial fetch on page load
+
+    async function checkRatingExists(exerciseId) {
+      try {
+        const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
+        const ratings = await res.json();
+        return ratings.some(r => r.UserId === userId);
+      } catch (err) {
+        return false;
+      }
+    }
+
     fetchRecoveryPlan();
   </script>
 </body>

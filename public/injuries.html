@@ -327,6 +327,16 @@
             }
         }
 
+        .button.orange {
+            background: #fd7e14;
+        }
+
+        .button-group {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
     </style>
 </head>
 
@@ -377,6 +387,11 @@
                 console.error("Error fetching recovery plans:", err);
                 return [];
             }
+        }
+        function goToUpdateInjury(injuryId, injuryData) {
+            // Store injury data in session storage
+            sessionStorage.setItem('updateInjuryData', JSON.stringify(injuryData));
+            window.location.href = `/update-injury.html?injury_id=${injuryId}`;
         }
 
         async function fetchInjuries() {
@@ -446,11 +461,12 @@
                                 <p><strong>Date Logged:</strong> <span class="value">${formattedDate}</span></p>
                             </div>
                         </div>
-                        <div class="injury-actions">
-                            ${existingPlan
+                            <div class="button-group">                            
+                                ${existingPlan
                                 ? `<button class="button button-primary" onclick="goToRecoveryPlan(${existingPlan.PlanId})">View Plan</button>`
                                 : `<button class="button button-secondary" onclick="goToPlanMaker(${injury.InjuryId})">Create Plan</button>`
                             }
+                            <button class="button orange" onclick="goToUpdateInjury(${injury.InjuryId}, ${JSON.stringify(injury).replace(/"/g, '"')})">Update Injury</button>
                         </div>
                     `;
                     container.appendChild(div);
