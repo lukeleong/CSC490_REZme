@@ -124,7 +124,7 @@
         .useful-element {
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 20px;
             border: 1px solid #e9ecef;
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
@@ -151,20 +151,29 @@
             align-items: center;
             justify-content: center;
         }
+        
+
+        .wave-container {
+            margin-bottom: 5px;
+            
+        }
+        .wave-svg {
+            width: 100px;
+            height: 30px;
+            fill: none;
+            stroke: #4FC3F7;
+            stroke-width: 8;
+            opacity: 0.6;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
 
 
 
-/* Optional: If you want to try fitting 3 columns on slightly larger mobile screens */
-@media (min-width: 500px) and (max-width: 768px) {
-    .useful-elements {
-        grid-template-columns: repeat(3, 1fr); /* Try 3 columns on larger mobile screens */
-        gap: 10px; /* Reduce gap to fit better */
-    }
-    .useful-element {
-        padding: 15px; /* Reduce padding to fit better */
-        min-height: 180px; /* Slightly smaller height */
-    }
-}
+
 
         .useful-element:hover {
             transform: translateY(-5px);
@@ -226,6 +235,12 @@
             transform: scale(1.05); /* Slight scale on hover for interactivity */
         }
 
+
+
+
+
+
+
         @media (max-width: 768px) {
             .container {
                 padding: 30px 25px; /* Adjusted padding */
@@ -251,6 +266,13 @@
 </head>
 <body>
     <div class="container">
+        <!-- Wave Container -->
+        <div class="wave-container">
+            <svg class="wave-svg" viewBox="0 0 100 20">
+                <path d="M0 10 Q25 0 50 10 T100 10" />
+            </svg>
+        </div>
+
         <!-- New Logo Section -->
         <div class="logo">
             <span class="logo-rez">REZ</span><span class="logo-me">me</span>
@@ -300,5 +322,7 @@
             </div>
         </div>
     </div>
+
+    
 </body>
 </html>
