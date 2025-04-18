@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Log Injury - Recovery App</title>
+  <title>Update Injury - Recovery App</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -162,14 +162,15 @@
 
 <body>
   <div class="header">
-    <a href="/dashboard.html" class="back-button">← Back to Dashboard</a>
+    <a href="/injuries.html" class="back-button">← Back to Injuries</a>
     <div id="greeting">Welcome!</div>
   </div>
 
   <div class="container">
-    <h1>Log Your Injury</h1>
+    <h1>Update Your Injury</h1>
     <form id="injuryForm">
       <input type="hidden" id="UserId" name="UserId" value="" />
+      <input type="hidden" id="InjuryId" name="InjuryId" value="" />
 
       <div class="input-group">
         <label for="InjuryType">Injury Type:</label>
@@ -245,7 +246,7 @@
         <input type="date" id="StartDate" name="StartDate" required />
       </div>
 
-      <button type="submit" class="button">Submit Injury</button>
+      <button type="submit" class="button">Update Injury</button>
     </form>
     <p id="message"></p>
   </div>
@@ -253,7 +254,7 @@
   <!-- Success Popup -->
   <div id="popupOverlay">
     <div id="popupBox">
-      <p>Injury logged successfully!</p>
+      <p>Injury updated successfully!</p>
       <button class="dashboard-btn" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
       <button class="view-btn" onclick="window.location.href='/injuries.html'">View Injuries</button>
     </div>
@@ -276,6 +277,11 @@
       }
     }
 
+    function getInjuryIdFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('injury_id');
+    }
+
     async function fetchUserName(userId) {
       try {
         const res = await fetch(`/users/${userId}`);
@@ -288,27 +294,61 @@
       }
     }
 
-    function populateMuscleGroups() {
-      const muscleGroups = [
-        "ankle",
-        "lower back",
-        "upper back",
-        "shoulders",
-        "chest",
-        "arms",
-        "core",
-        "quads"
-      ];
+    async function populateMuscleGroups() {
+      try {
+        const res = await fetch("/api/exercises/muscle-groups");
+        const groups = await res.json();
+        const dropdown = document.getElementById("InjuryLocation");
 
-      const dropdown = document.getElementById("InjuryLocation");
-      dropdown.innerHTML = '<option value="">Select Location</option>';
+        dropdown.innerHTML = '<option value="">Select Location</option>';
+        groups.forEach(group => {
+          const option = document.createElement("option");
+          option.value = group;
+          option.textContent = group.charAt(0).toUpperCase() + group.slice(1);
+          dropdown.appendChild(option);
+        });
 
-      muscleGroups.forEach(group => {
-        const option = document.createElement("option");
-        option.value = group;
-        option.textContent = group.charAt(0).toUpperCase() + group.slice(1);
-        dropdown.appendChild(option);
-      });
+        // After populating dropdown, load injury data
+        loadInjuryData();
+      } catch (err) {
+        console.error("Failed to load muscle groups:", err);
+      }
+    }
+
+    function loadInjuryData() {
+      // Get injury data from session storage
+      const storedData = sessionStorage.getItem('updateInjuryData');
+      if (!storedData) {
+        document.getElementById("message").innerText = "No injury data found to update";
+        return;
+      }
+
+      const injuryData = JSON.parse(storedData);
+      
+      // Fill the form with existing data
+      document.getElementById("InjuryId").value = injuryData.InjuryId;
+      document.getElementById("InjuryType").value = injuryData.InjuryType;
+      document.getElementById("InjuryLocation").value = injuryData.InjuryLocation;
+      
+      // Set range values and update labels
+      document.getElementById("InjurySeverity").value = injuryData.InjurySeverity;
+      updateLabel('severityValue', injuryData.InjurySeverity);
+      
+      document.getElementById("PainLevel").value = injuryData.PainLevel;
+      updateLabel('painValue', injuryData.PainLevel);
+      
+      document.getElementById("MobilityLevel").value = injuryData.MobilityLevel;
+      updateLabel('mobilityValue', injuryData.MobilityLevel);
+      
+      // Format date for the input
+      if (injuryData.StartDate) {
+        const date = new Date(injuryData.StartDate);
+        const formattedDate = date.toISOString().split('T')[0];
+        document.getElementById("StartDate").value = formattedDate;
+      }
+
+      // Clear session storage after loading
+      sessionStorage.removeItem('updateInjuryData');
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -318,11 +358,10 @@
         fetchUserName(userId);
       } else {
         document.getElementById("greeting").innerText = "Please log in.";
+        document.getElementById("message").innerText = "You need to be logged in to update an injury.";
       }
+      
       populateMuscleGroups();
-
-      const today = new Date().toISOString().split("T")[0];
-      document.getElementById("StartDate").value = today;
     });
 
     document.getElementById("injuryForm").addEventListener("submit", async function (event) {
@@ -330,9 +369,15 @@
 
       const formData = new FormData(this);
       const data = Object.fromEntries(formData);
+      const injuryId = data.InjuryId;
+      
+      if (!injuryId) {
+        document.getElementById("message").innerText = "No injury ID found to update";
+        return;
+      }
 
-      const response = await fetch("/api/injuries", {
-        method: "POST",
+      const response = await fetch(`/api/injuries/${injuryId}`, {
+        method: "PUT",
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" }
       });
@@ -343,8 +388,8 @@
         // Show success popup
         document.getElementById("popupOverlay").style.display = "block";
       } else {
-        document.getElementById("message").innerText = result.message || "Failed to log injury.";
-        console.error("Failed to log injury:", result);
+        document.getElementById("message").innerText = result.message || "Failed to update injury.";
+        console.error("Failed to update injury:", result);
       }
     });
   </script>

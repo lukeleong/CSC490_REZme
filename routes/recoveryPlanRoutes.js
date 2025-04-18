@@ -5,8 +5,10 @@ const {
     getRecoveryPlanById,
     updateRecoveryPlan,
     deleteRecoveryPlan,
-    getExercisesByPlanId
+    getExercisesByPlanId,
+    getProgressDetails
 } = require("../controllers/recoveryPlanController");
+
 
 const router = express.Router();
 
@@ -16,5 +18,6 @@ router.get("/recovery-plans/:id", getRecoveryPlanById);
 router.put("/recovery-plans/:id", updateRecoveryPlan);
 router.delete("/recovery-plans/:id", deleteRecoveryPlan);
 router.get("/recovery-plans/:planId/exercises", getExercisesByPlanId);
+router.get("/recovery-plans/:id/progress-details", getProgressDetails);
 
 module.exports = router;

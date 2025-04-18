@@ -21,15 +21,15 @@ const Exercise = sequelize.define("Exercise", {
   },
   TargetMuscleGroup: {
     type: DataTypes.STRING(100),
-    allowNull: false, // e.g., "lower back", "hamstrings"
+    allowNull: false,
   },
   Equipment: {
     type: DataTypes.STRING(100),
-    allowNull: true, // e.g., "body weight", "resistance band"
+    allowNull: true,
   },
   Difficulty: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     validate: {
       min: 1,
       max: 4,
@@ -37,7 +37,32 @@ const Exercise = sequelize.define("Exercise", {
   },
   VideoGuide: {
     type: DataTypes.STRING(255),
-    allowNull: true, // Optional video tutorial URL
+    allowNull: true,
+  },
+  Sets: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  Reps: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  TargetTime: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  RestTime: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  Instruction: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  Public: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   },
 });
 

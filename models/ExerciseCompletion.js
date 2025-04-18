@@ -49,11 +49,6 @@ const ExerciseCompletion = sequelize.define('ExerciseCompletion', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    ModifiedAt: {
-        type: DataTypes.REAL,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-    },
 });
 
 module.exports = ExerciseCompletion;

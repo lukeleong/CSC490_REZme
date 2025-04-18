@@ -1,147 +1,108 @@
-const {ExerciseCompletion, RecoveryPlan, Exercise} = require('../models'); // Importing the model
+const { ExerciseCompletion, RecoveryPlanExercise, Exercise } = require("../models");
+const { updatePlanProgress } = require("../services/recoveryPlanUpdater");
+const calculateProgressValue = require('../services/calculateProgressValue');
 
-// Controller: Create a new Exercise Completion
-const createExerciseCompletion = async (req, res) => {
-    try {
-        console.log('Request Body:', req.body);
-        const {
-            PlanId,
-            ExerciseId,
-            SetsCompleted,
-            RepsCompleted,
-            TimeTaken,
-            DifficultyRating,
-            ProgressFeedback
-        } = req.body;
+exports.createExerciseCompletion = async (req, res) => {
+  try {
+    const { PlanId, ExerciseId, SetsCompleted, RepsCompleted, TimeTaken } = req.body;
 
+    // Validate association between RecoveryPlan and Exercise
+    const isLinked = await RecoveryPlanExercise.findOne({
+      where: {
+        RecoveryPlanId: PlanId,
+        ExerciseId: ExerciseId,
+      },
+    });
 
-        const planExists = await RecoveryPlan.findByPk(PlanId);
-        if (!planExists) {
-            return res.status(400).json({error: `RecoveryPlan with PlanId ${PlanId} does not exist.`});
-        }
-
-        // Verify that ExerciseId exists in Exercise
-        const exerciseExists = await Exercise.findByPk(ExerciseId);
-        if (!exerciseExists) {
-            return res.status(400).json({error: `Exercise with ExerciseId ${ExerciseId} does not exist.`});
-        }
-          console.log('Inserting into ExerciseCompletion:', {
-            PlanId,
-            ExerciseId,
-            SetsCompleted,
-            RepsCompleted,
-            TimeTaken,
-            DifficultyRating,
-            ProgressFeedback,
-        });
-        const newCompletion = await ExerciseCompletion.create({
-            PlanId,
-            ExerciseId,
-            SetsCompleted,
-            RepsCompleted,
-            TimeTaken,
-            DifficultyRating,
-            ProgressFeedback
-        });
-        res.status(201).json({
-            message: 'Exercise completion record created successfully!',
-            data: newCompletion,
-        });
-
-    }  catch (error) {
-    console.error('Detailed error:', error);
-    res.status(500).json({ error: error.message });
-}
-
-};
-
-// Controller: Fetch all Exercise Completion records
-const getAllExerciseCompletions = async (req, res) => {
-    try {
-        const completions = await ExerciseCompletion.findAll({
-            include: [{
-                model: Exercise, // Assuming Exercise is associated
-                attributes: ['ExerciseId', 'ExerciseName'], // Get ExerciseName if needed
-            }]
-        });
-
-        res.status(200).json(completions);
-    } catch (error) {
-        console.error('Error fetching exercise completions:', error);
-        res.status(500).json({ error: 'Failed to fetch records.' });
+    if (!isLinked) {
+      return res.status(400).json({
+        error: "This exercise is not part of the selected recovery plan.",
+      });
     }
-};
 
-// Controller: Fetch a single Exercise Completion by ID
-const getExerciseCompletionById = async (req, res) => {
-    try {
-        const {id} = req.params;
-        const completion = await ExerciseCompletion.findByPk(id);
-        if (!completion) {
-            return res.status(404).json({error: 'Record not found.'});
-        }
-        res.status(200).json(completion);
-    } catch (error) {
-        console.error('Error fetching exercise completion:', error);
-        res.status(500).json({error: 'Failed to fetch the record.'});
+    // Load full Exercise object to use in progress calculation
+    const exercise = await Exercise.findByPk(ExerciseId);
+    if (!exercise) {
+      return res.status(404).json({ error: "Exercise not found." });
     }
+
+    // Calculate progress value using actual exercise details
+    const progressValue = calculateProgressValue({
+      SetsCompleted,
+      RepsCompleted,
+      TimeTaken: TimeTaken || 0,
+      Exercise: exercise
+    });
+
+    const completion = await ExerciseCompletion.create({
+      ...req.body,
+      ProgressValue: progressValue,
+    });
+
+    // Update plan progress
+    await updatePlanProgress(PlanId);
+
+    res.status(201).json(completion);
+  } catch (error) {
+    console.error("Error creating ExerciseCompletion:", error);
+    res.status(500).json({ error: "Failed to create record" });
+  }
 };
 
-// Controller: Update an Exercise Completion record
-const updateExerciseCompletion = async (req, res) => {
-    try {
-        const {id} = req.params;
-        const updated = await ExerciseCompletion.update(req.body, {
-            where: {CompletionId: id},
-        });
-        if (!updated[0]) {
-            return res.status(404).json({error: 'Record not found.'});
-        }
-        res.status(200).json({message: 'Record updated successfully!'});
-    } catch (error) {
-        console.error('Error updating exercise completion:', error);
-        res.status(500).json({error: 'Failed to update the record.'});
-    }
+// Get all ExerciseCompletion records
+exports.getAllExerciseCompletions = async (req, res) => {
+  try {
+    const completions = await ExerciseCompletion.findAll();
+    res.json(completions);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch records" });
+  }
 };
 
-// Controller: Delete an Exercise Completion record
-const deleteExerciseCompletion = async (req, res) => {
-    try {
-        const {id} = req.params;
-        const deleted = await ExerciseCompletion.destroy({
-            where: {CompletionId: id},
-        });
-        if (!deleted) {
-            return res.status(404).json({error: 'Record not found.'});
-        }
-        res.status(200).json({message: 'Record deleted successfully!'});
-    } catch (error) {
-        console.error('Error deleting exercise completion:', error);
-        res.status(500).json({error: 'Failed to delete the record.'});
-    }
-};
-const getExercisesByCompletion = async (req, res) => {
-    try {
-        const exercises = await Exercise.findAll({
-            include: [{
-                model: ExerciseCompletion,
-                attributes: ['CompletionId', 'SetsCompleted', 'RepsCompleted', 'TimeTaken', 'DifficultyRating', 'ProgressFeedback'],
-            }],
-        });
+// Get a single ExerciseCompletion by ID
+exports.getExerciseCompletionById = async (req, res) => {
+  try {
+    const completion = await ExerciseCompletion.findByPk(req.params.id);
+    if (!completion) return res.status(404).json({ error: "Not found" });
 
-        res.status(200).json(exercises);
-    } catch (error) {
-        console.error('Error fetching completed exercises:', error);
-        res.status(500).json({ error: 'Failed to fetch exercises.' });
-    }
+    res.json(completion);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch record" });
+  }
 };
 
+// Update an ExerciseCompletion record
+exports.updateExerciseCompletion = async (req, res) => {
+  try {
+    const completion = await ExerciseCompletion.findByPk(req.params.id);
+    if (!completion) return res.status(404).json({ error: "Not found" });
 
-module.exports = {
-    createExerciseCompletion,
-    getAllExerciseCompletions,
-    getExerciseCompletionById,
-    updateExerciseCompletion,
-    deleteExerciseCompletion,
-    getExercisesByCompletion,
+    await completion.update(req.body);
+
+    // Recalculate progress after update
+    await updatePlanProgress(completion.PlanId);
+
+    res.json(completion);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update record" });
+  }
+};
+
+// Delete an ExerciseCompletion record
+exports.deleteExerciseCompletion = async (req, res) => {
+  try {
+    const completion = await ExerciseCompletion.findByPk(req.params.id);
+    if (!completion) return res.status(404).json({ error: "Not found" });
+
+    const planId = completion.PlanId;
+
+    await completion.destroy();
+
+    // Update recovery plan after deletion
+    await updatePlanProgress(planId);
+
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete record" });
+  }
 };

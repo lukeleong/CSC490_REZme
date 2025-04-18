@@ -54,6 +54,17 @@
         .button.green {
             background: #28a745;
         }
+
+        .button.orange {
+            background: #fd7e14;
+        }
+
+        .button-group {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
     </style>
 </head>
 
@@ -89,6 +100,12 @@
             window.location.href = `/recoveryplan-maker.html?injury_id=${injuryId}`;
         }
 
+        function goToUpdateInjury(injuryId, injuryData) {
+            // Store injury data in session storage
+            sessionStorage.setItem('updateInjuryData', JSON.stringify(injuryData));
+            window.location.href = `/update-injury.html?injury_id=${injuryId}`;
+        }
+
         async function fetchInjuries() {
             const userId = getUserIdFromToken();
             if (!userId) {
@@ -120,10 +137,13 @@
                         <p><strong>Pain Level:</strong> ${injury.PainLevel}</p>
                         <p><strong>Mobility Level:</strong> ${injury.MobilityLevel}</p>
                         <p><strong>Start Date:</strong> ${new Date(injury.StartDate).toDateString()}</p>
-                        ${hasPlan
-                            ? `<button class="button" onclick="goToRecoveryPlan(${hasPlan})">View Recovery Plan</button>`
-                            : `<button class="button green" onclick="goToPlanMaker(${injury.InjuryId})">Create Recovery Plan</button>`
-                        }
+                        <div class="button-group">
+                            ${hasPlan
+                                ? `<button class="button" onclick="goToRecoveryPlan(${hasPlan})">View Recovery Plan</button>`
+                                : `<button class="button green" onclick="goToPlanMaker(${injury.InjuryId})">Create Recovery Plan</button>`
+                            }
+                            <button class="button orange" onclick="goToUpdateInjury(${injury.InjuryId}, ${JSON.stringify(injury).replace(/"/g, '&quot;')})">Update Injury</button>
+                        </div>
                     `;
                     container.appendChild(div);
                 }

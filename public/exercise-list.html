@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exercise List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .controls a.button {
+      padding: 8px 12px;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .controls select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .exercise {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f9f9f9;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+
+    .exercise h3 {
+      margin: 0 0 5px 0;
+    }
+
+    .exercise p {
+      margin: 4px 0;
+    }
+
+    /* Floating Suggest Button */
+    #suggestButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Modal Styles */
+    #suggestModal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Flexbox centering for the modal content */
+      align-items: center;
+      justify-content: center;
+    }
+
+    #suggestModalContent {
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 8px;
+    }
+
+    #suggestModalContent h2 {
+      margin-top: 0;
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-buttons .submit-btn {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .modal-buttons .cancel-btn {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="controls">
+      <a href="exercise-managment.html" class="button">Manage Exercises</a>
+      <select id="sortOptions">
+        <option value="name">Sort by Name</option>
+        <option value="muscle">Sort by Target Muscle Group</option>
+        <option value="difficulty">Sort by Difficulty</option>
+      </select>
+    </div>
+    <h1>Exercise List</h1>
+    <div id="exercisesContainer">
+      <p>Loading exercises...</p>
+    </div>
+  </div>
+
+  <!-- Floating Suggest New Exercise Button -->
+  <button id="suggestButton">Suggest New Exercise</button>
+
+  <!-- Suggest New Exercise Modal -->
+  <div id="suggestModal">
+    <div id="suggestModalContent">
+      <h2>Suggest New Exercise</h2>
+      <form id="suggestForm">
+        <div class="input-group">
+          <label for="exerciseName">Exercise Name*</label>
+          <input type="text" id="exerciseName" name="exerciseName" required>
+        </div>
+        <div class="input-group">
+          <label for="equipment">Equipment*</label>
+          <input type="text" id="equipment" name="equipment" required>
+        </div>
+        <div class="input-group">
+          <label for="targetMuscleGroup">Target Muscle Group (optional)</label>
+          <input type="text" id="targetMuscleGroup" name="targetMuscleGroup">
+        </div>
+        <div class="input-group">
+          <label for="difficulty">Difficulty (optional)</label>
+          <input type="text" id="difficulty" name="difficulty">
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="submit-btn">Submit</button>
+          <button type="button" class="cancel-btn" id="cancelSuggest">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let exercisesList = [];
+
+    async function fetchExercises() {
+      try {
+        const response = await fetch('/api/exercises');
+        exercisesList = await response.json();
+        renderExercises();
+      } catch (error) {
+        console.error("Error fetching exercises:", error);
+        document.getElementById('exercisesContainer').innerHTML = "<p>Error loading exercises.</p>";
+      }
+    }
+
+    function renderExercises() {
+      const container = document.getElementById('exercisesContainer');
+      container.innerHTML = "";
+      if (!exercisesList.length) {
+        container.innerHTML = "<p>No exercises found.</p>";
+        return;
+      }
+      exercisesList.forEach(ex => {
+        const exerciseDiv = document.createElement('div');
+        exerciseDiv.className = "exercise";
+        exerciseDiv.innerHTML = `
+          <h3>${ex.ExerciseName}</h3>
+          <p><strong>Target Muscle Group:</strong> ${ex.TargetMuscleGroup || 'N/A'}</p>
+          <p><strong>Difficulty:</strong> ${ex.Difficulty || 'N/A'}</p>
+        `;
+        container.appendChild(exerciseDiv);
+      });
+    }
+
+    function sortExercises(sortBy) {
+      if (sortBy === "name") {
+        exercisesList.sort((a, b) => a.ExerciseName.localeCompare(b.ExerciseName));
+      } else if (sortBy === "muscle") {
+        exercisesList.sort((a, b) => a.TargetMuscleGroup.localeCompare(b.TargetMuscleGroup));
+      } else if (sortBy === "difficulty") {
+        exercisesList.sort((a, b) => a.Difficulty - b.Difficulty);
+      }
+      renderExercises();
+    }
+
+    document.getElementById("sortOptions").addEventListener("change", function() {
+      sortExercises(this.value);
+    });
+
+    fetchExercises();
+
+    // Suggest Modal Script
+    const suggestButton = document.getElementById("suggestButton");
+    const suggestModal = document.getElementById("suggestModal");
+    const cancelSuggest = document.getElementById("cancelSuggest");
+    const suggestForm = document.getElementById("suggestForm");
+
+    suggestButton.addEventListener("click", function() {
+      suggestModal.style.display = "flex";
+    });
+
+    cancelSuggest.addEventListener("click", function() {
+      closeSuggestModal();
+    });
+
+    function closeSuggestModal() {
+      suggestModal.style.display = "none";
+      suggestForm.reset();
+    }
+
+    suggestForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const exerciseName = document.getElementById("exerciseName").value.trim();
+      const equipment = document.getElementById("equipment").value.trim();
+      if (!exerciseName || !equipment) {
+        alert("Exercise Name and Equipment are required.");
+        return;
+      }
+      // Add additional logic here to send the new suggestion to the server.
+      alert("Exercise suggestion submitted successfully!");
+      closeSuggestModal();
+    });
+
+    // Optional: Close modal when clicking outside the modal content
+    window.addEventListener("click", function(event) {
+      if (event.target == suggestModal) {
+        closeSuggestModal();
+      }
+    });
+  </script>
+</body>
+</html>

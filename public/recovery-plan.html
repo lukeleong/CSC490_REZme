@@ -28,14 +28,6 @@
 
     .progress-bar {
       width: 100%;
-      background-color: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-
-    .progress-bar {
-      width: 100%;
       background-color: #e0e0e0;
       border-radius: 10px;
       overflow: hidden;
@@ -139,7 +131,6 @@
     <a href="dashboard.html" class="button" style="width: 100%; text-align: center;">Back to Dashboard</a>
   </div>
 
-  <!-- Rating Modal -->
   <div id="ratingModal">
     <div id="ratingModalContent">
       <h3>Rate Exercise</h3>
@@ -202,44 +193,46 @@
     }
 
     async function fetchExercises(planId) {
-      const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
-      const exercises = await res.json();
-      const container = document.getElementById("exercisesContainer");
-      container.innerHTML = "";
+  const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+  const exercises = await res.json();
+  const container = document.getElementById("exercisesContainer");
+  container.innerHTML = "";
 
-      if (!exercises.length) {
-        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-        return;
-      }
+  if (!exercises.length) {
+    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+    return;
+  }
 
-      for (const ex of exercises) {
-        const ratingsRes = await fetch(`/api/exercise-ratings/${ex.ExerciseId}`);
-        const allRatings = await ratingsRes.json();
-        const userRating = allRatings.find(r => r.UserId === userId);
-        const avg = allRatings.length > 0
-          ? (allRatings.reduce((sum, r) => sum + r.Rating, 0) / allRatings.length).toFixed(1)
-          : "No ratings";
+  for (const ex of exercises) {
+    // Fetch completions for the user (this may return all completions for the user)
+    const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
+    const allCompletions = await completionsRes.json();
 
-        const div = document.createElement("div");
-        div.className = "exercise";
-        div.innerHTML = `
-          <h3>${ex.ExerciseName} <small style="font-weight:normal;">(${avg === "No ratings"
-            ? avg
-            : `<a href="exercise-rating.html?exerciseId=${ex.ExerciseId}" style="text-decoration:none;">Avg: ${avg}★</a>`
-          })</small></h3>
-          <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-          <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-          ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-          <button class="button" onclick="markExerciseComplete(${ex.ExerciseId})">Complete</button>
-          <button class="button" style="background: ${userRating ? "#6c757d" : "#007bff"};" onclick="openRatingModal(${ex.ExerciseId})">${userRating ? "Change Rating" : "Rate"}</button>
-        `;
-        container.appendChild(div);
-      }
-    }
+    // Filter completions to include only those for the current exercise
+    const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
 
-    function markExerciseComplete(exerciseId) {
-      alert(`Exercise ${exerciseId} marked as complete.`);
-    }
+    // Get the highest progress value among completions for this exercise, or default to 0
+    const highestProgress = completionsForExercise.length > 0
+      ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
+      : 0;
+
+    // Create the exercise element with highest progress displayed on the right.
+    const div = document.createElement("div");
+    div.className = "exercise";
+    div.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+         <h3 style="margin:0;">${ex.ExerciseName}</h3>
+         <div style="font-weight: bold;">${highestProgress}%</div>
+      </div>
+      <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+      <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+      ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+      <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
+      <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
+    `;
+    container.appendChild(div);
+  }
+}
 
     async function openRatingModal(exerciseId) {
       document.getElementById("ratingExerciseId").value = exerciseId;

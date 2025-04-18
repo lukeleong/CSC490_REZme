@@ -242,3 +242,4 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Serve static files (Must be at the end)
 app.use(express.static(path.join(__dirname, 'public'))); 
+
