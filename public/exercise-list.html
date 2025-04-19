@@ -106,6 +106,7 @@
 
     .exercise h3 {
       margin: 0 0 5px 0;
+      color: #1770b8;
     }
 
     .exercise p {
@@ -114,7 +115,7 @@
 
     /* Floating Suggest Button */
     #suggestButton {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       position: fixed;
       bottom: 50px;
       right: 320px;
@@ -391,6 +392,31 @@
   justify-content: flex-end;
 }
 
+
+.primary-btn {
+  background-color: #17a2b8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(23,162,184,0.10);
+  text-decoration: none;   /* <-- Add this line */
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+
+}
+.primary-btn:hover,
+.primary-btn:focus {
+  background-color: #1770b8;
+  box-shadow: 0 4px 16px rgba(23,162,184,0.18);
+  color: #e0f7fa;
+  outline: none;
+  transform: translateY(-1px) scale(1.01); /* <-- Add this line */
+
+}
+
         
 
   </style>
@@ -411,7 +437,7 @@
 
   <div class="container">
     <div class="controls">
-      <a href="exercise-managment.html" class="button">Manage Exercises</a>
+      <a href="exercise-managment.html" class="primary-btn">Manage Exercises</a>
       <select id="sortOptions">
         <option value="name">Sort by Name</option>
         <option value="muscle">Sort by Target Muscle Group</option>
