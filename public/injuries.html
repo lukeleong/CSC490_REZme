@@ -86,14 +86,14 @@
 
         h1 {
             text-align: center;
-            color: var(--primary-green);
+            color: #343a40; /* or var(--primary-green) if that's what you used */
             font-weight: 700;
-            font-size: 2.2rem;
-            text-transform: none;
+            font-size: 4rem; /* Adjust to match dashboard */
+            margin-bottom: 30px;
+            margin-top: 0;
             letter-spacing: normal;
-            margin: 0 auto 30px auto;
-            padding-top: 0;
-            max-width: 80%;
+            margin-bottom: 10px;
+            margin-top: 0;
         }
 
         /* --- Button Styles --- */
@@ -142,34 +142,34 @@
 
         /* Styles for the absolutely positioned back button */
         .back-button {
-    display: inline-block;
-    padding: 10px 24px;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 6px;
-    border: 1.5px solid var(--primary-green);
-    color: var(--primary-green);
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
-    font-size: 0.95rem;
-    margin: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
+            display: inline-block;
+            padding: 10px 24px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1.5px solid var(--primary-green);
+            color: var(--primary-green);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.95rem;
+            margin: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
 
-.button.button-secondary, .back-button {
-    background-color: transparent;
-    border: 1.5px solid var(--primary-green);
-    color: var(--primary-green);
-    box-shadow: none;
-}
+            .button.button-secondary, .back-button {
+                background-color: transparent;
+                border: 1.5px solid var(--primary-green);
+                color: var(--primary-green);
+                box-shadow: none;
+            }
 
-.button.button-secondary:hover, .back-button:hover {
-    background-color: #17a2b8; /* White background on hover */
-    color: white; /* Keep text color as #17a2b8 */
-    border-color: #17a2b8; /* Keep border color as #17a2b8 */
-    transform: translateY(-1px);
-}
+            .button.button-secondary:hover, .back-button:hover {
+                background-color: #17a2b8; /* White background on hover */
+                color: white; /* Keep text color as #17a2b8 */
+                border-color: #17a2b8; /* Keep border color as #17a2b8 */
+                transform: translateY(-1px);
+            }
 
 
         /* --- Injury Card Styles (Subtle Semi-Transparent) --- */
@@ -263,7 +263,7 @@
         #injuryContainer p {
             text-align: center;
             padding: 30px;
-            font-size: 1.1rem;
+            font-size: 2rem;
             color: var(--text-muted);
              /* Use subtle background for message */
              background: rgba(255, 255, 255, 0.6); /* Slightly more opaque */
@@ -337,6 +337,40 @@
             flex-wrap: wrap;
             gap: 5px;
         }
+
+        .dashboard-icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 65px;
+            background: #fff;
+            border-radius: 50%;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 2px 8px rgba(23,162,184,0.08);
+            border: 4px solid #e9ecef;
+            position: relative;
+            top: 18px;
+            z-index: 2;
+        }
+        .dashboard-icon-container i {
+            color: #17a2b8;
+            font-size: 2.3rem;
+            filter: drop-shadow(0 1px 2px #c1e5eb);
+            margin: 0 auto 8px auto; /* reduce bottom margin */
+            top: 10px; /* optionally reduce this too */
+        }
+
+        .divider {
+    width: 100%;
+    max-width: 800px; /* or 1000px if that's what you use */
+            border: none;
+            border-top: 16px solid #e9ecef;
+            opacity: 0.3;
+            margin: 10px auto;
+            border-radius: 5px;
+        }
+
     </style>
 </head>
 
@@ -344,8 +378,13 @@
     <!-- HTML Structure remains the same -->
     <div class="container">
         <a href="/dashboard.html" class="back-button">← Back to Dashboard</a>
-        <hr class="title-separator">
-        <h1><i class="fas fa-heartbeat"></i> Your Injuries</h1>
+        <hr class="divider">
+        <div class="dashboard-icon-container">
+            <i class="fas fa-heartbeat"></i>
+        </div>
+        <h1>Your Injuries</h1>
+        <hr class="divider">
+
         <div id="injuryContainer">
             <p>Loading injuries...</p>
             <!-- Injury cards injected by JS -->
@@ -388,11 +427,13 @@
                 return [];
             }
         }
-        function goToUpdateInjury(injuryId, injuryData) {
-            // Store injury data in session storage
-            sessionStorage.setItem('updateInjuryData', JSON.stringify(injuryData));
-            window.location.href = `/update-injury.html?injury_id=${injuryId}`;
-        }
+        function goToUpdateInjury(buttonElement) {
+    const injuryId = buttonElement.dataset.injuryId;
+    const injuryDataStr = buttonElement.dataset.injury;
+    const injuryData = JSON.parse(injuryDataStr.replace(/&apos;/g, "'"));
+    sessionStorage.setItem('updateInjuryData', JSON.stringify(injuryData));
+    window.location.href = `/update-injury.html?injury_id=${injuryId}`;
+}
 
         async function fetchInjuries() {
             const container = document.getElementById("injuryContainer");
@@ -466,8 +507,12 @@
                                 ? `<button class="button button-primary" onclick="goToRecoveryPlan(${existingPlan.PlanId})">View Plan</button>`
                                 : `<button class="button button-secondary" onclick="goToPlanMaker(${injury.InjuryId})">Create Plan</button>`
                             }
-                            <button class="button orange" onclick="goToUpdateInjury(${injury.InjuryId}, ${JSON.stringify(injury).replace(/"/g, '"')})">Update Injury</button>
-                        </div>
+<button class="button orange"
+    data-injury-id="${injury.InjuryId}"
+    data-injury='${JSON.stringify(injury).replace(/'/g, "&apos;")}'
+    onclick="goToUpdateInjury(this)">
+    Update Injury
+</button>                        </div>
                     `;
                     container.appendChild(div);
                 }
