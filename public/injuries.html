@@ -72,6 +72,7 @@
             border-radius: 12px;
             text-align: left;
             position: relative; /* Needed for absolute positioning of children */
+
         }
 
          /* Style for the horizontal line above the title */
@@ -95,6 +96,7 @@
             margin-bottom: 10px;
             margin-top: 0;
         }
+        
 
         /* --- Button Styles --- */
         .button {
@@ -119,8 +121,8 @@
             color: white;
         }
         .button.button-primary:hover {
-            background-color: #2e7d32;
-            border-color: #2e7d32;
+            background-color: #1770b8;
+            border-color: #1770b8;
             transform: translateY(-1px);
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
         }
@@ -150,11 +152,14 @@
             border: 1.5px solid var(--primary-green);
             color: var(--primary-green);
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.2s ease-in-out;
-            font-size: 0.95rem;
+            font-size: 1rem;
             margin: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--primary-green) !important;
+
+            
         }
 
             .button.button-secondary, .back-button {
@@ -184,22 +189,20 @@
             transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
             position: relative;
             overflow: hidden;
-            /* border-top: none; */ /* No thick top border */
+            opacity: 0.6;
         }
 
         .injury:hover {
             transform: translateY(-5px); /* Match welcome page lift */
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Match welcome page hover shadow */
             background-color: var(--card-bg-hover); /* Use hover variable */
-            /* border-color: rgba(0, 0, 0, 0.12); */ /* Optional: Slightly darker border on hover */
+            opacity: 0.7;
         }
 
-        /* Grid Layout for Details (Keep compact sizes) */
         .injury-details {
-            margin-bottom: 15px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* Adjust spacing as desired */
         }
         @media (min-width: 576px) {
             .injury-details {
@@ -210,7 +213,7 @@
         /* Text Sizes (Keep compact sizes) */
         .injury h2 {
              color: var(--text-dark);
-             font-size: 1.3rem;
+             font-size: 2rem;
              font-weight: 600;
              margin-bottom: 15px;
              grid-column: 1 / -1;
@@ -227,10 +230,12 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            /* Removed background, border-radius, and padding to eliminate white rectangles */
         }
 
         .injury .info-item i.icon {
-            font-size: 1rem;
+            margin-right: 18px;
+            font-size: 2.5rem;
             color: var(--primary-green);
             width: 18px;
             text-align: center;
@@ -290,6 +295,7 @@
                  left: 15px;
                  padding: 7px 15px;
                  font-size: 0.85rem;
+                 
              }
              hr.title-separator {
                 margin-top: 15px;
@@ -370,6 +376,9 @@
             margin: 10px auto;
             border-radius: 5px;
         }
+
+
+        
 
     </style>
 </head>
@@ -507,12 +516,13 @@
                                 ? `<button class="button button-primary" onclick="goToRecoveryPlan(${existingPlan.PlanId})">View Plan</button>`
                                 : `<button class="button button-secondary" onclick="goToPlanMaker(${injury.InjuryId})">Create Plan</button>`
                             }
-<button class="button orange"
-    data-injury-id="${injury.InjuryId}"
-    data-injury='${JSON.stringify(injury).replace(/'/g, "&apos;")}'
-    onclick="goToUpdateInjury(this)">
-    Update Injury
-</button>                        </div>
+                            <button class="button orange"
+                                data-injury-id="${injury.InjuryId}"
+                                data-injury='${JSON.stringify(injury).replace(/'/g, "&apos;")}'
+                                onclick="goToUpdateInjury(this)">
+                                Update Injury
+                            </button>
+                        </div>
                     `;
                     container.appendChild(div);
                 }
