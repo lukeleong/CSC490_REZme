@@ -83,7 +83,49 @@
             margin-bottom: 40px;
             padding-bottom: 25px;
             /* Subtle border for image background */
-            border-bottom: 1px solid var(--separator-color);
+        }
+
+        .divider {
+            width: 100%;
+            max-width: 800px;
+            border: none;
+            border-top: 16px solid #e9ecef;
+            opacity: 0.3;
+            margin: 24px auto;
+            border-radius: 5px;
+
+        }
+
+        .divider-icon-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 32px 0 24px 0;
+        }
+        .divider-icon-vertical .divider {
+            width: 870px;
+            max-width: 100vw;
+            margin: 0;
+            border-radius: 5px;
+        }
+        .divider-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(23,162,184,0.08);
+            padding: 10px 18px;
+            margin: 0 10px;
+            font-size: 2.5rem;
+            color: #17a2b8;
+            border: 3px solid #e9ecef;
+            opacity: 0.95;
+        }
+        .divider-icon i {
+            color: #17a2b8;
+            filter: drop-shadow(0 1px 2px #c1e5eb);
         }
 
 
@@ -91,12 +133,22 @@
             text-align: center;
             color: var(--primary-green);
             font-weight: 700;
-            margin-bottom: 30px;
-            font-size: 2.4rem;
+            margin-bottom: 5px;
+            font-size: 3.5rem;
             text-transform: none;
             letter-spacing: normal;
              /* Optional subtle shadow for contrast */
              /* text-shadow: 0 1px 2px rgba(0,0,0,0.1); */
+
+        }
+        h2 {
+            margin-bottom: 5px; /* Increase this value as needed */
+            color: #2c3e50;
+            font-weight: 900;
+            font-size: 4.5rem;
+            letter-spacing: 1px;
+            text-transform: none;
+            text-align: center;
         }
 
         /* --- Button Styles --- */
@@ -199,6 +251,9 @@
             overflow: hidden;
              /* Ensure no thick top border from previous versions */
              /* border-top: none; */
+            opacity: 0.6;
+            text-align: center;
+
         }
 
         .plan:hover {
@@ -207,6 +262,7 @@
             background-color: var(--card-bg-hover); /* Use hover variable */
              /* Optional: Adjust border on hover */
              /* border-color: rgba(0, 0, 0, 0.12); */
+             opacity: 0.8;
         }
 
         /* Ensure text inside card has good contrast */
@@ -215,13 +271,15 @@
             font-size: 1.4rem;
             font-weight: 600;
             margin-bottom: 15px;
+            font-size: 2.5rem;
+
         }
 
         .plan p {
             margin: 8px 0;
             color: var(--text-muted); /* Ensure this is dark enough */
             font-weight: 400;
-            font-size: 1rem;
+            font-size: 1.8rem;
         }
 
         .plan p strong {
@@ -276,13 +334,18 @@
          }
 
          .assigned-exercises-title {
-            font-size: 1.1rem; /* Smaller than the h2 (1.4rem) */
-            font-weight: 600; /* Match the weight of other headings */
+            font-size: 2rem; /* Smaller than the h2 (1.4rem) */
+            font-weight: 900; /* Match the weight of other headings */
             color: var(--primary-green); /* Match the primary color (#17a2b8) */
             margin-bottom: 8px; /* Space between the title and the injury type */
             text-transform: uppercase; /* Make it stand out */
             letter-spacing: 0.5px; /* Slight letter spacing for a modern look */
+            color: #1770b8;
         }
+
+        .card-icon {
+    color: #17a2b8;
+}
 
 
         /* Responsive Adjustments */
@@ -320,33 +383,30 @@
     </style>
 </head>
 <body>
-    <div class="container">
-<<<<<<< HEAD
-        <div class="header">
-            <!-- Grouped action buttons - Apply primary style -->
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-                <a href="/log-injury.html" class="button button-primary">Log New Injury</a>
-                <a href="/injuries.html" class="button button-primary">View All Injuries</a>
-=======
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; gap: 10px;">
-              <a href="/log-injury.html" class="button" style="width: auto;">Log a New Injury</a>
-              <a href="/injuries.html" class="button" style="width: auto;">View All Injuries</a>
-              <a href="/exercise-list.html" class="button" style="width: auto;">View Exercise List</a>
->>>>>>> 152279fcb458203932d35917aede5117d867d070
-            </div>
-             <!-- User info and logout -->
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px;">
-                <div id="greeting"></div>
-                 <!-- Apply specific logout style -->
-                <button onclick="logout()" class="button logout-btn">Logout</button>
-            </div>
+    <div class="container"><div class="header">
+        <div class="action-buttons">
+            <a href="/log-injury.html" class="button button-primary">Log New Injury</a>
+            <a href="/injuries.html" class="button button-primary">View All Injuries</a>
+            <a href="/exercise-list.html" class="button button-primary">View Exercise List</a>
         </div>
+        <div class="user-info">
+            <div id="greeting"></div>
+            <button onclick="logout()" class="button logout-btn">Logout</button>
+        </div>
+    </div>
 
-        <h1>Your Recovery Plans</h1>
 
-        <div id="plansContainer">
-            <p style="text-align: center; color: var(--text-muted);">Loading recovery plans...</p>
+    <div class="divider-icon-vertical">
+        <hr class="divider" style="margin-bottom: 10px;">
+        <span class="divider-icon">
+            <i class="fas fa-notes-medical"></i>
+        </span>
+        <h2>Your Recovery Plans</h2>
+        <hr class="divider" style="margin-top: 10px;">
+    </div>
+
+    <div id="plansContainer">
+        <p style="text-align: center; color: var(--text-muted);">Loading recovery plans...</p>
         </div>
     </div>
 
@@ -444,10 +504,13 @@
                     const isActive = plan.IsActive === true;
 
                     planElement.innerHTML = `
-                    <h3 class="assigned-exercises-title">Assigned Exercises</h3>
-                        <h2>${injuryType}</h2>
-                        <p><strong>Start Date:</strong> ${startDate}</p>
-                        <p><strong>Progress:</strong> ${progress}%
+                    <h3 class="assigned-exercises-title">
+  <i class="fas fa-folder-plus"></i>
+ Assigned Exercises
+</h3>
+                    <p><strong>Injury Name:</strong> ${injuryType}</p>
+                    <p><strong>Start Date:</strong> ${startDate}</p>
+                    <p><strong>Progress:</strong> ${progress}%
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: ${progress}%"></div>
                             </div>
