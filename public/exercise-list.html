@@ -147,7 +147,7 @@
     }
 
     #suggestModalContent {
-      background: #fff;
+      background: #ffffff;
       padding: 20px;
       border: 1px solid #888;
       width: 80%;
@@ -157,15 +157,19 @@
 
     #suggestModalContent h2 {
       margin-top: 0;
+      color: #1770b8;
+      font-size: 2.5rem;
     }
 
     .input-group {
       margin: 10px 0;
+      color: #1770b8;
     }
 
     .input-group label {
       display: block;
       margin-bottom: 5px;
+      font-size: 1.5rem;
     }
 
     .input-group input,
@@ -191,13 +195,32 @@
     }
 
     .modal-buttons .submit-btn {
-      background-color: #007bff;
+      background-color: #17a2b8;
       color: #fff;
     }
+
+    .modal-buttons .submit-btn:hover,
+.modal-buttons .submit-btn:focus {
+  background-color: #1770b8; /* Slightly darker blue */
+  color: #e0f7fa;            /* Optional: lighter text */
+  transform: translateY(-2px) scale(1.03); /* Slight lift and scale */
+  box-shadow: 0 4px 16px rgba(23,162,184,0.18);
+  outline: none;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
 
     .modal-buttons .cancel-btn {
       background-color: #ccc;
     }
+    .modal-buttons .cancel-btn:hover,
+.modal-buttons .cancel-btn:focus {
+  background-color: #c87312; /* Slightly darker gray */
+  color: #333;               /* Darker text for contrast */
+  transform: translateY(-2px) scale(1.03); /* Slight lift and scale */
+  box-shadow: 0 4px 16px rgba(160,160,160,0.18);
+  outline: none;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
 
 
     /*keep this*/
@@ -454,13 +477,15 @@
 
   <!-- Floating Suggest New Exercise Button -->
   <div class="suggest-align">
-    <button id="suggestButton">Suggest New Exercise</button>
+    <button id="suggestButton"><i class="fas fa-lightbulb"></i>
+
+      Suggest New Exercise</button>
   </div>
 
   <!-- Suggest New Exercise Modal -->
   <div id="suggestModal">
     <div id="suggestModalContent">
-      <h2>Suggest New Exercise</h2>
+      <h2><i class="fas fa-hand-point-up"></i> Suggest New Exercise</h2>
       <form id="suggestForm">
         <div class="input-group">
           <label for="exerciseName">Exercise Name*</label>
