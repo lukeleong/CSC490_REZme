@@ -225,7 +225,7 @@
         /* Range Slider Styles */
         .input-group input[type="range"] {
             width: 100%;
-            height: 6px; /* Thinner track */
+            height: 16px; /* Thinner track */
             background: #e9ecef; /* Light grey track */
             border-radius: 3px;
             appearance: none;
@@ -242,8 +242,8 @@
 
         .input-group input[type="range"]::-webkit-slider-thumb {
             appearance: none;
-            width: 18px; /* Thumb size */
-            height: 18px;
+            width: 30px; /* Thumb size */
+            height: 30px;
             background: var(--primary-green); /* Green thumb */
             border-radius: 50%;
             cursor: pointer;
@@ -253,8 +253,8 @@
         }
 
         .input-group input[type="range"]:hover::-webkit-slider-thumb {
-            width: 20px; /* Slightly larger thumb */
-            height: 20px;
+            width: 40px; /* Slightly larger thumb */
+            height: 40px;
             background: #17a2b8; /* Darker green */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Stronger shadow */
         }
@@ -282,7 +282,7 @@
             font-weight: 600; /* Bolder value */
             margin-top: 4px; /* Space above value */
             color: var(--text-dark); /* Darker text for value */
-            font-size: 0.9rem;
+            font-size: 1.4rem;
         }
 
         /* Submit Button Specifics */
@@ -572,12 +572,14 @@
       <input type="hidden" id="UserId" name="UserId" value="" />
 
       <div class="input-group">
-        <label for="InjuryType">Injury Type:</label>
+        <label for="InjuryType"><i class="fa-solid fa-stethoscope"></i>     <!-- Medical assessment -->
+            Injury Type:</label>
         <input type="text" id="InjuryType" name="InjuryType" required />
       </div>
 
       <div class="input-group">
-        <label for="InjuryLocation">Injury Location:</label>
+        <label for="InjuryLocation"><i class="fa-solid fa-person"></i>              <!-- General person / body -->
+            Injury Location:</label>
         <select id="InjuryLocation" name="InjuryLocation" required>
           <option value="">Loading...</option>
         </select>
@@ -585,7 +587,7 @@
 
       <div class="input-group">
         <label for="InjurySeverity">
-          Injury Severity:
+            <i class="fa-solid fa-thermometer-half"></i>            Injury Severity:
           <span class="tooltip">?
             <span class="tooltiptext">
               0 – No injury<br>
@@ -604,6 +606,7 @@
 
       <div class="input-group">
         <label for="PainLevel">
+            <i class="fa-solid fa-face-frown"></i>
           Pain Level:
           <span class="tooltip">?
             <span class="tooltiptext">
@@ -623,6 +626,7 @@
 
       <div class="input-group">
         <label for="MobilityLevel">
+            <i class="fa-solid fa-person-walking"></i>
           Mobility Level:
           <span class="tooltip">?
             <span class="tooltiptext">
@@ -641,7 +645,7 @@
       </div>
 
       <div class="input-group">
-        <label for="StartDate">Date of Injury:</label>
+        <label for="StartDate"><i class="fa-solid fa-calendar"></i> Date of Injury:</label>
         <input type="date" id="StartDate" name="StartDate" required />
       </div>
 
