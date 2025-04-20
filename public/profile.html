@@ -5,25 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - Recovery App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
+            background-image: url('images/backgroundimage2.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+            background-size: cover; /* Ensures the image covers the entire body without distortion */
+            background-position: center center; /* Keeps the image centered */
         }
 
         .container {
-            max-width: 800px;
+            max-width: 700px;
             margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
+            padding: 30px 25px;
+            border-radius: 12px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* Subtle border */
+            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle light grey border */
+            text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            /* Optional: Add backdrop filter for frosted glass */
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Very subtle shadow */ 
         }
 
         h1, h2 {
             margin-top: 0;
+            color: #17a2b8;
+        }
+        h1 .icon {
+            margin-right: 10px; /* Space between the icon and the text */
+            color: #17a2b8; /* Match the heading color */
+            font-size: 1.2em; /* Slightly larger than the text for emphasis */
+            vertical-align: middle; /* Align the icon vertically with the text */
         }
 
         .header {
@@ -39,7 +58,7 @@
 
         .nav-links a {
             margin-left: 15px;
-            color: #007bff;
+            color: #17a2b8 !important;
             text-decoration: none;
         }
 
@@ -58,34 +77,41 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #17a2b8;
         }
 
         .input-group input {
             width: 100%;
-            padding: 10px;
+            padding: 10px 10px; /* Explicitly set top/bottom to 10px, left/right to 10px */
             border: 1px solid #ddd;
             border-radius: 5px;
+            box-sizing: border-box; /* Ensure padding is included in the width */
+            text-indent: 0; /* Reset any text indentation */
+            text-align: left; /* Ensure text starts from the left */
         }
 
         .button {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
+    display: inline-block;
+    padding: 12px 28px; /* Slightly adjusted padding */
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 2px solid transparent; /* Base border */
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease; /* Smoother transition */
+    margin: 5px; /* Margin for spacing */
+    font-size: 1rem;
+    background-color: #17a2b8; /* Primary blue background */
+    border-color: #17a2b8; /* Primary blue border */
+    color: white; /* White text */
+}
 
-        .button-warning {
-            background: #ffc107;
-        }
-
-        .button-danger {
-            background: #dc3545;
-        }
+.button:hover {
+    background-color: #17a2b8; /* Keep the same blue on hover */
+    border-color: #17a2b8;
+    transform: translateY(-2px); /* Subtle lift effect */
+}
 
         .status-message {
             padding: 10px;
@@ -94,16 +120,17 @@
             display: none;
         }
 
+        /* "save change" button */
         .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #d6dce7;
+            color: #1770b8;
+            border: 1px solid #d6dce7;
         }
 
         .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #e3ced0;
+            color: #1770b8;
+            border: 1px solid #e3ced0;
         }
 
         .form-buttons {
@@ -156,13 +183,99 @@
             border-radius: 5px;
             margin-bottom: 15px;
         }
+
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: rgba(229, 237, 239, 0.6); /* Match the semi-transparent background */
+            backdrop-filter: blur(5px); /* Match the frosted glass effect */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Add transition for smooth hover */
+        }
+
+        .section:hover {
+            transform: translateY(-5px); /* Lift the section 5px upward */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07); /* Add subtle shadow on hover */
+        }
+        #deleteAccountSection {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #352e9c; /* Use deep blue for the border */
+            border-radius: 10px;
+            background-color: rgba(23, 162, 184, 0.1); /* Light turquoise background with transparency */
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        #deleteAccountSection:hover {
+            transform: translateY(-5px); /* Add a slight lift effect */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Add a subtle shadow */
+            background-color: rgba(23, 162, 184, 0.2); /* Slightly darker turquoise on hover */
+        }
+
+        /* Delete Account Button Styling */
+        #deleteAccountBtn {
+            display: inline-block;
+            width: 100%; /* Full-width button */
+            max-width: 300px; /* Limit maximum width */
+            padding: 12px 28px; /* Consistent padding */
+            font-size: 1rem; /* Uniform font size */
+            font-weight: 600; /* Slightly bolder font */
+            text-align: center;
+            border-radius: 8px;
+            border: 2px solid #352e9c; /* Deep blue border */
+            background-color: #17a2b8; /* Light turquoise background */
+            color: white; /* White text */
+            cursor: pointer;
+            transition: all 0.3s ease; /* Smooth transitions */
+        }
+
+        #deleteAccountBtn:hover {
+            background-color: #6f75cc; /* Slightly darker turquoise on hover */
+            border-color: #1770b8; /* Match hover background color */
+            transform: translateY(-2px); /* Subtle lift on hover */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Add shadow on hover */
+        }
+        .nav-links a {
+    margin-left: 15px;
+    color: #17a2b8; /* Primary turquoise */
+    text-decoration: none; /* No underline */
+    font-weight: 500; /* Slightly bold for better visibility */
+    position: relative; /* Required for positioning the pseudo-element */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    display: inline-block; /* Ensure proper block behavior */
+}
+
+.nav-links a::before {
+    content: ""; /* Empty content for the border box */
+    position: absolute;
+    top: -4px; /* Adjust for a larger box above the text */
+    left: -6px; /* Adjust for a larger box on the left */
+    width: calc(100% + 12px); /* Increase the box width */
+    height: calc(100% + 8px); /* Increase the box height */
+    border: 2px solid rgba(23, 162, 184, 1); /* Blue border */
+    border-radius: 4px; /* Optional: Rounded corners for the border */
+    transform: scale(0); /* Initially hide the border box */
+    transition: transform 0.3s ease; /* Smooth expand effect */
+    z-index: -1; /* Ensure the border is behind the text */
+}
+
+.nav-links a:hover::before {
+    transform: scale(1); /* Expand the border box to full size on hover */
+}      
+
+
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <h1>User Profile</h1>
+            <h1>
+                <i class="fas fa-user-circle icon"></i>User Profile
+            </h1>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
                 <a href="#" id="logoutButton">Logout</a>
@@ -200,7 +313,7 @@
                     </select>
                 </div>
                 <div class="right-aligned">
-                    <button type="submit" class="button">Save Changes</button>
+                    <button type="submit" class="button"> <i class="fas fa-save"></i> Save Changes</button>
                 </div>
             </form>
         </div>
@@ -222,20 +335,17 @@
                     <input type="password" id="confirmNewPassword" name="confirmNewPassword" required>
                 </div>
                 <div class="right-aligned">
-                    <button type="submit" class="button">Change Password</button>
+                    <button type="submit" class="button"><i class="fa-solid fa-key"></i> Change Password</button>
                 </div>
             </form>
         </div>
 
         <!-- Account Deletion Section -->
-        <div class="section" id="deleteAccountSection">
-            <h2>Delete Account</h2>
-            <div id="googleUserWarning" class="google-user-warning" style="display:none;">
-                <p>Note: Google Sign-In users cannot delete their account through this interface. Please contact support for account deletion.</p>
-            </div>
+        <div id="deleteAccountSection">
+            <h2 style="color: #352e9c;">Delete Account</h2> <!-- Title with deep blue color -->
             <p>Warning: This action cannot be undone. All your data will be permanently deleted.</p>
             <div class="right-aligned">
-                <button id="deleteAccountBtn" class="button button-danger">Delete Account</button>
+                <button id="deleteAccountBtn"><i class="fa-solid fa-user-slash"></i> Delete Account</button>
             </div>
         </div>
     </div>

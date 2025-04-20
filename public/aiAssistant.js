@@ -5,14 +5,16 @@ function initAiAssistant() {
     const assistantHTML = `
     <div id="fitnessAiAssistant" style="display: none; position: fixed; right: 20px; bottom: 20px; width: 350px; 
          background: white; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; z-index: 1000;">
-        <h3 style="margin-top: 0; color: #0066cc;">Fitness Recovery Assistant</h3>
-        <textarea id="fitnessAiQuestion" placeholder="Ask about exercises, recovery, or injuries..." 
-               style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; height: 60px; resize: none;"></textarea>
+        <h3 style="margin-top: 0; color: #17a2b8;">Fitness Recovery Assistant</h3>
+       <textarea id="fitnessAiQuestion" placeholder="Ask about exercises, recovery, or injuries..." 
+    style="width: 100%; padding: 8px; margin: 10px 0 0 0; border: 1px solid #ddd; border-radius: 4px; 
+    height: 60px; resize: none; box-sizing: border-box;"></textarea>
+
         <div id="fitnessAiResponse" style="margin-top: 10px; max-height: 200px; overflow-y: auto; display: none; background: #f7f9fc; padding: 10px; border-radius: 4px; border: 1px solid #e1e5eb;"></div>
         <div style="margin-top: 10px; display: flex; justify-content: space-between;">
-            <button id="askFitnessAiBtn" style="padding: 8px 15px; background: #0066cc; color: white; border: none; 
+            <button id="askFitnessAiBtn" style="padding: 8px 15px; background: #17a2b8; color: white; border: none; 
                     border-radius: 4px; cursor: pointer;">Ask</button>
-            <button id="closeFitnessAiBtn" style="padding: 8px 15px; background: #f0f0f0; border: none; 
+            <button id="closeFitnessAiBtn" style="padding: 8px 15px; background: #f0f0f0;color: #17a2b8; border: 3px solid #17a2b8; 
                     border-radius: 4px; cursor: pointer;">Close</button>
         </div>
     </div>`;
@@ -29,7 +31,7 @@ function initAiAssistant() {
         aiButton.id = 'toggleFitnessAiButton';
         aiButton.textContent = 'Recovery Assistant';
         aiButton.style.marginLeft = '15px';
-        aiButton.style.color = '#0066cc';
+        aiButton.style.color = '#198754';
         aiButton.style.fontWeight = 'bold';
         
         const logoutButton = document.getElementById('logoutButton');
@@ -48,7 +50,7 @@ function initAiAssistant() {
       aiButton.style.top = '20px';
       aiButton.style.right = '20px';
       aiButton.style.padding = '8px 15px';
-      aiButton.style.background = '#0066cc';
+      aiButton.style.background = '#198754';
       aiButton.style.color = 'white';
       aiButton.style.border = 'none';
       aiButton.style.borderRadius = '4px';

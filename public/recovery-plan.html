@@ -3,119 +3,446 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recovery Plan</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f4;
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Recovery App</title>
+    <!-- Added Font Awesome Link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style> 
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
 
+    /* --- Core Theme Styles Based on Welcome Page --- */
+    :root {
+        /* Define colors based on welcome.html */
+        --primary-green: #17a2b8;
+        --primary-green-dark: #17a2b8;
+        --secondary-green: #66bb6a; /* Lighter green for accents */
+        --text-dark: #2c3e50;
+        --text-muted: #5a6a7d;
+        --card-bg: rgba(255, 255, 255, 0.75); /* Semi-transparent like welcome cards */
+        --card-bg-hover: rgba(255, 255, 255, 0.88);
+        --exercise-card-bg: rgba(255, 255, 255, 0.9); /* Slightly more opaque for exercises */
+        --modal-bg: #ffffff; /* Opaque white for modals */
+        --border-color-subtle: rgba(0, 0, 0, 0.08);
+        --border-color-divider: #d1d8e0;
+        --border-color-input: #ced4da;
+        --background-fallback: #e8f5e9;
+        --button-grey-bg: #adb5bd; /* Consistent grey */
+        --button-grey-hover: #9fa8b3;
+        --logout-red: #dc3545; /* Include for consistency */
+        --button-back-bg: #e0f2e2;
+        --button-back-bg-hover: #cfe8d1;
+         --status-active-green: #28a745;
+    }
+
+    body {
+        font-family: 'Segoe UI', 'Nunito Sans', Tahoma, Geneva, Verdana, sans-serif; /* Match font */
+        line-height: 1.7; /* Adjusted */
+        color: var(--text-muted); /* Default text */
+        background-color: var(--background-fallback); /* Fallback */
+        min-height: 100vh;
+        text-align: left; /* Default align left */
+        overflow-x: hidden;
+        padding: 50px 20px; /* Adjusted padding */
+
+        /* --- Background Image Settings --- */
+        background-image: url('images/backgroundimage2.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    /* Main Container styling like target .useful-element */
     .container {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 900px; /* Match target container */
+        margin: 30px auto; /* Center container */
+        background: var(--card-bg);
+        padding: 35px 40px; /* Generous padding */
+        border-radius: 12px;
+        border: 1px solid var(--border-color-subtle);
+        backdrop-filter: blur(5px); /* Frosted glass */
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07); /* Subtle shadow */
+    }
+    .container:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12); /* Larger shadow */
+        transform: translateY(-5px); /* Slight lift */
+        transition: all 0.3s ease; /* Smooth transition */
+        background: var(--card-bg-hover); /* Defined as rgba(255, 255, 255, 0.88) */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Slightly bigger shadow */
+    }
+
+    /* Header area for back button */
+    .page-header-nav {
+        margin-bottom: 25px;
+        border-bottom: 1px solid var(--border-color-divider);
+        padding-bottom: 20px;
     }
 
     h1 {
-      text-align: center;
+        color: var(--primary-green);
+        font-weight: 700;
+        margin-bottom: 30px; /* Space below title */
+        font-size: 2.4rem; /* Adjusted size */
+        text-transform: none;
+        letter-spacing: -0.5px;
+        text-align: center;
+    }
+    h1 i {
+    color: var(--primary-green); /* Matches h1 color */
+    margin-right: 8px; /* Optional: adds spacing between icon and text */
+}
+
+    h2 {
+        color: #17a2b8; /* Heading color */
+        font-weight: 600;
+        margin-top: 30px; /* Space above section headings */
+        margin-bottom: 15px;
+        font-size: 1.6rem; /* Sub-heading size */
+        border-bottom: 1px solid var(--border-color-divider);
+        padding-bottom: 10px;
     }
 
+    h3 { /* For exercise names & modal titles */
+         color: var(--text-dark);
+         font-size: 1.3rem;
+         font-weight: 600;
+         margin-bottom: 10px;
+    }
+
+    p { /* Base paragraph style */
+        color: var(--text-muted);
+        margin-bottom: 0.8em; /* Adjusted margin */
+        font-size: 1rem; /* Base font size */
+        line-height: 1.7;
+        font-weight: 400;
+    }
+    p strong {
+        color: var(--text-dark); /* Darker bold text */
+        font-weight: 600;
+    }
+    #planDetails p { /* Specific spacing for plan details */
+         margin-bottom: 12px;
+    }
+
+    /* --- Button Styles --- */
+    .button, .back-button {
+        display: inline-block;
+        padding: 10px 24px; /* Consistent padding */
+        text-align: center;
+        text-decoration: none;
+        border-radius: 8px; /* Match target radius */
+        border: 2px solid transparent; /* Match target border */
+        cursor: pointer;
+        font-weight: 500; /* Match target weight */
+        transition: all 0.3s ease;
+        margin: 5px;
+        font-size: 0.95rem;
+        color: white; /* Default for solid */
+    }
+
+    /* Primary Button (Green Solid) */
+    .button.button-primary {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .button.button-primary:hover {
+        background-color: var(--primary-green-dark);
+        border-color: var(--primary-green-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Secondary Button (Green Outline) */
+    .button.button-secondary {
+        background-color: transparent;
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+        box-shadow: none;
+    }
+    .button.button-secondary:hover {
+        background-color: rgba(25, 135, 84, 0.05);
+        color: var(--primary-green-dark);
+        border-color: var(--primary-green-dark);
+        transform: translateY(-2px);
+    }
+
+     /* Back Button (Use Secondary Style with Modifications) */
+    .back-button {
+        background-color: transparent;
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+        box-shadow: none;
+        padding: 8px 18px; /* Keep slightly smaller */
+        font-size: 0.9rem;
+        border-width: 1.5px; /* Slightly thinner border */
+    }
+    .back-button:hover {
+        background-color: #17a2b8;
+        color: white;
+        border-color: var(--primary-green-dark);
+        transform: translateY(-2px);
+    }
+
+    /* Grey Button (For Cancel/Less important actions) */
+    .button.button-grey {
+        background-color: var(--button-grey-bg);
+        border-color: var(--button-grey-bg);
+        color: #fff; /* White text on grey */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .button.button-grey:hover {
+        background-color: var(--button-grey-hover);
+        border-color: var(--button-grey-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Progress Bar */
     .progress-bar {
-      width: 100%;
-      background-color: #e0e0e0;
-      border-radius: 10px;
-      overflow: hidden;
-      height: 25px;
-      margin-bottom: 20px;
-      position: relative;
+        width: 100%;
+        height: 25px;
+        background: rgba(0, 0, 0, 0.08); /* Subtle dark track */
+        border-radius: 8px;
+        margin: 25px 0;
+        overflow: hidden;
+        position: relative;
     }
-
     .progress {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #4CAF50, #81C784);
-      text-align: right;
-      color: white;
-      font-weight: bold;
-      line-height: 25px;
-      padding-right: 10px;
-      border-radius: 10px 0 0 10px;
-      transition: width 0.6s ease;
+        height: 100%;
+        width: 0%; /* Set by JS */
+        background: linear-gradient(90deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+        border-radius: 8px; /* Rounded fill */
+        transition: width 0.6s ease-out;
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        color: #1770b8;
+        font-size: 1.2rem;
+        font-weight: 500;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        text-align: center; /* <<< ADD THIS LINE */
+
     }
 
+    /* Exercise Card Styles */
+    #exercisesContainer {
+         margin-top: 10px;
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+         gap: 25px; /* Increased gap */
+    }
     .exercise {
-      padding: 15px;
-      border: 1px solid #ddd;
-      margin: 10px 0;
-      border-radius: 5px;
-      background: #f9f9f9;
+        background: var(--exercise-card-bg); /* Use dedicated variable */
+        padding: 20px 25px; /* Adjusted padding */
+        border-radius: 8px; /* Consistent radius */
+        border: 1px solid var(--border-color-subtle); /* Subtle border */
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06); /* Subtle shadow */
+        transition: box-shadow 0.3s ease;
+        
+    }
+    .exercise:hover {
+         box-shadow: 0 5px 18px rgba(0, 0, 0, 0.09);
+    }
+    .exercise p {
+         font-size: 0.95rem;
+         margin-bottom: 0.6em;
+    }
+    .exercise small {
+         font-size: 0.9rem;
+         color: var(--text-muted);
+    }
+    .exercise small a {
+         color: var(--primary-green);
+         text-decoration: none;
+    }
+    .exercise small a:hover {
+         text-decoration: underline;
+    }
+    .exercise .button { /* Buttons inside exercise cards */
+        margin-top: 15px; /* More space */
+        margin-right: 8px;
+        padding: 7px 15px;
+        font-size: 0.85rem;
+    }
+     /* Specific button styling */
+     .exercise .complete-btn { /* Use Primary style */
+         background-color: var(--primary-green);
+         border-color: var(--primary-green);
+     }
+      .exercise .complete-btn:hover {
+         background-color: var(--primary-green-dark);
+         border-color: var(--primary-green-dark);
+     }
+     .exercise .rate-btn { /* Use Secondary style */
+          background-color: transparent;
+          border-color: #17a2b8; /* Use lighter green */
+          color: #17a2b8;
+          border-width: 1.5px;
+     }
+     .exercise .rate-btn.rated { /* Style if already rated */
+           background-color: var(--button-grey-bg);
+           border-color: var(--button-grey-bg);
+           color: #fff;
+      }
+      .exercise .rate-btn:hover:not(.rated) { /* Only change non-rated on hover */
+         background-color: rgba(102, 187, 106, 0.08); /* Lighter green tint */
+         border-color: var(--primary-green);
+         color: var(--primary-green);
+      }
+
+
+    /* Modal Styles */
+    #ratingModal, #exCompleteModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        animation: fadeInModalBg 0.3s ease-out forwards;
+        padding: 20px;
     }
 
-    .button {
-      display: inline-block;
-      padding: 10px;
-      margin-top: 10px;
-      margin-right: 10px;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
+    #ratingModalContent, #exCompleteModalContent {
+        background: var(--modal-bg); /* Opaque white */
+        color: var(--text-dark);
+        max-width: 480px;
+        margin: 80px auto;
+        padding: 30px 35px;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        position: relative;
+        animation: slideInModal 0.4s ease-out forwards;
+        text-align: left;
+    }
+     #ratingModalContent h3, #exCompleteModalContent h3 {
+        text-align: center;
+        color: var(--primary-green);
+        margin-bottom: 25px;
+        font-size: 1.5rem;
     }
 
-    #ratingModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    #ratingModalContent {
-      background: white;
-      max-width: 400px;
-      margin: 100px auto;
-      padding: 20px;
-      border-radius: 8px;
-      position: relative;
-    }
-
+    /* Form Styles within Modal */
     .input-group {
-      margin: 10px 0;
+        margin-bottom: 20px;
     }
-
     .input-group label {
-      display: block;
-      margin-bottom: 5px;
+        display: block;
+        margin-bottom: 8px;
+        color: var(--primary-green);
+        font-weight: 600;
+        font-size: 0.95rem;
     }
-
-    .input-group input,
+    .input-group input[type="range"],
+    .input-group input[type="number"],
     .input-group textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color-input); /* Use theme border color */
+        border-radius: 5px;
+        background: #fdfdfd;
+        color: var(--text-dark);
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .input-group input[type="range"] { padding: 0; height: 8px; background: #e9ecef; cursor: pointer; appearance: none; margin-top: 5px;}
+    .input-group input[type="range"]::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; background: var(--primary-green); border-radius: 50%; cursor: pointer; }
+    .input-group input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; background: var(--primary-green); border-radius: 50%; cursor: pointer; border: none;}
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15); /* Use theme green */
+    }
+     .input-group textarea {
+        resize: vertical;
+        min-height: 60px;
+    }
+     .input-group #ratingDisplay {
+        display: inline-block;
+        margin-left: 10px;
+        font-weight: 600;
+        color: var(--text-dark);
+        min-width: 20px;
+     }
+     /* Align modal buttons */
+     #ratingForm, #exerciseCompleteForm {
+         text-align: right;
+     }
+     #ratingForm .button, #exerciseCompleteForm .button {
+          margin: 10px 0 0 8px; /* Adjust spacing */
+          width: auto;
+          display: inline-block;
+     }
+
+
+    /* Animations */
+    @keyframes fadeInModalBg { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideInModal { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+         body {
+             padding: 30px 15px;
+         }
+        .container {
+            padding: 25px 20px;
+            margin: 20px auto;
+        }
+         h1 {
+             font-size: 2rem;
+         }
+         h2 {
+             font-size: 1.4rem;
+         }
+          .exercise h3 {
+             font-size: 1.2rem;
+         }
+    }
+     @media (max-width: 600px) {
+          #exercisesContainer {
+             grid-template-columns: 1fr; /* Stack exercises */
+         }
+          #ratingModalContent, #exCompleteModalContent {
+             margin: 40px auto;
+             padding: 20px 25px;
+             max-width: 95%;
+         }
+         #ratingForm, #exerciseCompleteForm {
+             text-align: center; /* Center buttons on mobile */
+         }
+          #ratingForm .button, #exerciseCompleteForm .button {
+             display: block;
+             width: 100%;
+             margin: 10px 0 0 0;
+         }
     }
   </style>
 </head>
 
 <body>
+    <!-- Apply back-button class for styling -->
   <div class="container">
-    <h1 id="recoveryTitle">Recovery Plan</h1>
+     <div class="page-header-nav">
+        <a href="dashboard.html" class="back-button">← Back to Dashboard</a>
+     </div>
+
+    <h1 id="recoveryTitle"><i class="fas fa-life-ring"></i> Recovery Plan</h1>
     <div id="planDetails">
       <h2>Plan Details</h2>
       <p><strong>Injury:</strong> <span id="injuryType">Loading...</span></p>
       <p><strong>Start Date:</strong> <span id="startDate">Loading...</span></p>
-      <p><strong>End Date:</strong> <span id="endDate">Loading...</span></p>
+      <p style="display: none;"><strong>End Date:</strong> <span id="endDate"></span></p>
       <p><strong>Status:</strong> <span id="isActive">Loading...</span></p>
     </div>
 
@@ -126,11 +453,14 @@
     <h2>Assigned Exercises</h2>
     <div id="exercisesContainer">
       <p>Loading exercises...</p>
+      <!-- Exercises populated by JS -->
     </div>
 
-    <a href="dashboard.html" class="button" style="width: 100%; text-align: center;">Back to Dashboard</a>
+    <!-- Main action button styled as primary -->
+    <a href="dashboard.html" class="button button-primary" style="width: 100%; text-align: center; margin-top: 30px;">Back to Dashboard</a>
   </div>
 
+    <!-- Rating Modal -->
   <div id="ratingModal">
     <div id="ratingModalContent">
       <h3>Rate Exercise</h3>
@@ -138,101 +468,205 @@
         <input type="hidden" id="ratingExerciseId">
         <div class="input-group">
           <label for="ratingValue">Rating (0–5):</label>
-          <input type="range" id="ratingValue" name="rating" min="0" max="5" step="0.5" value="0"
-            oninput="document.getElementById('ratingDisplay').innerText = this.value">
-          <span id="ratingDisplay">0</span>
+          <div>
+              <input type="range" id="ratingValue" name="rating" min="0" max="5" step="0.5" value="0"
+                oninput="document.getElementById('ratingDisplay').innerText = parseFloat(this.value).toFixed(1)">
+              <span id="ratingDisplay">0.0</span> <!-- Show decimal -->
+          </div>
         </div>
         <div class="input-group">
-          <label for="ratingComment">Comment:</label>
+          <label for="ratingComment">Comment (Optional):</label>
           <textarea id="ratingComment" name="comment" rows="3"></textarea>
         </div>
-        <button type="submit" class="button" id="ratingSubmitButton">Submit Rating</button>
-        <button type="button" class="button" style="background: #ccc;" onclick="closeRatingModal()">Cancel</button>
+        <!-- Buttons styled with classes -->
+        <button type="submit" class="button button-primary" id="ratingSubmitButton">Submit Rating</button>
+        <button type="button" class="button button-grey" onclick="closeRatingModal()">Cancel</button>
       </form>
     </div>
   </div>
 
+  <!-- Exercise Completion Modal -->
+  <div id="exCompleteModal">
+    <div id="exCompleteModalContent">
+      <h3>Log Set/Reps</h3> <!-- Changed Title -->
+      <form id="exerciseCompleteForm">
+        <input type="hidden" id="feedbackExerciseId">
+        <input type="hidden" id="feedbackPlanId">
+        <div class="input-group">
+          <label for="setsCompleted">Sets Completed:</label>
+          <input type="number" id="setsCompleted" name="setsCompleted" required min="0">
+        </div>
+        <div class="input-group">
+          <label for="repsCompleted">Reps Completed (per set):</label>
+          <input type="number" id="repsCompleted" name="repsCompleted" required min="0">
+        </div>
+        <!-- Buttons styled with classes -->
+        <button type="submit" class="button button-primary" id="feedbackSubmitButton">Submit</button>
+        <button type="button" class="button button-grey" onclick="closeExCompleteModal()">Cancel</button> <!-- Corrected Function Call -->
+      </form>
+    </div>
+  </div>
+
+
   <script>
-    const userId = getUserIdFromToken();
+    // --- JavaScript remains largely the same, but update button generation ---
+    const userId = getUserIdFromToken(); // Keep userId accessible globally
 
     function getUserIdFromToken() {
       const token = localStorage.getItem("token");
       if (!token) return null;
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const payload = JSON.parse(jsonPayload);
         return payload.id || payload.user_id || payload.UserId;
-      } catch {
-        return null;
+      } catch(err) {
+          console.error("Failed to decode token:", err);
+          return null;
       }
     }
 
     async function fetchRecoveryPlan() {
       const planId = new URLSearchParams(window.location.search).get("planId");
-      if (!planId) return;
+      if (!planId) {
+          document.getElementById("recoveryTitle").innerText = "Error: Plan ID not found";
+          document.getElementById("planDetails").innerHTML = "<p>Could not load plan details.</p>";
+          document.getElementById("exercisesContainer").innerHTML = "";
+          return;
+      };
 
-      const res = await fetch(`/api/recovery-plans/${planId}`);
-      const plan = await res.json();
+      try {
+          const headers = { 'Content-Type': 'application/json' };
+          const token = localStorage.getItem("token");
+          if (token) { headers['Authorization'] = `Bearer ${token}`; }
 
-      document.getElementById("injuryType").innerText = plan.Injury?.InjuryType || "N/A";
-      document.getElementById("recoveryTitle").innerText = `Recovery Plan – ${plan.Injury?.InjuryType || "Unknown Injury"}`;
-      document.getElementById("startDate").innerText = new Date(plan.StartDate).toLocaleDateString();
-      const endDateEl = document.getElementById("endDate");
-      if (plan.IsActive) {
-        endDateEl.parentElement.style.display = "none";
-      } else {
-        endDateEl.parentElement.style.display = "block";
-        endDateEl.innerText = plan.EndDate ? new Date(plan.EndDate).toLocaleDateString() : "Not set";
+          const res = await fetch(`/api/recovery-plans/${planId}`, { headers });
+           if (!res.ok) {
+               if (res.status === 404) throw new Error("Plan not found.");
+               if (res.status === 401) throw new Error("Unauthorized. Please log in.");
+               throw new Error(`HTTP error! status: ${res.status}`);
+           }
+          const plan = await res.json();
+
+          if (!plan) throw new Error("Invalid plan data received.");
+
+          const injuryTypeText = plan.Injury?.InjuryType || "General";
+          document.getElementById("injuryType").innerText = injuryTypeText;
+          document.getElementById("recoveryTitle").innerHTML = '<i class="fas fa-life-ring"></i> Recovery Plan';          document.getElementById("startDate").innerText = plan.StartDate ? new Date(plan.StartDate).toLocaleDateString() : 'N/A';
+
+          const endDateEl = document.getElementById("endDate");
+          const endDateParent = endDateEl.parentElement;
+          if (plan.IsActive) {
+            endDateParent.style.display = "none";
+          } else {
+            endDateParent.style.display = "block";
+            endDateEl.innerText = plan.EndDate ? new Date(plan.EndDate).toLocaleDateString() : "Not set";
+          }
+          document.getElementById("isActive").innerText = plan.IsActive ? "Active" : "Completed";
+
+          const progress = document.getElementById("progress");
+          const progressPercentage = (plan.ProgressStatus !== null && plan.ProgressStatus !== undefined) ? parseInt(plan.ProgressStatus, 10) : 0;
+          progress.style.width = `${progressPercentage}%`;
+          progress.innerText = `${progressPercentage}%`;
+
+          fetchExercises(planId, headers);
+
+      } catch (error) {
+          console.error("Failed to fetch recovery plan:", error);
+          document.getElementById("recoveryTitle").innerText = "Error Loading Plan";
+          document.getElementById("planDetails").innerHTML = `<p style="color: var(--logout-red);">${error.message || "Could not load plan details."}</p>`;
+          document.getElementById("exercisesContainer").innerHTML = "";
       }
-      document.getElementById("isActive").innerText = plan.IsActive ? "Active" : "Completed";
-
-      const progress = document.getElementById("progress");
-      progress.style.width = `${plan.ProgressStatus}%`;
-      progress.innerText = `${plan.ProgressStatus}%`;
-
-      fetchExercises(planId);
     }
 
-    async function fetchExercises(planId) {
-  const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
-  const exercises = await res.json();
-  const container = document.getElementById("exercisesContainer");
-  container.innerHTML = "";
+    async function fetchExercises(planId, headers) {
+      const container = document.getElementById("exercisesContainer");
+      container.innerHTML = "<p>Loading exercises...</p>";
 
-  if (!exercises.length) {
-    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-    return;
-  }
+      try {
+          const res = await fetch(`/api/recovery-plans/${planId}/exercises`, { headers });
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          const exercises = await res.json();
 
-  for (const ex of exercises) {
-    // Fetch completions for the user (this may return all completions for the user)
-    const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
-    const allCompletions = await completionsRes.json();
+          container.innerHTML = "";
 
-    // Filter completions to include only those for the current exercise
-    const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
+          if (!exercises || !Array.isArray(exercises) || exercises.length === 0) {
+            container.innerHTML = "<p>No exercises assigned to this recovery plan yet.</p>";
+            return;
+          }
 
-    // Get the highest progress value among completions for this exercise, or default to 0
-    const highestProgress = completionsForExercise.length > 0
-      ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
-      : 0;
+          for (const ex of exercises) {
+            let userRating = null;
+            let avgRatingText = "No ratings";
+            let highestProgress = 0;
 
-    // Create the exercise element with highest progress displayed on the right.
-    const div = document.createElement("div");
-    div.className = "exercise";
-    div.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-         <h3 style="margin:0;">${ex.ExerciseName}</h3>
-         <div style="font-weight: bold;">${highestProgress}%</div>
-      </div>
-      <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-      <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-      ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-      <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
-      <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
-    `;
-    container.appendChild(div);
-  }
-}
+            // Fetch ratings
+             try {
+                 const ratingsRes = await fetch(`/api/exercise-ratings/exercise/${ex.ExerciseId}`, { headers });
+                 if (ratingsRes.ok) {
+                     const allRatings = await ratingsRes.json();
+                     if (Array.isArray(allRatings)) {
+                         userRating = allRatings.find(r => r.UserId === userId);
+                         if (allRatings.length > 0) {
+                             const avg = (allRatings.reduce((sum, r) => sum + parseFloat(r.Rating || 0), 0) / allRatings.length);
+                             avgRatingText = `Avg: ${avg.toFixed(1)}★`;
+                         }
+                     }
+                 }
+             } catch (ratingError) {
+                 console.warn(`Could not fetch ratings for exercise ${ex.ExerciseId}:`, ratingError);
+             }
+             // Fetch completions
+              try {
+                const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
+                if (completionsRes.ok) {
+                  const allCompletions = await completionsRes.json();
+                  const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
+                  highestProgress = completionsForExercise.length > 0
+                    ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
+                    : 0;
+                }
+              } catch (completionError) {
+                console.warn(`Could not fetch completions for exercise ${ex.ExerciseId}:`, completionError);
+              }
+
+            const div = document.createElement("div");
+            div.className = "exercise";
+
+            const ratingLinkOrText = avgRatingText === "No ratings"
+                ? avgRatingText
+                : `<a href="exercise-rating.html?exerciseId=${ex.ExerciseId}" style="text-decoration:none;" title="View all ratings">${avgRatingText}</a>`;
+
+             // *** UPDATE: Add classes for buttons ***
+             const rateButtonClass = userRating ? "rate-btn rated" : "rate-btn"; // Class determines grey or green style
+             const rateButtonText = userRating ? "Change Rating" : "Rate";
+
+            div.innerHTML = `
+              <h3>${ex.ExerciseName || 'Unnamed Exercise'} <small style="font-weight:normal;">(${ratingLinkOrText})</small></h3>
+              <p><strong>Target:</strong> ${ex.TargetMuscleGroup || 'N/A'}</p>
+              <p><strong>Equipment:</strong> ${ex.Equipment || 'Body Weight'}</p>
+              ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank" class="button button-secondary" style="padding: 5px 10px; font-size: 0.8rem;">Watch Guide <i class="fas fa-external-link-alt"></i></a></p>` : ""}
+              <button class="button button-primary complete-btn" onclick="markExerciseComplete(${ex.ExerciseId}, ${planId})">Log Set/Reps</button>
+              <button class="button ${rateButtonClass}" onclick="openRatingModal(${ex.ExerciseId})">${rateButtonText}</button>
+            `;
+            container.appendChild(div);
+          }
+      } catch (error) {
+           console.error("Failed to fetch exercises:", error);
+           container.innerHTML = `<p style="color: var(--logout-red);">Error loading exercises.</p>`;
+      }
+    }
+
+    async function markExerciseComplete(exerciseId, planId) {
+      document.getElementById("setsCompleted").value = '';
+      document.getElementById("repsCompleted").value = '';
+      document.getElementById("feedbackExerciseId").value = exerciseId;
+      document.getElementById("feedbackPlanId").value = planId;
+      document.getElementById("exCompleteModal").style.display = "block";
+    }
 
     async function openRatingModal(exerciseId) {
       document.getElementById("ratingExerciseId").value = exerciseId;
@@ -243,10 +677,10 @@
       const heading = document.querySelector("#ratingModalContent h3");
 
       ratingSlider.value = 0;
-      ratingDisplay.innerText = "0";
+      ratingDisplay.innerText = "0.0"; // Show decimal
       commentBox.value = "";
       submitBtn.innerText = "Submit Rating";
-      submitBtn.style.background = "#007bff";
+      submitBtn.className = "button button-primary"; // Default to primary submit
       heading.innerText = "Rate Exercise";
 
       document.getElementById("ratingModal").style.display = "block";
@@ -254,17 +688,24 @@
       if (!userId) return;
 
       try {
-        const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
-        const allRatings = await res.json();
-        const userRating = allRatings.find(r => r.UserId === userId);
+        const headers = { 'Content-Type': 'application/json' };
+        const token = localStorage.getItem("token");
+        if (token) { headers['Authorization'] = `Bearer ${token}`; }
 
-        if (userRating) {
-          ratingSlider.value = userRating.Rating;
-          ratingDisplay.innerText = userRating.Rating;
-          commentBox.value = userRating.Comment || "";
-          submitBtn.innerText = "Update Rating";
-          submitBtn.style.background = "#6c757d";
-          heading.innerText = "Update Rating";
+        const res = await fetch(`/api/exercise-ratings/${exerciseId}/${userId}`, { headers });
+
+        if (res.ok) {
+          const userRating = await res.json();
+          if (userRating && userRating.Rating !== undefined) {
+            ratingSlider.value = userRating.Rating;
+            ratingDisplay.innerText = parseFloat(userRating.Rating).toFixed(1);
+            commentBox.value = userRating.Comment || "";
+            submitBtn.innerText = "Update Rating";
+            submitBtn.className = "button button-secondary"; // Use secondary for update
+            heading.innerText = "Update Rating";
+          }
+        } else if (res.status !== 404) {
+            console.warn(`Could not preload rating: ${res.statusText}`);
         }
       } catch (err) {
         console.error("Error preloading rating:", err);
@@ -275,42 +716,187 @@
       document.getElementById("ratingModal").style.display = "none";
     }
 
-    document.getElementById("ratingForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
+    function closeExCompleteModal() { // Corrected function name
+      document.getElementById("exCompleteModal").style.display = "none";
+    }
+
+        // Submit Rating Form
+        document.getElementById("ratingForm").addEventListener("submit", async function (e) {
+      e.preventDefault(); // Prevent default form submission
+
+      console.log("--- Rating Form Submit Start ---"); // DEBUG
+
+      if (!userId) {
+          alert("Please log in to rate.");
+          console.log("Rating aborted: User not logged in."); // DEBUG
+          return;
+      }
 
       const exerciseId = document.getElementById("ratingExerciseId").value;
       const rating = parseFloat(document.getElementById("ratingValue").value);
       const comment = document.getElementById("ratingComment").value;
+      const submitBtn = document.getElementById("ratingSubmitButton");
+      const originalBtnText = submitBtn.innerText;
+      const originalBtnClass = submitBtn.className;
 
-      const url = `/api/exercise-ratings/${exerciseId}/${userId}`;
+      console.log("Form Data:", { exerciseId, rating, comment, userId }); // DEBUG: Log form data
+
+      // Basic validation
+      if (isNaN(rating) || rating < 0 || rating > 5) {
+           alert("Invalid rating value.");
+           console.log("Rating aborted: Invalid rating value."); // DEBUG
+           return;
+      }
+       if (!exerciseId) {
+           alert("Error: Exercise ID is missing.");
+           console.log("Rating aborted: Exercise ID is missing."); // DEBUG
+           return;
+       }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Saving...";
+      console.log("Submit button disabled, text set to 'Saving...'."); // DEBUG
+
+      // Initial payload only includes data for the body
       const payload = { Rating: rating, Comment: comment };
+      console.log("Initial payload (for body):", payload); // DEBUG
 
       try {
-        const method = await checkRatingExists(exerciseId) ? "PUT" : "POST";
-        const endpoint = method === "POST" ? "/api/exercise-ratings" : url;
+         let method = "POST";
+         let endpoint = "/api/exercise-ratings"; // Default POST endpoint
+         let finalPayload = { userId: userId, exerciseId: parseInt(exerciseId, 10), ...payload }; // Default payload for POST
+
+         console.log("Checking if rating exists..."); // DEBUG
+
+         try {
+             const headers = { 'Content-Type': 'application/json' };
+             const token = localStorage.getItem("token");
+             if (token) { headers['Authorization'] = `Bearer ${token}`; }
+
+             // Check endpoint: /api/exercise-ratings/{exerciseId}/{userId}
+             const checkEndpoint = `/api/exercise-ratings/${exerciseId}/${userId}`;
+             console.log("Checking existing rating at:", checkEndpoint); // DEBUG
+             const checkRes = await fetch(checkEndpoint, { headers });
+
+             console.log("Check response status:", checkRes.status); // DEBUG
+
+             if (checkRes.ok) { // If rating exists (status 200)
+                 method = "PUT";
+                 endpoint = checkEndpoint; // Use the specific update endpoint
+                 finalPayload = payload; // For PUT, only send Rating and Comment in body
+                 console.log("Rating exists. Method set to PUT, endpoint:", endpoint); // DEBUG
+             } else if (checkRes.status === 404) {
+                 console.log("Rating does not exist. Method remains POST, endpoint:", endpoint); // DEBUG
+             }
+              else {
+                 // If it's not 404, maybe another error occurred during check
+                 console.warn(`Rating check unexpected status: ${checkRes.status}`); // DEBUG
+                 // Proceed with POST as a fallback? Or handle error?
+                 // Let's proceed with POST for now.
+             }
+         } catch (checkErr) {
+             console.error("Error checking existing rating:", checkErr); // DEBUG
+             // Proceed with POST as a fallback if check fails
+         }
+
+        console.log(`Preparing ${method} request to ${endpoint}`); // DEBUG
+        console.log("Final payload for request body:", finalPayload); // DEBUG
+
+        const headers = { 'Content-Type': 'application/json' };
+        const token = localStorage.getItem("token");
+        if (token) { headers['Authorization'] = `Bearer ${token}`; }
 
         const res = await fetch(endpoint, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...(method === "POST" ? { userId, exerciseId } : {}),
-            ...payload
-          })
+          method: method,
+          headers: headers,
+          body: JSON.stringify(finalPayload) // Send the correct payload
         });
 
-        const result = await res.json();
+        console.log("Fetch response received. Status:", res.status); // DEBUG
+
+       
+
         if (res.ok) {
-          alert("Rating saved successfully.");
+          console.log("Request successful (status OK). Closing modal and refreshing."); // DEBUG
           closeRatingModal();
           fetchRecoveryPlan(); // Refresh UI
+          // Consider adding a temporary success message element instead of alert
+          // showTemporaryMessage("Rating saved successfully!", "success");
         } else {
-          alert(result.error || "Failed to save rating.");
+          const errorMsg = result?.error || result?.message || `Failed to save rating (Status: ${res.status})`;
+          alert(errorMsg); // Show error to user
+          console.error("Rating save error:", errorMsg, result); // DEBUG: Log detailed error
         }
       } catch (err) {
-        console.error("Error saving rating:", err);
-        alert("Something went wrong.");
+        console.error("General error during rating submission:", err); // DEBUG: Catch network/other errors
+        alert("Something went wrong saving the rating. Check console for details.");
+      } finally {
+          console.log("Rating submission finally block. Enabling button."); // DEBUG
+          submitBtn.disabled = false;
+          // Restore button text correctly based on whether it was an update or initial submit
+          // This might require re-checking or relying on fetchRecoveryPlan to fix it.
+          // For now, just restore original text:
+          submitBtn.innerText = originalBtnText;
+          console.log("Submit button re-enabled."); // DEBUG
       }
     });
+    // Submit Exercise Completion Form
+    document.getElementById("exerciseCompleteForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (!userId) { alert("Please log in."); return; }
+
+      const exerciseId = document.getElementById("feedbackExerciseId").value;
+      const planId = document.getElementById("feedbackPlanId").value;
+      const setsCompleted = parseInt(document.getElementById("setsCompleted").value);
+      const repsCompleted = parseInt(document.getElementById("repsCompleted").value);
+      const submitBtn = document.getElementById("feedbackSubmitButton");
+      const originalBtnText = submitBtn.innerText;
+
+      if (isNaN(setsCompleted) || setsCompleted < 0 || isNaN(repsCompleted) || repsCompleted < 0) {
+          alert("Please enter valid numbers for sets and reps.");
+          return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Submitting...";
+
+      const payload = {
+          PlanId: parseInt(planId, 10),
+          ExerciseId: parseInt(exerciseId, 10),
+          SetsCompleted: setsCompleted,
+          RepsCompleted: repsCompleted,
+          UserId: userId
+      };
+
+      try {
+          const headers = { 'Content-Type': 'application/json' };
+          const token = localStorage.getItem("token");
+          if (token) { headers['Authorization'] = `Bearer ${token}`; }
+
+          const res = await fetch("/api/exercise-completions", {
+              method: "POST",
+              headers: headers,
+              body: JSON.stringify(payload)
+          });
+
+          const result = await res.json();
+          if (res.ok) {
+              closeExCompleteModal(); // Use correct function name
+              fetchRecoveryPlan();
+          } else {
+              alert(result.error || "Failed to save exercise completion data.");
+              console.error("Completion save error:", result);
+          }
+      } catch (err) {
+          console.error("Error saving exercise completion data:", err);
+          alert("Something went wrong saving completion data.");
+      } finally {
+           submitBtn.disabled = false;
+           submitBtn.innerText = "Submit";
+      }
+  });
+
+    // Initial fetch on page load
 
     async function checkRatingExists(exerciseId) {
       try {
