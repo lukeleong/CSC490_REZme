@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exercise Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,17 +13,54 @@
             margin: 0;
             padding: 20px;
             color: #333;
+            background-image: url('images/backgroundimage2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat; 
+            background-attachment: fixed;
+            background-color: var(--light-green-bg-start); /* Fallback */
         }
         
-        h1, h2, h3 {
+        h1, h2 {
             color: #2c3e50;
+            margin-top: 0;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.4rem; /* Adjust to match dashboard */
+            margin-left: 10px;
+            
+        }
+        h4 {
+            text-align: center;
+            color: #343a40; /* or var(--primary-green) if that's what you used */
+            font-weight: 700;
+            font-size: 4rem; /* Adjust to match dashboard */
+            margin-bottom: 30px;
+            margin-top: 0;
+            letter-spacing: normal;
+            margin-bottom: 10px;
             margin-top: 0;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 830px;
             margin: 0 auto;
+            background: rgba(255,255,255,0.6); 
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0.8;
+            transition: box-shadow 0.6s, opacity 0.6s, transform 0.6s;
         }
+        .container:hover {
+    box-shadow: 0 8px 32px rgba(23,162,184,0.18); /* Stronger shadow */
+    opacity: 1; /* Fully opaque on hover */
+    transform: translateY(-4px) scale(1.01); /* Slight lift and scale */
+    background: rgba(255,255,255,0.6); /* Slightly less transparent */
+    transition: box-shadow 0.3s, opacity 0.3s, transform 0.3s, background 0.3s;
+}
         
         .header {
             display: flex;
@@ -72,12 +111,16 @@
         }
         
         .details-container, .form-container {
+            font-size: 1.4rem; /* Adjust to match dashboard */
             padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            background-color: #fcfcfc;
+            background-color: #e2e4ff;
+            opacity: 0.8;
+            transition: box-shadow 0.6s, opacity 0.6s, transform 0.6s;
         }
+        
         
         .form-group {
             margin-bottom: 15px;
@@ -108,17 +151,22 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            transition: background-color 0.2s;
         }
         
         .add-button, .save-button {
-            background-color: #4CAF50;
+            background-color: #17a2b8;
             color: white;
             border: none;
+            transition: background-color 0.6s, color 0.6s, box-shadow 0.6s;
+
         }
         
         .add-button:hover, .save-button:hover {
-            background-color: #388E3C;
+            background-color: #1770b8;
+            transform: translateY(-1px) scale(1.01); /* Moves up and slightly grows */
+            box-shadow: 0 4px 12px rgba(23,162,184,0.18); /* Stronger shadow */
+            opacity: 1; /* Fully opaque on hover */
+            transition: background-color 0.6s, color 0.6s, box-shadow 0.6s, opacity 0.6s, transform 0.6s;
         }
         
         .edit-button {
@@ -142,13 +190,19 @@
         }
         
         .cancel-button {
-            background-color: #9e9e9e;
+            background-color: #7a7a7a;
             color: white;
             border: none;
+            opacity: 0.8;
+            transition: background-color 0.6s, color 0.6s, box-shadow 0.6s, opacity 0.6s, transform 0.6s;
         }
         
         .cancel-button:hover {
-            background-color: #757575;
+            background-color: #db462c;
+            transform: translateY(-1px) scale(1.01); /* Moves up and slightly grows */
+            box-shadow: 0 4px 12px rgba(23,162,184,0.18); /* Stronger shadow */
+            opacity: 1; /* Fully opaque on hover */
+            transition: background-color 0.6s, color 0.6s, box-shadow 0.6s, opacity 0.6s, transform 0.6s;
         }
         
         #statusMessages {
@@ -168,7 +222,7 @@
         }
         
         .status-message.success {
-            background-color: #4CAF50;
+            background-color: #1770b8;
         }
         
         .status-message.error {
@@ -188,12 +242,67 @@
             90% { opacity: 1; }
             100% { opacity: 0; }
         }
+
+        .divider {
+            width: 100%;
+            max-width: 800px;
+            border: none;
+            border-top: 16px solid #e9ecef;
+            opacity: 0.3;
+            margin: 24px auto;
+            border-radius: 5px;
+
+        }
+
+        .divider-icon-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 32px 0 24px 0;
+        }
+        .divider-icon-vertical .divider {
+            width: 870px;
+            max-width: 100vw;
+            margin: 0;
+            border-radius: 5px;
+        }
+        .divider-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(23,162,184,0.08);
+            padding: 10px 18px;
+            margin: 0 10px;
+            font-size: 2.5rem;
+            color: #17a2b8;
+            border: 3px solid #e9ecef;
+            opacity: 0.95;
+        }
+        .divider-icon i {
+            color: #17a2b8;
+            filter: drop-shadow(0 1px 2px #c1e5eb);
+        }
+        
     </style>
 </head>
 <body>
+
+    <div class="divider-icon-vertical">
+        <hr class="divider" style="margin-bottom: 10px;">
+        <span class="divider-icon">
+            <i class="fas fa-layer-group"></i>
+
+        </span>
+        <h4>Manage Your Exercises</h4>
+        <hr class="divider" style="margin-top: 10px;">
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1>Exercise Management System</h1>
+            <h1><i class="fas fa-cogs"></i> Exercise Management System</h1>
             <div>
                 <button id="homeButton" class="cancel-button">Back to Dashboard</button>
             </div>
@@ -206,7 +315,7 @@
             
             <div class="exercise-management-layout">
                 <div class="exercise-list-container">
-                    <h3>All Exercises</h3>
+                    <h3><i class="fas fa-th-large"></i> All Exercises</h3>
                     <div id="exerciseList" class="list-container">
                         <div class="loading">Loading exercises...</div>
                     </div>
@@ -301,7 +410,7 @@
             
             // Exercise fields
             detailsContainer.innerHTML = `
-                <h3>Exercise Details</h3>
+                <h3><i class="fas fa-info-circle"></i>  Exercise Details</h3>
                 <p><strong>Name:</strong> ${exercise.ExerciseName}</p>
                 <p><strong>Muscle Group:</strong> ${exercise.TargetMuscleGroup}</p>
                 <p><strong>Difficulty:</strong> ${exercise.Difficulty}/4</p>
@@ -365,7 +474,7 @@
             const formContainer = document.getElementById('exerciseFormContainer');
             
             formContainer.innerHTML = `
-                <h3>Edit Exercise</h3>
+                <h3><i class="fas fa-edit"></i> Edit Exercise</h3>
                 <form id="editExerciseForm">
                     <input type="hidden" id="exerciseId" value="${exercise.ExerciseId}">
                     
