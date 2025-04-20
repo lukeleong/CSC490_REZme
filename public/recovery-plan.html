@@ -4,26 +4,223 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Link -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <title>Recovery Plan</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f4;
-    }
+       * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+             /* --- Core Theme Styles --- */
+        :root {
+            --primary-green: #17a2b8;
+            --secondary-green: #1770b8;
+            --light-green-bg-start: #d1f0d9;
+            --light-green-bg-end: #a8e0b0;
+
+            /* UPDATED Card Backgrounds for semi-transparency */
+            --card-bg: rgba(255, 255, 255, 0.7);  /* Semi-transparent white (like welcome page) */
+            --card-bg-hover: rgba(255, 255, 255, 0.85); /* Slightly less transparent (like welcome page) */
+
+            --text-dark: #343a40;
+            --text-muted: #5f6368; /* Adjusted slightly darker gray for better contrast */
+
+             /* Use subtle dark border like welcome page */
+             --border-color-light: rgba(0, 0, 0, 0.08);
+
+            --separator-color: rgba(56, 142, 60, 0.3);
+            --status-active-green: #28a745;
+            --status-completed-grey: #6c757d;
+            --logout-red: #dc3545;
+            --button-back-bg: #e0f2e2;
+            --button-back-bg-hover: #cfe8d1;
+        }
+
+
+        body {
+            font-family: 'Segoe UI', 'Nunito Sans', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text-muted); /* Default text color */
+
+            /* --- Background Image Settings --- */
+            background-image: url('images/backgroundimage2.jpg');
+            /* --- OR use Gradient Background --- */
+            /* background: linear-gradient(135deg, var(--light-green-bg-start) 0%, var(--light-green-bg-end) 100%); */
+
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: var(--light-green-bg-start); /* Fallback */
+
+            padding: 40px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
     .container {
-      max-width: 800px;
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 30px 40px; /* Keep sufficient padding */
+            border-radius: 12px;
+            text-align: left;
+            position: relative; /* Needed for absolute positioning of children */
+
+        }
+      hr.title-separator {
+            border: none;
+            height: 1px;
+            background-color: var(--separator-color);
+            margin-top: 25px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+           h1 {
+            text-align: center;
+            color: #343a40; /* or var(--primary-green) if that's what you used */
+            font-weight: 700;
+            font-size: 4rem; /* Adjust to match dashboard */
+            margin-bottom: 30px;
+            margin-top: 0;
+            letter-spacing: normal;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+     /* --- Button Styles --- */
+        .button {
+            display: inline-block;
+            padding: 8px 18px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.9rem;
+            margin: 3px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        /* PRIMARY SOLID GREEN BUTTON */
+        .button.button-primary {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+        .button.button-primary:hover {
+            background-color: #1770b8;
+            border-color: #1770b8;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        /* SECONDARY OUTLINE GREEN BUTTON */
+        .button.button-secondary {
+            background-color: transparent;
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            box-shadow: none;
+            text-decoration: none;
+        }
+        .button.button-secondary:hover {
+             background-color: rgba(56, 142, 60, 0.08);
+             color: #2e7d32;
+             border-color: #2e7d32;
+             transform: translateY(-1px);
+        }
+
+        /* Styles for the absolutely positioned back button */
+        .back-button {
+            display: inline-block;
+            padding: 10px 24px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1.5px solid var(--primary-green);
+            color: var(--primary-green);
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s ease-in-out;
+            font-size: 1rem;
+            margin: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--primary-green) !important;
+
+
+        }
+
+            .button.button-secondary, .back-button {
+                background-color: transparent;
+                border: 1.5px solid var(--primary-green);
+                color: var(--primary-green);
+                box-shadow: none;
+            }
+
+            .button.button-secondary:hover, .back-button:hover {
+                background-color: #17a2b8; /* White background on hover */
+                color: white; /* Keep text color as #17a2b8 */
+                border-color: #17a2b8; /* Keep border color as #17a2b8 */
+                transform: translateY(-1px);
+            }
+
+    #planDetails{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 5px;
+        width: 100%;
+      max-width: 700px;
       margin: auto;
-      background: white;
-      padding: 20px;
+      background: #f9f9f9;
+      padding: 10px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
+    #exercisesContainer{
+ text-align: center;
+
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+      width: 60%;
+    height: auto;
+    margin: auto;
+    }
+
+
     h1 {
       text-align: center;
+    }
+
+
+.back-button {
+    width: auto;
+    display: inline-flex;
+      padding: 5px;
+      margin-top: 5px;
+      margin-right: 5px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+
+}
+
+    .progress-bar {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
     }
 
     .progress-bar {
@@ -38,7 +235,7 @@
 
     .progress {
       height: 100%;
-      width: 0%;
+      width: 0;
       background: linear-gradient(90deg, #4CAF50, #81C784);
       text-align: right;
       color: white;
@@ -50,18 +247,51 @@
     }
 
     .exercise {
-      padding: 15px;
-      border: 1px solid #ddd;
-      margin: 10px 0;
-      border-radius: 5px;
-      background: #f9f9f9;
+          padding: 25px 30px; /* Keep slightly larger padding */
+            margin: 20px 0; /* Keep slightly larger margin */
+            border-radius: 12px; /* Match welcome page radius */
+            background: var(--card-bg); /* USE SEMI-TRANSPARENT VARIABLE */
+            border: 1px solid var(--border-color-light); /* Use subtle dark border */
+            backdrop-filter: blur(4px); /* ADD BLUR EFFECT */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Match subtle shadow */
+            transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0.6;
     }
+      .exercise:hover {
+            transform: translateY(-5px); /* Match welcome page lift */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Match welcome page hover shadow */
+            background-color: var(--card-bg-hover); /* Use hover variable */
+            opacity: 0.7;
+        }
+        .exercise-details {
+             display: flex;
+            flex-direction: column;
+            gap: 12px; /* Adjust spacing as desired */
+        }
+          @media (min-width: 576px) {
+            .exercise-details {
+                 grid-template-columns: repeat(2, 1fr);
+                 .injury .info-item {
+                 white-space: normal;
+            }
+            .exercise-actions {
+                 text-align: center;
+            }
+            }
+        }
+.button-container {
+    display: flex;
+    justify-content: flex-start; /* Moves it to the left */
+    padding: 10px; /* Adds spacing */
+}
 
     .button {
       display: inline-block;
-      padding: 10px;
-      margin-top: 10px;
-      margin-right: 10px;
+      padding: 5px;
+      margin-top: 5px;
+      margin-right: 5px;
       background: #007bff;
       color: white;
       text-decoration: none;
@@ -84,7 +314,7 @@
       background: white;
       max-width: 400px;
       margin: 100px auto;
-      padding: 20px;
+      padding: 5px;
       border-radius: 8px;
       position: relative;
     }
@@ -105,6 +335,37 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
+
+    #exCompleteModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .checklist{
+  background: #f9f9f9;
+      width: 80%;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .checklist input {
+    margin-right: 10px;
+}
+
+
+
+    #exCompleteModalContent {
+      background: white;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      border-radius: 8px;
+      position: relative;
+    }
   </style>
 </head>
 
@@ -112,23 +373,34 @@
   <div class="container">
     <h1 id="recoveryTitle">Recovery Plan</h1>
     <div id="planDetails">
-      <h2>Plan Details</h2>
+      <h2>🏋️‍♂️Plan Details</h2>
       <p><strong>Injury:</strong> <span id="injuryType">Loading...</span></p>
       <p><strong>Start Date:</strong> <span id="startDate">Loading...</span></p>
       <p><strong>End Date:</strong> <span id="endDate">Loading...</span></p>
       <p><strong>Status:</strong> <span id="isActive">Loading...</span></p>
+      <div class="checklist p-4 shadow rounded">
+    <h4>✅ Daily Recovery Checklist</h4>
+    <label><input type="checkbox"> 🧘 Stretch for 10 minutes</label><br>
+    <label><input type="checkbox"> 💧 Drink enough water</label><br>
+    <label><input type="checkbox"> 🏋️ Complete 3 recovery exercises</label><br>
+    <label><input type="checkbox"> 🍎 Eat a healthy post-workout meal</label><br>
+    <label><input type="checkbox"> ⏳ Get enough rest</label>
+      </div>
+
+        <div class="progress-bar">
+      <div id="progress" class="progress">50%</div>
     </div>
 
-    <div class="progress-bar">
-      <div id="progress" class="progress">0%</div>
     </div>
 
-    <h2>Assigned Exercises</h2>
+
+
+
     <div id="exercisesContainer">
       <p>Loading exercises...</p>
     </div>
 
-    <a href="dashboard.html" class="button" style="width: 100%; text-align: center;">Back to Dashboard</a>
+   <a href="dashboard.html" class="back-button">⬅ Back to Dashboard</a>
   </div>
 
   <div id="ratingModal">
@@ -148,6 +420,26 @@
         </div>
         <button type="submit" class="button" id="ratingSubmitButton">Submit Rating</button>
         <button type="button" class="button" style="background: #ccc;" onclick="closeRatingModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="exCompleteModal">
+    <div id="exCompleteModalContent">
+      <h3>Exercise Complete</h3>
+      <form id="exerciseCompleteForm">
+        <input type="hidden" id="feedbackExerciseId">
+        <input type="hidden" id="feedbackPlanId">
+        <div class="input-group">
+          <label for="setsCompleted">Sets Completed:</label>
+          <input type="number" id="setsCompleted" name="setsCompleted" required>
+        </div>
+        <div class="input-group">
+          <label for="repsCompleted">Reps Completed:</label>
+          <input type="number" id="repsCompleted" name="repsCompleted" required>
+        </div>
+        <button type="submit" class="button" id="feedbackSubmitButton">Submit</button>
+        <button type="button" class="button" style="background: #ccc;" onclick="closeExCompleteModal()">Cancel</button>
       </form>
     </div>
   </div>
@@ -186,6 +478,7 @@
       document.getElementById("isActive").innerText = plan.IsActive ? "Active" : "Completed";
 
       const progress = document.getElementById("progress");
+      plan.ProgressStatus = 50;
       progress.style.width = `${plan.ProgressStatus}%`;
       progress.innerText = `${plan.ProgressStatus}%`;
 
@@ -193,46 +486,50 @@
     }
 
     async function fetchExercises(planId) {
-  const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
-  const exercises = await res.json();
-  const container = document.getElementById("exercisesContainer");
-  container.innerHTML = "";
+      const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+      const exercises = await res.json();
+      const container = document.getElementById("exercisesContainer");
+      container.innerHTML = "";
 
-  if (!exercises.length) {
-    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-    return;
-  }
+      if (!exercises.length) {
+        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+        return;
+      }
 
-  for (const ex of exercises) {
-    // Fetch completions for the user (this may return all completions for the user)
-    const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
-    const allCompletions = await completionsRes.json();
+      for (const ex of exercises) {
+        const ratingsRes = await fetch(`/api/exercise-ratings/${ex.ExerciseId}`);
+        const allRatings = await ratingsRes.json();
+        const userRating = allRatings.find(r => r.UserId === userId);
+        const avg = allRatings.length > 0
+          ? (allRatings.reduce((sum, r) => sum + r.Rating, 0) / allRatings.length).toFixed(1)
+          : "No ratings";
 
-    // Filter completions to include only those for the current exercise
-    const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
+        const div = document.createElement("div");
+        div.className = "exercise";
+        div.innerHTML = `
+            <h2>Assigned Exercises🏋️</h2>
+          <h3>${ex.ExerciseName} <small style="font-weight:normal;">(${avg === "No ratings"
+            ? avg
+            : `<a href="exercise-rating.html?exerciseId=${ex.ExerciseId}" style="text-decoration:none;">Avg: ${avg}★</a>`
+          })</small></h3>
+          <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+          <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+          ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
 
-    // Get the highest progress value among completions for this exercise, or default to 0
-    const highestProgress = completionsForExercise.length > 0
-      ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
-      : 0;
 
-    // Create the exercise element with highest progress displayed on the right.
-    const div = document.createElement("div");
-    div.className = "exercise";
-    div.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-         <h3 style="margin:0;">${ex.ExerciseName}</h3>
-         <div style="font-weight: bold;">${highestProgress}%</div>
-      </div>
-      <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-      <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-      ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-      <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
-      <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
-    `;
-    container.appendChild(div);
-  }
-}
+
+          <button class="button" onclick="markExerciseComplete(${ex.ExerciseId}, ${planId})">Complete</button>
+          <button class="button" style="background: ${userRating ? "#6c757d" : "#007bff"};" onclick="openRatingModal(${ex.ExerciseId})">${userRating ? "Change Rating" : "Rate"}</button>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    async function markExerciseComplete(exerciseId, planId) {
+      document.getElementById("feedbackExerciseId").value = exerciseId;
+      document.getElementById("feedbackPlanId").value = planId;
+      document.getElementById("exCompleteModal").style.display = "block";
+    }
 
     async function openRatingModal(exerciseId) {
       document.getElementById("ratingExerciseId").value = exerciseId;
@@ -275,6 +572,10 @@
       document.getElementById("ratingModal").style.display = "none";
     }
 
+    function closeExCompleteModal() {
+      document.getElementById("exCompleteModal").style.display = "none";
+    }
+
     document.getElementById("ratingForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
@@ -312,6 +613,42 @@
       }
     });
 
+      document.getElementById("exerciseCompleteForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const exerciseId = document.getElementById("feedbackExerciseId").value;
+      const planId = document.getElementById("feedbackPlanId").value;
+      const setsCompleted = parseInt(document.getElementById("setsCompleted").value);
+      const repsCompleted = parseInt(document.getElementById("repsCompleted").value);
+
+      const payload = {
+          PlanId: planId,
+          ExerciseId: exerciseId,
+          SetsCompleted: setsCompleted,
+          RepsCompleted: repsCompleted,
+      };
+
+      try {
+          const res = await fetch("/api/exercise-completions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+          });
+
+          const result = await res.json();
+          if (res.ok) {
+              alert("Exercise completion data saved successfully.");
+              closeExCompleteModal();
+              fetchRecoveryPlan(); // Refresh UI
+          } else {
+              alert(result.error || "Failed to save exercise completion data.");
+          }
+      } catch (err) {
+          console.error("Error saving exercise completion data:", err);
+          alert("Something went wrong.");
+      }
+  });
+
     async function checkRatingExists(exerciseId) {
       try {
         const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
@@ -324,6 +661,7 @@
 
     fetchRecoveryPlan();
   </script>
+
 </body>
 
 </html>

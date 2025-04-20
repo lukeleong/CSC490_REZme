@@ -10,6 +10,6 @@ router.post("/exercises", exerciseController.createExercise);
 router.put("/exercises/:id", exerciseController.updateExercise);
 router.delete("/exercises/:id", exerciseController.deleteExercise);
 router.get("/exercises/target-muscle/:muscleGroup", exerciseController.getExercisesByMuscleGroup);
-router.get("/exercises/body-part/:bodyPart", exerciseController.getExercisesByBodyPart);
+//router.get("/exercises/body-part/:bodyPart", exerciseController.getExercisesByBodyPart);
 
 module.exports = router;
