@@ -253,6 +253,7 @@
              /* border-top: none; */
             opacity: 0.6;
             text-align: center;
+            transition: box-shadow 0.2s, opacity 0.2s, transform 0.6s;
 
         }
 
@@ -262,7 +263,8 @@
             background-color: var(--card-bg-hover); /* Use hover variable */
              /* Optional: Adjust border on hover */
              /* border-color: rgba(0, 0, 0, 0.12); */
-             opacity: 0.8;
+             opacity: 0.7;
+             transform: translateY(1px) scale(1.02);
         }
 
         /* Ensure text inside card has good contrast */
@@ -505,8 +507,7 @@
 
                     planElement.innerHTML = `
                     <h3 class="assigned-exercises-title">
-  <i class="fas fa-folder-plus"></i>
- Assigned Exercises
+                    <i class="fas fa-folder-plus"></i>Assigned Exercises
 </h3>
                     <p><strong>Injury Name:</strong> ${injuryType}</p>
                     <p><strong>Start Date:</strong> ${startDate}</p>

@@ -15,6 +15,18 @@ exports.createRecoveryPlan = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
+    // Check if a recovery plan already exists for this injury
+    const existingPlan = await RecoveryPlan.findOne({
+      where: {
+        UserId: user_id,
+        InjuryId: injury_id,
+        IsActive: true
+      }
+    });
+    if (existingPlan) {
+      return res.status(400).json({ error: "A recovery plan for this injury already exists." });
+    }
+
     const injury = await Injury.findByPk(injury_id);
     if (!injury) {
       return res.status(404).json({ error: "Injury not found." });
