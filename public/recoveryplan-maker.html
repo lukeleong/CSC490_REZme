@@ -11,6 +11,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Link (Optional but good practice) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <style>
     * {
         box-sizing: border-box;
@@ -20,7 +23,7 @@
 
     /* --- Core Theme Styles --- */
     :root {
-        --primary-green: #388e3c;
+        --primary-green: #17a2b8;
         --light-green-bg-start: #d1f0d9;
         --light-green-bg-end: #a8e0b0;
         --card-bg: #ffffff; /* Use white for the form container */
@@ -50,26 +53,27 @@
         flex-direction: column;
         align-items: center;
     }
+    
 
     /* Main container for the form */
     .container {
         max-width: 650px; /* Suitable width for a form */
         width: 100%;
         margin: 20px auto;
-        background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background (80% opacity) */
+        background: rgba(255, 255, 255, 0.6); /* Semi-transparent white background (80% opacity) */
         padding: 35px 45px; /* Generous padding */
         border-radius: 10px; /* Consistent border radius */
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Consistent shadow */
         border: 1px solid var(--border-color-light); /* Subtle border */
         text-align: left; /* Override body center align */
-        transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out, opacity 0.2s ease-in-out; /* Add opacity transition */
+        transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out, opacity 0.7s ease-in-out; /* Add opacity transition */
     }
 
     .container:hover {
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Slightly stronger shadow on hover */
         transform: translateY(-2px); /* Subtle lift on hover */
         opacity: 1; /* Make it fully opaque on hover */
-        background: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.7);
     }
 
     /* Select dropdown hover effect */
@@ -90,23 +94,25 @@
     }
 
     h1 {
-        text-align: center;
-        color: var(--primary-green);
-        font-weight: 700;
-        margin-bottom: 15px; /* Reduced margin */
-        font-size: 2.0rem; /* Adjusted size */
-        text-transform: none;
-        letter-spacing: normal;
-    }
+            text-align: center;
+            color: var(--primary-green); /* Use primary green */
+            font-weight: 700;
+            margin-bottom: 5px; /* Space below title */
+            font-size: 3.5rem; /* Adjust size */
+            text-transform: none;
+            letter-spacing: normal;
+            color: #1770b8;
+            line-height: 1.2;
+        }
 
     .injury-info {
         font-weight: 600; /* Slightly bolder */
         margin-bottom: 30px; /* More space below */
         text-align: center;
-        color: var(--text-dark); /* Darker text */
-        font-size: 1.1rem;
-        padding: 10px;
-        background-color: #e9f5eb; /* Very light green highlight */
+        color: #32638b; /* Darker text */
+        font-size: 1.5rem;
+        padding: 5px;
+        background-color: rgba(135, 172, 208, 0.4); /* Very light green highlight */
         border-radius: 5px;
         border: 1px solid rgba(56, 142, 60, 0.2); /* Subtle border */
     }
@@ -124,7 +130,6 @@
         transition: all 0.2s ease-in-out;
         font-size: 0.95rem;
         margin: 0; /* Remove default margins */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     }
 
     /* PRIMARY BUTTON STYLE (Generate Plan) */
@@ -132,28 +137,34 @@
         background-color: var(--primary-green);
         border-color: var(--primary-green);
         color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     }
     .button.button-primary:hover {
-        background-color: #2e7d32;
-        border-color: #2e7d32;
+        background-color: #1770b8;
+        border-color: #1770b8;
         transform: translateY(-1px);
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
     }
 
     /* BACK BUTTON STYLE */
     .back-button {
-        background-color: var(--button-back-bg);
-        border-color: var(--primary-green);
-        color: var(--primary-green);
+        display: inline-block;
+        padding: 4px 20px;
+        margin-right: 450px;
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
         box-shadow: none;
         border-radius: 8px; /* Keep specific radius */
         text-decoration: none; /* Ensure no underline */
+        font-size: 1.2rem;
     }
     .back-button:hover {
-        background-color: var(--button-back-bg-hover);
-        color: #2e7d32;
-        border-color: #2e7d32;
+        background-color: #1770b8;
+        color: white;
+        border-color: white;
         transform: translateY(-1px);
+        border-width: 3px;
     }
 
     
@@ -173,9 +184,9 @@
         /* Keep the label styles as they are, or adjust if needed */
         display: block;
         margin-bottom: 8px;
-        color: var(--text-form-label);
+        color: #1770b8;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 2rem;
         width: 100%; /* Ensure label still takes full width above the select */
     }
     
@@ -224,7 +235,7 @@
         font-weight: 400;
         color: var(--text-dark);
         margin-bottom: 10px;
-        font-size: 1rem;
+        font-size: 1.2rem;
         cursor: pointer;
         position: relative;
         padding-left: 30px; /* Space for custom checkbox */
@@ -280,13 +291,14 @@
     }
      /* Label for the group */
     .input-group label.group-label {
-         color: var(--text-form-label);
+         color: #1770b8;
          font-weight: 600;
-         font-size: 0.95rem;
+         font-size: 2rem;
          margin-bottom: 15px; /* More space below group label */
+
     }
      .input-group .group-description {
-         font-size: 0.85rem;
+         font-size: 1.2rem;
          margin-top: -12px; /* Pull up slightly */
          margin-bottom: 12px;
          color: var(--text-muted);
@@ -299,7 +311,7 @@
         width: 100%;
         padding: 12px 25px; /* Larger padding */
         margin-top: 30px; /* More space above submit */
-        font-size: 1.05rem; /* Larger font */
+        font-size: 1.5rem; /* Larger font */
     }
 
     #message {
@@ -333,17 +345,32 @@
          }
     }
 
+    .divider {
+            width: 100%;
+            max-width: 650px;
+            border: none;
+            border-top: 16px solid #e9ecef;
+            opacity: 0.3;
+            margin: 24px auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            margin-top: 0px;
+        }
+
   </style>
 </head>
 
 <body>
-  <div class="container">
     <div class="header-nav">
-      <!-- Use back-button class -->
-      <a href="/injuries.html" class="back-button">← Back to Injuries</a>
+        <!-- Use back-button class -->
+        <a href="/injuries.html" class="back-button">← Back to Injuries</a>
     </div>
+    <hr class="divider" style="margin-bottom: 10px;">
 
-    <h1>Create Recovery Plan</h1>
+  <div class="container">
+    
+
+    <h1><i class="fas fa-tasks"></i> Create Recovery Plan</h1>
     <div id="injuryInfo" class="injury-info">Loading injury details...</div>
 
     <form id="planMakerForm">

@@ -16,7 +16,7 @@ function getUserIdFromToken() {
       const injury = await res.json();
   
       document.getElementById("InjuryId").value = injuryId;
-      document.getElementById("injuryInfo").innerText = `Injury: ${injury.InjuryType} (${injury.InjuryLocation})`;
+      document.getElementById("injuryInfo").innerText = `Injury Info: ${injury.InjuryType} (${injury.InjuryLocation})`;
     } catch (err) {
       console.error("Error loading injury:", err);
       document.getElementById("injuryInfo").innerText = "Failed to load injury.";

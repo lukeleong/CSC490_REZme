@@ -123,16 +123,20 @@
             color: white;
         }
         .button.button-primary:hover {
-            background-color: #2e7d32;
-            border-color: #2e7d32;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-        }
+    background-color: #1770b8;
+    color: white;
+    border-color: white;
+    transform: translateY(-1px);
+    border-width: 3px;
+    box-shadow: 0 4px 16px rgba(23,162,184,0.18);
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
 
         /* SECONDARY OUTLINE BUTTON STYLE (Back Button) */
     .back-button {
         display: inline-block;
-        padding: 10px 24px;
+        padding: 4px 20px;
         text-align: center;
         text-decoration: none;
         border-radius: 6px;
@@ -147,17 +151,19 @@
     }
 
     .button.button-secondary, .back-button {
-        background-color: transparent;
+        background-color: #17a2b8;
         border: 1.5px solid var(--primary-green);
-        color: var(--primary-green);
+        color: white;
         box-shadow: none;
+        
     }
 
     .button.button-secondary:hover, .back-button:hover {
-        background-color: #17a2b8; /* White background on hover */
+        background-color: #1770b8; /* White background on hover */
         color: white; /* Keep text color as #17a2b8 */
-        border-color: #17a2b8; /* Keep border color as #17a2b8 */
+        border-color: white; /* Keep border color as #17a2b8 */
         transform: translateY(-1px);
+        border-width: 3px;
     }
 
         /* --- Form Styles --- */
@@ -404,7 +410,7 @@
       display: inline-block;
       margin-left: 6px;
       cursor: pointer;
-      color: #007bff;
+      color: #1770b8;
       font-weight: bold;
       font-size: 2rem;
     }
@@ -436,26 +442,32 @@
     }
 
     .primary-btn {
-        width: 200px !important;
-        background-color: #17a2b8;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 28px;
-        font-weight: 600;
-        font-size: 1.1rem;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(23,162,184,0.10);
-        text-decoration: none;
-        transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-    }
+    display: inline-block;
+    width: 200px !important;
+    background-color: #17a2b8;
+    color: white;
+    border: 1.5px solid var(--primary-green);
+    border-radius: 6px;
+    padding: 12px 28px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    margin: 5px;
+    transition: all 0.2s ease-in-out;
+}
     .primary-btn:hover,
-    .primary-btn:focus {
-        background-color: #1770b8 !important;
-        color: #ffffff;
-        box-shadow: 0 4px 16px rgba(23,162,184,0.18);
-        outline: none;
-  transform: translateY(-2px) scale(1.03);
+.primary-btn:focus {
+    background-color: #1770b8 !important;
+    color: white;
+    border-color: white;
+    box-shadow: 0 4px 16px rgba(23,162,184,0.18);
+    outline: none;
+    transform: translateY(-1px);
+    border-width: 3px;
+    transition: all 0.2s ease-in-out;
 }
 
 
@@ -567,7 +579,7 @@
   
 
   <div class="container">
-    <h1><i class="fas fa-pen-to-square"></i> Log Your Injury</h1>
+    <h1><i class="fas fa-pen-to-square"></i>Log Your Injury</h1>
     <form id="injuryForm">
       <input type="hidden" id="UserId" name="UserId" value="" />
 

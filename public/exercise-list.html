@@ -20,23 +20,6 @@
       background-color: var(--light-green-bg-start); /* Fallback */
 
     }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      opacity: 0.6;
-      transition: box-shadow 0.2s, opacity 0.2s, transform 0.8s;
-
-    }
-    .container:hover {
-      opacity: 0.7;
-      box-shadow: 0 8px 24px rgba(23, 162, 184, 0.18);
-      transform: translateY(1px) scale(1.008);
-    }
     
 
     h1 {
@@ -237,22 +220,29 @@
       margin-bottom: 0px;
       margin-top: 20px;
       margin-left: 0;
-      padding: 10px 24px;
+      padding: 10px 20px;
       text-align: center;
       text-decoration: none;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 2px solid #17a2b8;
       color: #17a2b8;
       font-weight: 700;
-      background: transparent;
       font-size: 1.1rem;
       transition: background 0.2s, color 0.2s;
+      background-color: #17a2b8;
+      color: white;
     }
 
-    .back-button:hover {
-      background: #17a2b8;
-      color: #fff;
-    }
+    .back-button:hover,
+.back-button:focus {
+  background: #1770b8;     /* Slightly darker blue on hover */
+  color: #fff;             /* White text */
+  border-color: white;     /* White border */
+  transform: translateY(-1px); /* Subtle lift */
+  border-width: 3px;       /* Thicker border */
+  outline: none;           /* Remove default outline */
+  transition: background 0.5s, color 0.5s, border-color 0.5s, transform 0.5s;
+}
 
     .divider {
             width: 100%;
@@ -264,6 +254,7 @@
             border-radius: 5px;
 
         }
+        .divider-2 { width: 75%; }
 
         .divider-icon-vertical {
             display: flex;
@@ -437,8 +428,26 @@
   color: #e0f7fa;
   outline: none;
   transform: translateY(-1px) scale(1.01); /* <-- Add this line */
-
+  border: 3px solid #e9ecef;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s, border 0.2s;
 }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.2s, opacity 0.2s, transform 0.8s;
+      background-color: rgba(255, 255, 255, 0.4);
+      opacity: 0.6;
+
+    }
+    .container:hover {
+      opacity: 0.7;
+      box-shadow: 0 8px 24px rgba(23, 162, 184, 0.18);
+      transform: translateY(1px) scale(1.008);
+    }
 
         
 
@@ -454,8 +463,8 @@
       <i class="fas fa-list-alt"></i>
     </span>
     <h2>Exercise List</h2>
-    <hr class="divider" style="margin-top: 10px;">
   </div>
+  <hr class="divider divider-2" style="margin-top: 10px;">
   </div>
 
   <div class="container">
@@ -511,7 +520,7 @@
     </div>
   </div>
 
-  <hr class="divider" style="margin-top: 30px;">
+  <hr class="divider" style="margin-top: 10px;">
   <h4>Tips for Browsing Exercises</h4>
   <!-- Tips cards goes here -->
   <hr class="divider" style="margin-top: 30px;">
