@@ -78,37 +78,37 @@
     /* Header area for back button */
     .page-header-nav {
         margin-bottom: 25px;
-        border-bottom: 1px solid var(--border-color-divider);
         padding-bottom: 20px;
     }
 
     h1 {
-        color: var(--primary-green);
-        font-weight: 700;
-        margin-bottom: 30px; /* Space below title */
-        font-size: 2.4rem; /* Adjusted size */
-        text-transform: none;
-        letter-spacing: -0.5px;
-        text-align: center;
-    }
+            text-align: center;
+            color: var(--primary-green); /* Use primary green */
+            font-weight: 700;
+            margin-bottom: 35px; /* Space below title */
+            font-size: 3.5rem; /* Adjust size */
+            text-transform: none;
+            letter-spacing: normal;
+            color: #1770b8;
+        }
+
     h1 i {
-    color: var(--primary-green); /* Matches h1 color */
+    color: #1770b8; 
     margin-right: 8px; /* Optional: adds spacing between icon and text */
 }
 
     h2 {
-        color: #17a2b8; /* Heading color */
-        font-weight: 600;
-        margin-top: 30px; /* Space above section headings */
-        margin-bottom: 15px;
-        font-size: 1.6rem; /* Sub-heading size */
-        border-bottom: 1px solid var(--border-color-divider);
-        padding-bottom: 10px;
+      display: block;
+            margin-bottom: 6px;
+            color: var(--text-form-label); /* Use green for labels */
+            font-weight: 600; /* Bolder labels */
+            font-size: 2rem;
+            color: #1770b8;
     }
 
     h3 { /* For exercise names & modal titles */
          color: var(--text-dark);
-         font-size: 1.3rem;
+         font-size: 1.5rem;
          font-weight: 600;
          margin-bottom: 10px;
     }
@@ -116,13 +116,14 @@
     p { /* Base paragraph style */
         color: var(--text-muted);
         margin-bottom: 0.8em; /* Adjusted margin */
-        font-size: 1rem; /* Base font size */
-        line-height: 1.7;
+        font-size: 1.5rem; /* Base font size */
+        line-height: 1;
         font-weight: 400;
     }
     p strong {
         color: var(--text-dark); /* Darker bold text */
         font-weight: 600;
+        font-size: 1.5rem;
     }
     #planDetails p { /* Specific spacing for plan details */
          margin-bottom: 12px;
@@ -140,7 +141,7 @@
         font-weight: 500; /* Match target weight */
         transition: all 0.3s ease;
         margin: 5px;
-        font-size: 0.95rem;
+        font-size: 1.2rem;
         color: white; /* Default for solid */
     }
 
@@ -151,10 +152,13 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
     .button.button-primary:hover {
-        background-color: var(--primary-green-dark);
-        border-color: var(--primary-green-dark);
+        background-color: #1770b8;
+        border-color: #1770b8;
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        border-width: 3px;
+        border-color: white;
+        
     }
 
     /* Secondary Button (Green Outline) */
@@ -178,7 +182,6 @@
         color: var(--primary-green);
         box-shadow: none;
         padding: 8px 18px; /* Keep slightly smaller */
-        font-size: 0.9rem;
         border-width: 1.5px; /* Slightly thinner border */
     }
     .back-button:hover {
@@ -243,13 +246,12 @@
         border: 1px solid var(--border-color-subtle); /* Subtle border */
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06); /* Subtle shadow */
         transition: box-shadow 0.3s ease;
-        
     }
     .exercise:hover {
          box-shadow: 0 5px 18px rgba(0, 0, 0, 0.09);
     }
     .exercise p {
-         font-size: 0.95rem;
+         font-size: 1.5rem;
          margin-bottom: 0.6em;
     }
     .exercise small {
@@ -271,12 +273,12 @@
     }
      /* Specific button styling */
      .exercise .complete-btn { /* Use Primary style */
-         background-color: var(--primary-green);
-         border-color: var(--primary-green);
+         background-color: #17a2b8;
+         border-color: #17a2b8;
      }
       .exercise .complete-btn:hover {
-         background-color: var(--primary-green-dark);
-         border-color: var(--primary-green-dark);
+         background-color: #1770b8;
+         border-color: #1770b8;
      }
      .exercise .rate-btn { /* Use Secondary style */
           background-color: transparent;
@@ -427,16 +429,53 @@
              margin: 10px 0 0 0;
          }
     }
+
+    .divider {
+            width: 100%;
+            max-width: 900px;
+            border: none;
+            border-top: 16px solid #e9ecef;
+            opacity: 0.3;
+            margin: 24px auto;
+            border-radius: 5px;
+        }
+
+        .action-button {
+          display: inline-block;
+        padding: 4px 20px; /* Consistent padding */
+        text-align: center;
+        text-decoration: none;
+        border-radius: 8px; /* Match target radius */
+        border: 2px solid transparent; /* Match target border */
+        cursor: pointer;
+        font-weight: 500; /* Match target weight */
+        transition: all 0.3s ease;
+        margin-left: 730px;
+        font-size: 1.2rem;
+        color: white; /* Default for solid */ 
+        background-color: #17a2b8;
+      }
+      .action-button:hover {
+        background-color: #1770b8;
+        border-color: var(--primary-green-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        border-width: 3px;
+        border-color: white;
+      }
+
   </style>
 </head>
 
 <body>
-    <!-- Apply back-button class for styling -->
-  <div class="container">
-     <div class="page-header-nav">
-        <a href="dashboard.html" class="back-button">← Back to Dashboard</a>
-     </div>
+    <div class="page-header-nav">
+      <a href="dashboard.html" class="action-button">← Back to Dashboard</a>
+   </div>
 
+   <hr class="divider" style="margin-bottom: 10px;">
+
+
+  <div class="container">
     <h1 id="recoveryTitle"><i class="fas fa-life-ring"></i> Recovery Plan</h1>
     <div id="planDetails">
       <h2>Plan Details</h2>
@@ -909,6 +948,37 @@
     }
 
     fetchRecoveryPlan();
+
+
+
+
+    
+document.querySelectorAll('.rating-form').forEach(function(form) {
+  form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const card = form.closest('.exercise');
+    const exerciseId = card.getAttribute('data-exercise-id');
+    const rating = form.querySelector('select[name="rating"]').value;
+
+    if (!exerciseId || !rating) return;
+
+    try {
+      const response = await fetch('/api/exercise/rate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exerciseId, rating })
+      });
+      const result = await response.json();
+      if (result.success) {
+        card.querySelector('.rating-display').textContent = `Rating: ${rating}`;
+      } else {
+        alert('Failed to save rating.');
+      }
+    } catch (err) {
+      alert('Network error while saving rating.');
+    }
+  });
+});
   </script>
 </body>
 
