@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exercise Completions</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f4f4f4 }
+    .container { max-width:800px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1) }
+    h1 { margin-bottom:10px }
+    table { width:100%; border-collapse:collapse; margin-bottom:20px }
+    th, td { border:1px solid #ddd; padding:8px; text-align:left }
+    th { background:#f4f4f4 }
+    .button { display:inline-block; padding:10px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="exerciseName">Loading exercise…</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Sets</th>
+          <th>Reps</th>
+          <th>Time (s)</th>
+          <th>Progress (%)</th>
+          <th>Difficulty</th>
+          <th>Feedback</th>
+        </tr>
+      </thead>
+      <tbody id="completionsTableBody">
+        <tr><td colspan="8">Loading completions…</td></tr>
+      </tbody>
+    </table>
+    <a id="backLink" href="#" class="button">← Back to Plan</a>
+  </div>
+
+  <script>
+    function getUserIdFromToken() {
+      const token = localStorage.getItem("token");
+      if (!token) return null;
+      try {
+        const p = JSON.parse(atob(token.split('.')[1]));
+        return p.id||p.user_id||p.UserId;
+      } catch { return null }
+    }
+
+    async function loadExerciseName(exerciseId) {
+      try {
+        const r = await fetch(`/api/exercises/${exerciseId}`);
+        const ex = await r.json();
+        document.getElementById("exerciseName").innerText = ex.ExerciseName || "Exercise Details";
+      } catch {
+        document.getElementById("exerciseName").innerText = "Exercise Details";
+      }
+    }
+
+    async function fetchCompletions(planId, exerciseId) {
+      const tbody = document.getElementById("completionsTableBody");
+      tbody.innerHTML = `<tr><td colspan="8">Loading completions…</td></tr>`;
+      try {
+        const res = await fetch(`/api/exercise-completions`);
+        const all = await res.json();
+        const comps = all.filter(c =>
+          c.PlanId     == planId &&
+          c.ExerciseId == exerciseId
+        );
+        if (!comps.length) {
+          tbody.innerHTML = `<tr><td colspan="8">No completions logged yet.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = comps.map(c => `
+          <tr>
+            <td>${new Date(c.createdAt).toLocaleString()}</td>
+            <td>${c.SetsCompleted}</td>
+            <td>${c.RepsCompleted}</td>
+            <td>${c.TimeTaken ?? '—'}</td>
+            <td>${c.ProgressValue ?? '—'}</td>
+            <td>${c.DifficultyRating ?? '—'}</td>
+            <td>${c.ProgressFeedback ?? '—'}</td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="8">Error loading completions.</td></tr>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const params     = new URLSearchParams(window.location.search);
+      const planId     = params.get("planId");
+      const exerciseId = params.get("exerciseId");
+
+      document.getElementById("backLink").href = `recovery-plan.html?planId=${planId}`;
+      loadExerciseName(exerciseId);
+      fetchCompletions(planId, exerciseId);
+    });
+  </script>
+</body>
+</html>
