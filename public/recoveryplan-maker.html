@@ -1,123 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create Recovery Plan - REZme</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Recovery Plan - Recovery App</title>
+  <!-- Font Awesome Link (Optional but good practice) -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+  <!-- Font Link -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Link (Optional but good practice) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    * {
+        box-sizing: border-box;
         margin: 0;
-        padding: 20px;
-        background-color: #f4f4f4;
-      }
-      .container {
-        max-width: 600px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
+        padding: 0;
+    }
+
+    /* --- Core Theme Styles --- */
+    :root {
+        --primary-green: #17a2b8;
+        --light-green-bg-start: #d1f0d9;
+        --light-green-bg-end: #a8e0b0;
+        --card-bg: #ffffff; /* Use white for the form container */
+        --text-dark: #343a40;
+        --text-muted: #5f6368;
+        --text-form-label: #388e3c; /* Green for form labels */
+        --border-color-light: #e0e0e0;
+        --border-color-input: #ced4da;
+        --input-bg: #ffffff;
+        --logout-red: #dc3545;
+        --button-back-bg: #e0f2e2;
+        --button-back-bg-hover: #cfe8d1;
+        --separator-color: rgba(56, 142, 60, 0.3); /* Added from injuries page */
+    }
+
+    body {
+        font-family: 'Segoe UI', 'Nunito Sans', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6; /* Slightly adjusted for forms */
+        color: var(--text-muted);
+        /* --- Background --- */
+        background-image: url('images/backgroundimage2.jpg'); /* <-- !!! UPDATE THIS PATH !!! */
+        /* --- End Background --- */
+        padding: 40px 20px;
+        min-height: 100vh;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+
+    /* Main container for the form */
+    .container {
+        max-width: 650px; /* Suitable width for a form */
+        width: 100%;
+        margin: 20px auto;
+        background: rgba(255, 255, 255, 0.6); /* Semi-transparent white background (80% opacity) */
+        padding: 35px 45px; /* Generous padding */
+        border-radius: 10px; /* Consistent border radius */
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Consistent shadow */
+        border: 1px solid var(--border-color-light); /* Subtle border */
+        text-align: left; /* Override body center align */
+        transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out, opacity 0.7s ease-in-out; /* Add opacity transition */
+    }
+
+    .container:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Slightly stronger shadow on hover */
+        transform: translateY(-2px); /* Subtle lift on hover */
+        opacity: 1; /* Make it fully opaque on hover */
+        background: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Select dropdown hover effect */
+    .input-group select:hover {
+        border-color: var(--primary-green); /* Highlight border on hover */
+        box-shadow: 0 0 5px rgba(56, 142, 60, 0.3); /* Subtle shadow on hover */
+    }
+
+    /* Custom checkbox hover effect */
+    .checkbox-group label:hover::before {
+        border-color: #5cb85c; /* Slightly darker than primary green for distinction */
+        background-color: #f0fff0; /* Very light green background on hover */
+    }
+
+    .header-nav { /* Wrapper for the back button */
+        margin-bottom: 25px;
+        text-align: left; /* Align button left */
+    }
+
+    h1 {
+            text-align: center;
+            color: var(--primary-green); /* Use primary green */
+            font-weight: 700;
+            margin-bottom: 5px; /* Space below title */
+            font-size: 3.5rem; /* Adjust size */
+            text-transform: none;
+            letter-spacing: normal;
+            color: #1770b8;
+            line-height: 1.2;
+        }
+
+    .injury-info {
+        font-weight: 600; /* Slightly bolder */
+        margin-bottom: 30px; /* More space below */
         text-align: center;
-      }
-      .injury-info {
-        font-weight: bold;
-        margin-bottom: 20px;
+        color: #32638b; /* Darker text */
+        font-size: 1.5rem;
+        padding: 5px;
+        background-color: rgba(135, 172, 208, 0.4); /* Very light green highlight */
+        border-radius: 5px;
+        border: 1px solid rgba(56, 142, 60, 0.2); /* Subtle border */
+    }
+
+    /* --- Button Styles --- */
+    .button, .back-button { /* Combined base styles */
+        display: inline-block;
+        padding: 9px 20px; /* Base padding */
         text-align: center;
-      }
-      .input-group {
-        margin: 15px 0;
-      }
-      .input-group label {
+        text-decoration: none;
+        border-radius: 6px;
+        border: 1.5px solid transparent;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease-in-out;
+        font-size: 0.95rem;
+        margin: 0; /* Remove default margins */
+    }
+
+    /* PRIMARY BUTTON STYLE (Generate Plan) */
+    .button.button-primary {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+        color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    .button.button-primary:hover {
+        background-color: #1770b8;
+        border-color: #1770b8;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    /* BACK BUTTON STYLE */
+    .back-button {
+        display: inline-block;
+        padding: 4px 20px;
+        margin-right: 450px;
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
+        box-shadow: none;
+        border-radius: 8px; /* Keep specific radius */
+        text-decoration: none; /* Ensure no underline */
+        font-size: 1.2rem;
+    }
+    .back-button:hover {
+        background-color: #1770b8;
+        color: white;
+        border-color: white;
+        transform: translateY(-1px);
+        border-width: 3px;
+    }
+
+    
+
+    /* --- Form Styles --- */
+    
+
+    .input-group select#difficulty {
+        width: 40%; /* Adjust this percentage to control the width */
+        /* If you need to position something to its right, you might consider using flexbox on the parent .input-group */
+        display: flex;
+        flex-direction: row; /* Ensure items are in a row */
+        align-items: center; /* Vertically align items if needed */
+    }
+
+    .input-group label[for="difficulty"] {
+        /* Keep the label styles as they are, or adjust if needed */
         display: block;
-        margin-bottom: 5px;
-      }
-      .checkbox-group label {
+        margin-bottom: 8px;
+        color: #1770b8;
+        font-weight: 600;
+        font-size: 2rem;
+        width: 100%; /* Ensure label still takes full width above the select */
+    }
+    
+    .input-group {
+        margin-bottom: 22px; /* Consistent spacing */
+    }
+
+    .input-group label {
         display: block;
-        font-weight: normal;
-      }
-      .button {
+        margin-bottom: 8px; /* Space below label */
+        color: var(--text-form-label);
+        font-weight: 600;
+        font-size: 0.95rem; /* Consistent label size */
+    }
+
+    .input-group select {
+        width: 100%;
+        padding: 11px 14px; /* Adjusted padding */
+        border: 1px solid var(--border-color-input);
+        border-radius: 5px;
+        background: var(--input-bg);
+        color: var(--text-dark);
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        appearance: none;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23388E3C%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 10px auto;
+        padding-right: 40px;
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    .input-group select:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.15);
+    }
+
+    /* Checkbox Styles */
+    .checkbox-group {
+        margin-top: 10px;
+    }
+    .checkbox-group label { /* Label associated WITH input */
+        display: block;
+        font-weight: 400;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        position: relative;
+        padding-left: 30px; /* Space for custom checkbox */
+        line-height: 1.4; /* Adjust line height */
+    }
+    .checkbox-group input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+     /* Custom checkbox appearance */
+    .checkbox-group label::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%; /* Center vertically */
+        transform: translateY(-50%); /* Adjust vertical center */
+        height: 20px;
+        width: 20px;
+        background-color: #eee;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+     /* Hover state */
+    .checkbox-group label:hover::before {
+        border-color: var(--primary-green);
+    }
+     /* Checked state */
+    .checkbox-group input[type="checkbox"]:checked + label::before {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+    }
+     /* Checkmark */
+    .checkbox-group label::after {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 50%;
+        width: 6px;
+        height: 12px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        transform: translateY(-65%) rotate(45deg); /* Adjust checkmark position */
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+     /* Show checkmark when checked */
+    .checkbox-group input[type="checkbox"]:checked + label::after {
+        opacity: 1;
+    }
+     /* Label for the group */
+    .input-group label.group-label {
+         color: #1770b8;
+         font-weight: 600;
+         font-size: 2rem;
+         margin-bottom: 15px; /* More space below group label */
+
+    }
+     .input-group .group-description {
+         font-size: 1.2rem;
+         margin-top: -12px; /* Pull up slightly */
+         margin-bottom: 12px;
+         color: var(--text-muted);
+    }
+
+
+    /* Submit Button Specifics */
+    #planMakerForm button[type="submit"] {
         display: block;
         width: 100%;
-        padding: 10px;
-        margin-top: 20px;
-        text-align: center;
-        background: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-      .button:hover {
-        background: #0056b3;
-      }
-      .feedback {
-        margin-top: 15px;
-        padding: 10px;
-        border-radius: 5px;
-        text-align: center;
-      }
-      .feedback.success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-      }
-      .feedback.error {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-      }
-      .instructions {
-        font-size: 0.9em;
-        color: #555;
-        margin-bottom: 15px;
-      }
-    </style>
-  </head>
+        padding: 12px 25px; /* Larger padding */
+        margin-top: 30px; /* More space above submit */
+        font-size: 1.5rem; /* Larger font */
+    }
 
-  <body>
-    <div class="container">
-      <div style="margin-bottom: 15px;">
-        <a href="/injuries.html" class="button" style="display: inline-block; width: auto;">← Back to Injuries</a>
+    #message {
+        text-align: center;
+        margin-top: 20px;
+        color: var(--logout-red);
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+         body {
+             padding: 30px 15px;
+         }
+        .container {
+            padding: 25px 20px;
+        }
+         h1 {
+             font-size: 1.8rem;
+         }
+         .injury-info {
+             font-size: 1rem;
+         }
+         .checkbox-group label {
+             font-size: 0.95rem;
+         }
+         #planMakerForm button[type="submit"] {
+             padding: 11px 20px;
+             font-size: 1rem;
+         }
+    }
+
+    .divider {
+            width: 100%;
+            max-width: 650px;
+            border: none;
+            border-top: 16px solid #e9ecef;
+            opacity: 0.3;
+            margin: 24px auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            margin-top: 0px;
+        }
+
+  </style>
+</head>
+
+<body>
+    <div class="header-nav">
+        <!-- Use back-button class -->
+        <a href="/injuries.html" class="back-button">← Back to Injuries</a>
+    </div>
+    <hr class="divider" style="margin-bottom: 10px;">
+
+  <div class="container">
+    
+
+    <h1><i class="fas fa-tasks"></i> Create Recovery Plan</h1>
+    <div id="injuryInfo" class="injury-info">Loading injury details...</div>
+
+    <form id="planMakerForm">
+      <input type="hidden" id="UserId" name="UserId" value="" />
+      <input type="hidden" id="InjuryId" name="injury_id" value="" />
+
+      <div class="input-group">
+        <label for="difficulty">Select Difficulty Level</label>
+        <select id="difficulty" name="difficulty" required>
+          <option value="" disabled selected>-- Choose Level --</option> <!-- Added placeholder -->
+          <option value="1">Beginner</option>
+          <option value="2">Intermediate</option>
+          <option value="3">Advanced</option>
+          <option value="4">Expert</option>
+        </select>
       </div>
 
-      <h1>Create Recovery Plan</h1>
-      <p class="instructions">Select your injury details, choose the difficulty level, and indicate your available equipment. Body weight is always included.</p>
-      
-      <div id="injuryInfo" class="injury-info">Loading injury details...</div>
+      <div class="input-group">
+         <!-- Use specific class for group label -->
+        <label class="group-label">Select Available Equipment</label>
+        <p class="group-description">(Body weight is always included)</p>
+        <div class="checkbox-group">
+            <!-- Structure: Input first, then Label for custom style -->
+            <input type="checkbox" id="equip_resistance_band" name="equipment" value="resistance band" />
+            <label for="equip_resistance_band">Resistance Band</label>
 
-      <form id="planMakerForm">
-        <input type="hidden" id="UserId" name="UserId" value="" />
-        <input type="hidden" id="InjuryId" name="injury_id" value="" />
-
-        <div class="input-group">
-          <label for="difficulty">Difficulty Level</label>
-          <select id="difficulty" name="difficulty" required>
-            <option value="">Select difficulty</option>
-            <option value="1">Beginner</option>
-            <option value="2">Intermediate</option>
-            <option value="3">Advanced</option>
-            <option value="4">Expert</option>
-          </select>
+            <input type="checkbox" id="equip_gym" name="equipment" value="gym" />
+            <label for="equip_gym">Gym Access (Dumbbells, Machines, etc.)</label>
+             <!-- Add more equipment options here -->
+             <!-- Example:
+             <input type="checkbox" id="equip_kettlebell" name="equipment" value="kettlebell" />
+             <label for="equip_kettlebell">Kettlebell</label>
+            -->
         </div>
+      </div>
 
-        <div class="input-group">
-          <label>Available Equipment (Body weight is always included)</label>
-          <div class="checkbox-group">
-            <label><input type="checkbox" name="equipment" value="resistance band" /> Resistance Band</label>
-            <label><input type="checkbox" name="equipment" value="gym" /> Gym</label>
-          </div>
-        </div>
+      <!-- Applied primary button style -->
+      <button type="submit" class="button button-primary">Generate Recovery Plan</button>
+    </form>
 
-        <button type="submit" class="button">Generate Recovery Plan</button>
-      </form>
+    <p id="message"></p>
+  </div>
 
-      <div id="message" class="feedback" style="display: none;"></div>
-    </div>
-    <script src="/js/recoveryplan-maker.js"></script>
-  </body>
+</body>
+<script src="/js/recoveryplan-maker.js"></script>
 </html>
