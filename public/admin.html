@@ -5,88 +5,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin User Management - Recovery App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <style>
+        /* --- Core Styles --- */
+        :root {
+            --primary-green: #17a2b8;
+            --secondary-green: #1770b8;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-bg-hover: rgba(255, 255, 255, 0.85);
+            --text-dark: #343a40;
+            --text-muted: #5f6368;
+            --border-color-light: rgba(0, 0, 0, 0.08);
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
+            font-family: 'Nunito Sans', sans-serif;
+            background-image: url('images/backgroundimage2.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding: 40px 20px;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 30px 40px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-color-light);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        h1,
-        h2 {
-            margin-top: 0;
-        }
+.container:hover {
+    transform: translateY(-5px);
+    background-color: var(--card-bg-hover);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
 
-        .header {
+h1,
+h2 {
+    margin-top: 0;
+}
+
+        h1 {
+            text-align: center;
+            color: var(--primary-green);
+            font-weight: 700;
+            font-size: 2.2rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .nav-links {
-            text-align: right;
-        }
-
-        .nav-links a {
-            margin-left: 15px;
-            color: #007bff;
-            text-decoration: none;
+        h1 i {
+            font-size: 1.8rem;
+            color: var(--primary-green);
         }
 
         .section {
             margin-bottom: 30px;
             padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color-light);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .input-group {
-            margin: 15px 0;
+        .section:hover {
+            transform: translateY(-5px);
+            background-color: var(--card-bg-hover);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 6px;
+            color: var(--primary-green);
+            font-weight: 600;
         }
 
         .input-group input,
         .input-group select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color-light);
             border-radius: 5px;
+            background: #ffffff;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.15);
         }
 
         .button {
             display: inline-block;
             padding: 10px 15px;
-            background: #007bff;
+            background: var(--primary-green);
             color: white;
             text-decoration: none;
             border-radius: 5px;
             border: none;
             cursor: pointer;
             font-size: 14px;
+            transition: all 0.3s ease;
         }
 
-        .button-warning {
-            background: #ffc107;
+        .button:hover {
+            background: #138496;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.12);
         }
 
         .button-danger {
             background: #dc3545;
+        }
+
+        .button-danger:hover {
+            background: #c82333;
+        }
+
+        .right-aligned {
+            text-align: right;
         }
 
         .status-message {
@@ -106,86 +159,72 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-
-        .form-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+        .nav-links a {
+            margin-left: 15px;
+            color: var(--primary-green); /* Match primary green color */
+            text-decoration: none;
+            font-weight: 600; /* Make it bold */
+            transition: color 0.3s ease, transform 0.2s ease;
         }
 
-        .right-aligned {
-            text-align: right;
+        .nav-links a:hover {
+            color: #138496; /* Darker shade on hover */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        /* Modal styling */
+        #confirmationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0,.2);
+        }
+
+        #deletionConfirmationPopup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
         .hidden {
             display: none !important;
         }
 
-        #confirmationModel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px 20px;
+            }
 
-        .Model-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 400px;
-            width: 100%;
-        }
+            h1 {
+                font-size: 1.8rem;
+            }
 
-        .Model-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        #userSearchContainer {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        #userSearch {
-            flex-grow: 1;
-            margin-right: 10px;
-        }
-
-        #searchButton {
-            flex-shrink: 0;
-        }
-
-        #debugInfo {
-            background-color: #f8f9fa;
-            border: 1px solid #e2e6ea;
-            padding: 10px;
-            margin-top: 20px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        /* New styles for deletion confirmation popup */
-        #deletionConfirmationPopup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            text-align: center;
+            .button {
+                width: 100%;
+                margin-top: 10px;
+            }
         }
 
         /* New styles for user list */
@@ -234,7 +273,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Admin User Management</h1>
+            <h1><i class="fas fa-users-cog"></i> Admin User Management</h1>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
                 <a href="exercise-management.html" class="admin-menu-item">Exercise Management</a>
@@ -322,15 +361,15 @@
     </div>
 
     <!-- Confirmation Model for Delete Account -->
-    <div id="confirmationModel" class="hidden">
-        <div class="Model-content">
+    <div id="confirmationModal" class="hidden">
+        <div class="modal-content">
             <h2>Confirm User Account Deletion</h2>
             <p>Are you sure you want to delete this user account? This action cannot be undone.</p>
             <div class="input-group">
                 <label for="deleteConfirmPassword">Enter your admin password to confirm:</label>
                 <input type="password" id="deleteConfirmPassword" name="deleteConfirmPassword" required>
             </div>
-            <div class="Model-buttons">
+            <div class="modal-buttons" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;"></div>
                 <button id="cancelDeleteBtn" class="button">Cancel</button>
                 <button id="confirmDeleteBtn" class="button button-danger">Delete Permanently</button>
             </div>
@@ -744,14 +783,14 @@
 
                 // Delete Account Modal Handling
                 document.getElementById('deleteAccountBtn').addEventListener('click', function () {
-                    const confirmationModel = document.getElementById('confirmationModel');
+                    const confirmationModel = document.getElementById('confirmationModal');
                     confirmationModel.classList.remove('hidden');
                     confirmationModel.style.display = 'flex';
                 });
 
                 // Cancel Delete Button
                 document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
-                    const confirmationModel = document.getElementById('confirmationModel');
+                    const confirmationModel = document.getElementById('confirmationModal');
                     confirmationModel.classList.add('hidden');
                     confirmationModel.style.display = 'none';
                 });
@@ -799,9 +838,9 @@
                         const responseData = await response.json();
 
                         // Hide confirmation modal
-                        const confirmationModel = document.getElementById('confirmationModel');
-                        confirmationModel.classList.add('hidden');
-                        confirmationModel.style.display = 'none';
+                        const confirmationModal = document.getElementById('confirmationModal');
+                        confirmationModal.classList.add('hidden');
+                        confirmationModal.style.display = 'none';
 
                         // Show deletion confirmation popup
                         const deletionPopup = document.getElementById('deletionConfirmationPopup');
@@ -829,6 +868,7 @@
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
 </body>
 
 </html>

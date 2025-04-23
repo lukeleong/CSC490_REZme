@@ -5,12 +5,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Update Injury - Recovery App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
       background-color: #f4f4f4;
+      background-image: url('images/backgroundimage2.jpg'); 
+
+
+background-size: cover;
+background-position: center center;
+background-repeat: no-repeat;
+background-attachment: fixed;
+background-color: var(--light-green-bg-start); /* Fallback */
+
     }
 
     .header {
@@ -23,35 +34,64 @@
     }
 
     .back-button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
-      text-decoration: none;
-    }
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  margin-left: 380px;
+  display: block;
+  box-shadow: 0 2px 8px rgba(0,123,255,0.10);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.back-button:hover,
+.back-button:focus {
+  background: #1770b8;
+  color: #e0f7fa;
+  box-shadow: 0 4px 16px rgba(0,123,255,0.18);
+  transform: translateY(-2px) scale(1.03);
+  outline: none;
+}
 
     .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(23,112,184,0.10);
+  transition: box-shadow 0.3s, transform 0.3s, opacity 0.3s;
+  opacity: 0.6;
+}
+.container:hover, .container:focus-within {
+  box-shadow: 0 6px 32px rgba(23,112,184,0.18), 0 2px 8px rgba(23,162,184,0.10);
+  transform: translateY(-4px) scale(1.015);
+  opacity: 0.7;
+}
 
     h1 {
       text-align: center;
+      font-size: 3rem;
+      color: #17a2b8;
+    }
+    p {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #17a2b8;
     }
 
     .input-group {
       margin: 15px 0;
+      color: #17a2b8;
+      font-size: 2rem;
     }
 
     .input-group label {
       display: block;
       margin-bottom: 5px;
+      
     }
 
     .input-group input,
@@ -60,31 +100,44 @@
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
+      font-size: 1.1rem;
+      box-sizing: border-box; /* Include padding and border in width */
+
     }
 
-    .input-group input[type="range"] {
-      padding: 0;
-    }
+
 
     .range-value {
       text-align: right;
       font-weight: bold;
       margin-top: 5px;
     }
+    
 
     .button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-top: 20px;
-      text-align: center;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-    }
+  display: block;
+  width: 30%;
+  padding: 10px;
+  margin-top: 20px;
+  text-align: center;
+  background: #17a2b8;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0,123,255,0.10);
+  font-size: 1.2rem;
+}
+.button:hover,
+.button:focus {
+  background: #0056b3;
+  color: #e0f7fa;
+  box-shadow: 0 4px 16px rgba(0,123,255,0.18);
+  transform: translateY(-2px) scale(1.03);
+  outline: none;
+}
 
     /* Popup Modal */
     #popupOverlay {
@@ -116,24 +169,32 @@
       cursor: pointer;
     }
 
-    #popupBox .dashboard-btn {
-      background-color: #007bff;
-      color: white;
-    }
-
-    #popupBox .view-btn {
-      background-color: #28a745;
-      color: white;
-    }
+    #popupBox .dashboard-btn,
+#popupBox .view-btn {
+  background-color: #17a2b8;
+  color: white;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(23,162,184,0.10);
+}
+#popupBox .dashboard-btn:hover,
+#popupBox .dashboard-btn:focus,
+#popupBox .view-btn:hover,
+#popupBox .view-btn:focus {
+  background-color: #1770b8;
+  color: #e0f7fa;
+  box-shadow: 0 4px 16px rgba(23,162,184,0.18);
+  transform: translateY(-2px) scale(1.03);
+  outline: none;
+}
 
     .tooltip {
       position: relative;
       display: inline-block;
       margin-left: 6px;
       cursor: pointer;
-      color: #007bff;
+      color: #17a2b8;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 1.6rem;
     }
 
     .tooltip .tooltiptext {
@@ -157,6 +218,17 @@
       visibility: visible;
       opacity: 1;
     }
+
+    .divider {
+            width: 100%;
+            max-width: 650px;
+            border: none;
+            border-top: 16px solid #e9ecef;
+            opacity: 0.3;
+            margin: 24px auto;
+            border-radius: 5px;
+
+        }
   </style>
 </head>
 
@@ -166,9 +238,11 @@
     <div id="greeting">Welcome!</div>
   </div>
 
+  <hr class="divider" style="margin-top: 10px;">
+
+
   <div class="container">
-    <h1>Update Your Injury</h1>
-    <form id="injuryForm">
+    <h1><i class="fa-solid fa-pencil"></i> Update Your Injury</h1>    <form id="injuryForm">
       <input type="hidden" id="UserId" name="UserId" value="" />
       <input type="hidden" id="InjuryId" name="InjuryId" value="" />
 
