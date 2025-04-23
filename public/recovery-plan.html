@@ -39,7 +39,7 @@
     .progress {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #4CAF50, #81C784);
+      background: linear-gradient(90deg, #4caf50, #81c784);
       text-align: right;
       color: white;
       font-weight: bold;
@@ -105,6 +105,97 @@
       border: 1px solid #ddd;
       border-radius: 5px;
     }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 1000;
+    }
+
+    .star-link {
+      color: #ffc107;
+      font-size: 1.2em;
+      margin-left: 5px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .star-link:hover {
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .exercise-score-bar {
+      margin: 10px 0;
+    }
+
+    .exercise-score-bar .bar-container {
+      position: relative;
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      overflow: visible;
+    }
+
+    .exercise-score-bar .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50, #81c784);
+      border-radius: 5px 0 0 5px;
+      transition: width 0.4s ease;
+    }
+
+    .exercise-score-bar .marker {
+      position: absolute;
+      top: 50%;
+      /* center vertically */
+      transform: translate(-50%, -50%);
+      width: 14px;
+      /* make it a circle */
+      height: 14px;
+      background: #333;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      cursor: pointer;
+      color: #007bff;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 280px;
+      background-color: #333;
+      color: #fff;
+      text-align: left;
+      padding: 10px;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      top: -5px;
+      left: 110%;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 13px;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -114,7 +205,9 @@
     <div id="planDetails">
       <h2>Plan Details</h2>
       <p><strong>Injury:</strong> <span id="injuryType">Loading...</span></p>
-      <p><strong>Start Date:</strong> <span id="startDate">Loading...</span></p>
+      <p>
+        <strong>Start Date:</strong> <span id="startDate">Loading...</span>
+      </p>
       <p><strong>End Date:</strong> <span id="endDate">Loading...</span></p>
       <p><strong>Status:</strong> <span id="isActive">Loading...</span></p>
     </div>
@@ -127,30 +220,14 @@
     <div id="exercisesContainer">
       <p>Loading exercises...</p>
     </div>
-
-    <a href="dashboard.html" class="button" style="width: 100%; text-align: center;">Back to Dashboard</a>
+    <a href="dashboard.html" class="button" style="width: 100%; text-align: center">Back to Dashboard</a>
   </div>
 
   <div id="ratingModal">
-    <div id="ratingModalContent">
-      <h3>Rate Exercise</h3>
-      <form id="ratingForm">
-        <input type="hidden" id="ratingExerciseId">
-        <div class="input-group">
-          <label for="ratingValue">Rating (0–5):</label>
-          <input type="range" id="ratingValue" name="rating" min="0" max="5" step="0.5" value="0"
-            oninput="document.getElementById('ratingDisplay').innerText = this.value">
-          <span id="ratingDisplay">0</span>
-        </div>
-        <div class="input-group">
-          <label for="ratingComment">Comment:</label>
-          <textarea id="ratingComment" name="comment" rows="3"></textarea>
-        </div>
-        <button type="submit" class="button" id="ratingSubmitButton">Submit Rating</button>
-        <button type="button" class="button" style="background: #ccc;" onclick="closeRatingModal()">Cancel</button>
-      </form>
-    </div>
+    <div id="ratingModalContent"></div>
   </div>
+
+  <div id="toast"></div>
 
   <script>
     const userId = getUserIdFromToken();
@@ -159,167 +236,258 @@
       const token = localStorage.getItem("token");
       if (!token) return null;
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const payload = JSON.parse(atob(token.split(".")[1]));
         return payload.id || payload.user_id || payload.UserId;
       } catch {
         return null;
       }
     }
 
-    async function fetchRecoveryPlan() {
-      const planId = new URLSearchParams(window.location.search).get("planId");
-      if (!planId) return;
+    function getStarHTML(rating) {
+      if (!rating || rating === "No ratings") return "";
+      const rounded = Math.round(rating * 2) / 2;
+      const fullStars = Math.floor(rounded);
+      const halfStar = rounded % 1 !== 0;
+      const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+      return (
+        "★".repeat(fullStars) + (halfStar ? "⯪" : "") + "☆".repeat(emptyStars)
+      );
+    }
 
+    async function fetchRecoveryPlan() {
+      const planId = new URLSearchParams(window.location.search).get(
+        "planId"
+      );
+      if (!planId) return;
       const res = await fetch(`/api/recovery-plans/${planId}`);
       const plan = await res.json();
-
-      document.getElementById("injuryType").innerText = plan.Injury?.InjuryType || "N/A";
-      document.getElementById("recoveryTitle").innerText = `Recovery Plan – ${plan.Injury?.InjuryType || "Unknown Injury"}`;
-      document.getElementById("startDate").innerText = new Date(plan.StartDate).toLocaleDateString();
+      window.currentPlan = plan;
+      document.getElementById("injuryType").innerText =
+        plan.Injury?.InjuryType || "N/A";
+      document.getElementById("recoveryTitle").innerText = `Recovery Plan – ${plan.Injury?.InjuryType || "Unknown Injury"
+        }`;
+      document.getElementById("startDate").innerText = new Date(
+        plan.StartDate
+      ).toLocaleDateString();
       const endDateEl = document.getElementById("endDate");
       if (plan.IsActive) {
         endDateEl.parentElement.style.display = "none";
       } else {
         endDateEl.parentElement.style.display = "block";
-        endDateEl.innerText = plan.EndDate ? new Date(plan.EndDate).toLocaleDateString() : "Not set";
+        endDateEl.innerText = plan.EndDate
+          ? new Date(plan.EndDate).toLocaleDateString()
+          : "Not set";
       }
-      document.getElementById("isActive").innerText = plan.IsActive ? "Active" : "Completed";
-
-      const progress = document.getElementById("progress");
-      progress.style.width = `${plan.ProgressStatus}%`;
-      progress.innerText = `${plan.ProgressStatus}%`;
-
+      document.getElementById("isActive").innerText = plan.IsActive
+        ? "Active"
+        : "Completed";
+      document.getElementById(
+        "progress"
+      ).style.width = `${plan.ProgressStatus}%`;
+      document.getElementById(
+        "progress"
+      ).innerText = `${plan.ProgressStatus}%`;
       fetchExercises(planId);
     }
 
     async function fetchExercises(planId) {
-  const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
-  const exercises = await res.json();
-  const container = document.getElementById("exercisesContainer");
-  container.innerHTML = "";
+      // 1) load the assigned exercises
+      const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
+      const exercises = await res.json();
+      const container = document.getElementById("exercisesContainer");
+      container.innerHTML = "";  // clear the “Loading...” message
 
-  if (!exercises.length) {
-    container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
-    return;
-  }
+      for (const ex of exercises) {
+        // 2) fetch all completions & ratings in parallel
+        const [completionsRes, ratingsRes] = await Promise.all([
+          fetch(`/api/exercise-completions`),
+          fetch(`/api/exercise-ratings/${ex.ExerciseId}`)
+        ]);
+        const completions = await completionsRes.json();
+        const ratings = await ratingsRes.json();
+        const userRating = ratings.find(r => r.UserId === userId);
+        const avgRating = ratings.length
+          ? (ratings.reduce((sum, r) => sum + r.Rating, 0) / ratings.length).toFixed(1)
+          : "No ratings";
 
-  for (const ex of exercises) {
-    // Fetch completions for the user (this may return all completions for the user)
-    const completionsRes = await fetch(`/api/exercise-completions?user_id=${userId}`);
-    const allCompletions = await completionsRes.json();
+        // 3) compute current progress (max of ProgressValue)
+        const thisComps = completions.filter(c =>
+          c.ExerciseId === ex.ExerciseId && c.PlanId == planId
+        );
+        const progress = thisComps.reduce(
+          (m, c) => Math.max(m, c.ProgressValue || 0),
+          0
+        );
 
-    // Filter completions to include only those for the current exercise
-    const completionsForExercise = allCompletions.filter(c => c.ExerciseId === ex.ExerciseId);
+        // 4) pick out the first record that crosses each threshold
+        const thresholds = [25, 50, 75];
+        const thresholdRecords = {};
+        thresholds.forEach(th => {
+          thresholdRecords[th] = thisComps.find(c => (c.ProgressValue || 0) >= th) || null;
+        });
 
-    // Get the highest progress value among completions for this exercise, or default to 0
-    const highestProgress = completionsForExercise.length > 0
-      ? Math.max(...completionsForExercise.map(c => c.ProgressValue || 0))
-      : 0;
-
-    // Create the exercise element with highest progress displayed on the right.
-    const div = document.createElement("div");
-    div.className = "exercise";
-    div.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-         <h3 style="margin:0;">${ex.ExerciseName}</h3>
-         <div style="font-weight: bold;">${highestProgress}%</div>
+        // 5) build the card
+        const div = document.createElement("div");
+        div.className = "exercise";
+        div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">
+          ${ex.ExerciseName}
+          <a
+            href="exercise-rating.html?exerciseId=${ex.ExerciseId}"
+            class="star-link"
+            title="${ratings.length ? `${avgRating}/5` : 'No ratings yet'}"
+          >
+  ${getStarHTML(avgRating)}
+</a>
+        </h3>
+        <div style="font-weight:bold">${progress}%</div>
       </div>
+
+      <div class="exercise-score-bar">
+        <div class="bar-container">
+          <div class="bar-fill" style="width:${progress}%;"></div>
+          ${thresholds.map(th => `
+            <div
+              class="marker tooltip"
+              style="left:${th}%;"
+              onclick="window.location.href='exercise-completions.html?planId=${planId}&exerciseId=${ex.ExerciseId}'"
+            >
+              <span class="tooltiptext">
+                ${thresholdRecords[th]
+            ? `Date: ${new Date(thresholdRecords[th].createdAt).toLocaleString()}<br/>
+                     Sets: ${thresholdRecords[th].SetsCompleted}<br/>
+                     Reps: ${thresholdRecords[th].RepsCompleted}<br/>
+                     Time: ${thresholdRecords[th].TimeTaken}s<br/>
+                     Difficulty: ${thresholdRecords[th].DifficultyRating}<br/>
+                     Progress: ${thresholdRecords[th].ProgressValue}%`
+            : `${th}% not yet reached`
+          }
+              </span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
       <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
       <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
       ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
-      <a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>
-      <button class="button" style="background: #007bff;" onclick="openRatingModal(${ex.ExerciseId})">Rate</button>
+      ${window.currentPlan?.IsActive
+            ? `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>`
+            : ""}
+      <a class="button" href="exercise-completions.html?planId=${planId}&exerciseId=${ex.ExerciseId}">
+        View Completions
+      </a>
+      <button class="button rate-button" style="${userRating ? 'background-color:#6c757d;' : ''}"
+        data-id="${ex.ExerciseId}" data-name="${ex.ExerciseName}">
+        ${userRating ? 'Rerate' : 'Rate'}
+      </button>
     `;
-    container.appendChild(div);
-  }
-}
-
-    async function openRatingModal(exerciseId) {
-      document.getElementById("ratingExerciseId").value = exerciseId;
-      const ratingSlider = document.getElementById("ratingValue");
-      const ratingDisplay = document.getElementById("ratingDisplay");
-      const commentBox = document.getElementById("ratingComment");
-      const submitBtn = document.getElementById("ratingSubmitButton");
-      const heading = document.querySelector("#ratingModalContent h3");
-
-      ratingSlider.value = 0;
-      ratingDisplay.innerText = "0";
-      commentBox.value = "";
-      submitBtn.innerText = "Submit Rating";
-      submitBtn.style.background = "#007bff";
-      heading.innerText = "Rate Exercise";
-
-      document.getElementById("ratingModal").style.display = "block";
-
-      if (!userId) return;
-
-      try {
-        const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
-        const allRatings = await res.json();
-        const userRating = allRatings.find(r => r.UserId === userId);
-
-        if (userRating) {
-          ratingSlider.value = userRating.Rating;
-          ratingDisplay.innerText = userRating.Rating;
-          commentBox.value = userRating.Comment || "";
-          submitBtn.innerText = "Update Rating";
-          submitBtn.style.background = "#6c757d";
-          heading.innerText = "Update Rating";
-        }
-      } catch (err) {
-        console.error("Error preloading rating:", err);
+        container.appendChild(div);
       }
+
+      // reattach your rate-button handlers
+      document.querySelectorAll(".rate-button").forEach(btn => {
+        btn.addEventListener("click", () =>
+          openRatingModal(btn.dataset.id, btn.dataset.name)
+        );
+      });
+    }
+    async function openRatingModal(exerciseId, exerciseName) {
+      const ratingModalContent =
+        document.getElementById("ratingModalContent");
+      ratingModalContent.innerHTML = `
+        <h3>Rate Exercise: ${exerciseName}</h3>
+        <form id="ratingForm">
+          <input type="hidden" id="ratingExerciseId" value="${exerciseId}">
+          <div class="input-group">
+            <label>Rating (0–5):</label>
+            <input type="range" id="ratingValue" min="0" max="5" step="0.5" value="0"
+              oninput="document.getElementById('ratingDisplay').innerText = this.value">
+            <span id="ratingDisplay">0</span>
+          </div>
+          <div class="input-group">
+            <label>Comment:</label>
+            <textarea id="ratingComment" rows="3"></textarea>
+          </div>
+          <button type="submit" class="button">Submit Rating</button>
+          <button type="button" class="button" style="background:#ccc;" onclick="closeRatingModal()">Cancel</button>
+        </form>
+      `;
+
+      const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
+      const allRatings = await res.json();
+      const userRating = allRatings.find((r) => r.UserId === userId);
+
+      if (userRating) {
+        document.getElementById("ratingValue").value = userRating.Rating;
+        document.getElementById("ratingDisplay").innerText =
+          userRating.Rating;
+        document.getElementById("ratingComment").value =
+          userRating.Comment || "";
+      }
+
+      document.getElementById("ratingForm").onsubmit = submitRating;
+      document.getElementById("ratingModal").style.display = "block";
     }
 
-    function closeRatingModal() {
-      document.getElementById("ratingModal").style.display = "none";
-    }
-
-    document.getElementById("ratingForm").addEventListener("submit", async function (e) {
+    async function submitRating(e) {
       e.preventDefault();
-
       const exerciseId = document.getElementById("ratingExerciseId").value;
       const rating = parseFloat(document.getElementById("ratingValue").value);
       const comment = document.getElementById("ratingComment").value;
 
-      const url = `/api/exercise-ratings/${exerciseId}/${userId}`;
-      const payload = { Rating: rating, Comment: comment };
-
-      try {
-        const method = await checkRatingExists(exerciseId) ? "PUT" : "POST";
-        const endpoint = method === "POST" ? "/api/exercise-ratings" : url;
-
-        const res = await fetch(endpoint, {
-          method,
+      const exists = await checkRatingExists(exerciseId);
+      const res = await fetch(
+        exists
+          ? `/api/exercise-ratings/${exerciseId}/${userId}`
+          : `/api/exercise-ratings`,
+        {
+          method: exists ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            ...(method === "POST" ? { userId, exerciseId } : {}),
-            ...payload
-          })
-        });
-
-        const result = await res.json();
-        if (res.ok) {
-          alert("Rating saved successfully.");
-          closeRatingModal();
-          fetchRecoveryPlan(); // Refresh UI
-        } else {
-          alert(result.error || "Failed to save rating.");
+            userId,
+            exerciseId,
+            Rating: rating,
+            Comment: comment,
+          }),
         }
-      } catch (err) {
-        console.error("Error saving rating:", err);
-        alert("Something went wrong.");
+      );
+
+      if (res.ok) {
+        closeRatingModal();
+        showToast("Rating submitted successfully.");
+        fetchExercises(
+          new URLSearchParams(window.location.search).get("planId")
+        );
+      } else {
+        const result = await res.json();
+        alert(result.error || "Failed to save rating.");
       }
-    });
+    }
 
     async function checkRatingExists(exerciseId) {
       try {
         const res = await fetch(`/api/exercise-ratings/${exerciseId}`);
         const ratings = await res.json();
-        return ratings.some(r => r.UserId === userId);
-      } catch (err) {
+        return ratings.some((r) => r.UserId === userId);
+      } catch {
         return false;
       }
+    }
+
+    function closeRatingModal() {
+      document.getElementById("ratingModal").style.display = "none";
+      document.getElementById("ratingModalContent").innerHTML = "";
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.opacity = "1";
+      setTimeout(() => {
+        toast.style.opacity = "0";
+      }, 2500);
     }
 
     fetchRecoveryPlan();

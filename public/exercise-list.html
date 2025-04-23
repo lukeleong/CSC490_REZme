@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -52,13 +53,23 @@
       cursor: pointer;
     }
 
+    #exercisesContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
     .exercise {
+      flex: 1 0 300px;
+      /* Grow and shrink with a base width of 300px */
+      box-sizing: border-box;
       border: 1px solid #ddd;
       border-radius: 5px;
       background: #f9f9f9;
       padding: 15px;
-      margin-bottom: 10px;
     }
+
 
     .exercise h3 {
       margin: 0 0 5px 0;
@@ -85,7 +96,8 @@
 
     /* Modal Styles */
     #suggestModal {
-      display: none; /* Hidden by default */
+      display: none;
+      /* Hidden by default */
       position: fixed;
       z-index: 1001;
       left: 0;
@@ -151,12 +163,36 @@
     .modal-buttons .cancel-btn {
       background-color: #ccc;
     }
+
+    .feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+      font-size: 14px;
+    }
+
+    .feedback.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .feedback.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="controls">
-      <a href="exercise-managment.html" class="button">Manage Exercises</a>
+      <a href="dashboard.html" class="button">Back to Dashboard</a>
+      <a href="exercise-managment.html" class="button" id="exerciseManagementButton">
+        Manage Exercises
+      </a>
       <select id="sortOptions">
         <option value="name">Sort by Name</option>
         <option value="muscle">Sort by Target Muscle Group</option>
@@ -187,12 +223,17 @@
         </div>
         <div class="input-group">
           <label for="targetMuscleGroup">Target Muscle Group (optional)</label>
-          <input type="text" id="targetMuscleGroup" name="targetMuscleGroup">
+          <!-- Dropdown to be populated with existing muscle groups -->
+          <select id="targetMuscleGroup" name="targetMuscleGroup">
+            <option value="">Select muscle group</option>
+          </select>
         </div>
         <div class="input-group">
-          <label for="difficulty">Difficulty (optional)</label>
-          <input type="text" id="difficulty" name="difficulty">
+          <label for="difficulty">Difficulty (optional): <span id="difficultyValue">1</span></label>
+          <!-- Range slider from 1 to 4 -->
+          <input type="range" id="difficulty" name="difficulty" min="1" max="4" step="1" value="1">
         </div>
+        <div id="suggestFeedback" class="feedback"></div>
         <div class="modal-buttons">
           <button type="submit" class="submit-btn">Submit</button>
           <button type="button" class="cancel-btn" id="cancelSuggest">Cancel</button>
@@ -200,6 +241,7 @@
       </form>
     </div>
   </div>
+
 
   <script>
     let exercisesList = [];
@@ -218,18 +260,24 @@
     function renderExercises() {
       const container = document.getElementById('exercisesContainer');
       container.innerHTML = "";
-      if (!exercisesList.length) {
+
+      // Filter to include only public exercises (assuming Public is a boolean with true meaning public)
+      const publicExercises = exercisesList.filter(ex => ex.Public === true);
+
+      if (!publicExercises.length) {
         container.innerHTML = "<p>No exercises found.</p>";
         return;
       }
-      exercisesList.forEach(ex => {
+
+      publicExercises.forEach(ex => {
         const exerciseDiv = document.createElement('div');
         exerciseDiv.className = "exercise";
         exerciseDiv.innerHTML = `
-          <h3>${ex.ExerciseName}</h3>
-          <p><strong>Target Muscle Group:</strong> ${ex.TargetMuscleGroup || 'N/A'}</p>
-          <p><strong>Difficulty:</strong> ${ex.Difficulty || 'N/A'}</p>
-        `;
+      <h3>${ex.ExerciseName}</h3>
+      <p><strong>Target Muscle Group:</strong> ${ex.TargetMuscleGroup || 'N/A'}</p>
+      <p><strong>Difficulty:</strong> ${ex.Difficulty || 'N/A'}</p>
+      <a href="exercise-detail.html?exerciseId=${ex.ExerciseId}" class="button view-detail">View Detail</a>
+    `;
         container.appendChild(exerciseDiv);
       });
     }
@@ -245,7 +293,7 @@
       renderExercises();
     }
 
-    document.getElementById("sortOptions").addEventListener("change", function() {
+    document.getElementById("sortOptions").addEventListener("change", function () {
       sortExercises(this.value);
     });
 
@@ -257,11 +305,11 @@
     const cancelSuggest = document.getElementById("cancelSuggest");
     const suggestForm = document.getElementById("suggestForm");
 
-    suggestButton.addEventListener("click", function() {
+    suggestButton.addEventListener("click", function () {
       suggestModal.style.display = "flex";
     });
 
-    cancelSuggest.addEventListener("click", function() {
+    cancelSuggest.addEventListener("click", function () {
       closeSuggestModal();
     });
 
@@ -270,25 +318,146 @@
       suggestForm.reset();
     }
 
-    suggestForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const exerciseName = document.getElementById("exerciseName").value.trim();
-      const equipment = document.getElementById("equipment").value.trim();
-      if (!exerciseName || !equipment) {
-        alert("Exercise Name and Equipment are required.");
-        return;
+    // Function to fetch muscle groups from the API endpoint and populate the dropdown
+    async function populateMuscleGroups() {
+      try {
+        // Adjust the endpoint if needed; here we assume it is available at /api/exercises/muscle-groups
+        const response = await fetch('/api/exercises/muscle-groups');
+        if (response.ok) {
+          const muscleGroups = await response.json();
+          const select = document.getElementById('targetMuscleGroup');
+          muscleGroups.forEach(group => {
+            const option = document.createElement('option');
+            option.value = group;
+            option.textContent = group;
+            select.appendChild(option);
+          });
+        } else {
+          console.error('Error fetching muscle groups: ', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching muscle groups:', error);
       }
-      // Add additional logic here to send the new suggestion to the server.
-      alert("Exercise suggestion submitted successfully!");
-      closeSuggestModal();
+    }
+
+    // Update the displayed value for the difficulty slider as it changes.
+    document.getElementById('difficulty').addEventListener('input', function () {
+      document.getElementById('difficultyValue').textContent = this.value;
     });
 
-    // Optional: Close modal when clicking outside the modal content
-    window.addEventListener("click", function(event) {
-      if (event.target == suggestModal) {
-        closeSuggestModal();
+    // Populate the muscle group dropdown when the DOM is loaded.
+    document.addEventListener('DOMContentLoaded', function () {
+      populateMuscleGroups();
+    });
+
+    suggestForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const feedbackEl = document.getElementById("suggestFeedback");
+      // Clear previous feedback
+      feedbackEl.style.display = "none";
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+
+      const exerciseName = document.getElementById("exerciseName").value.trim();
+      const equipment = document.getElementById("equipment").value.trim();
+
+      if (!exerciseName || !equipment) {
+        feedbackEl.textContent = "Exercise Name and Equipment are required.";
+        feedbackEl.classList.add("error");
+        feedbackEl.style.display = "block";
+        return;
+      }
+
+      // Get optional fields
+      const targetMuscleGroup = document.getElementById("targetMuscleGroup").value;
+      const difficulty = document.getElementById("difficulty").value;
+
+      // Construct payload; note Public is set to false (or 0 if you use numeric values)
+      const payload = {
+        ExerciseName: exerciseName,
+        Equipment: equipment,
+        TargetMuscleGroup: targetMuscleGroup || null,
+        Difficulty: difficulty || null,
+        Public: false
+      };
+
+      // Show a submitting message
+      feedbackEl.textContent = "Submitting exercise suggestion...";
+      feedbackEl.classList.remove("error", "success");
+      feedbackEl.style.display = "block";
+
+      // Send POST request to create the exercise
+      fetch('/api/exercises', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(data => {
+              throw new Error(data.error || 'Failed to create exercise');
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          feedbackEl.textContent = "Exercise suggestion submitted successfully!";
+          feedbackEl.classList.add("success");
+
+          // Optionally, refresh exercise list if needed
+          fetchExercises();
+
+          // Auto-close the modal after a short delay
+          setTimeout(() => {
+            closeSuggestModal();
+            // Clear feedback message after closing the modal
+            feedbackEl.style.display = "none";
+            suggestForm.reset();
+          }, 2000);
+        })
+        .catch(error => {
+          feedbackEl.textContent = "Error: " + error.message;
+          feedbackEl.classList.add("error");
+        });
+    });
+
+    // Function to verify admin status
+    async function verifyAdminStatus() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        return false;
+      }
+      try {
+        const response = await fetch('/users/admin-check', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          return false;
+        }
+        const data = await response.json();
+        return data.isAdmin;
+      } catch (error) {
+        console.error("Admin verification error:", error);
+        return false;
+      }
+    }
+
+    // Check admin status when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', async () => {
+      const isAdmin = await verifyAdminStatus();
+      if (!isAdmin) {
+        // Hide the Manage Exercises button for non-admin users
+        document.getElementById("exerciseManagementButton").style.display = "none";
       }
     });
   </script>
 </body>
+
 </html>

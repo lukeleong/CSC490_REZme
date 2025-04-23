@@ -14,8 +14,9 @@ module.exports = function calculateProgressValue({ SetsCompleted, RepsCompleted,
   const normalizedSets = Math.min(SetsCompleted / expectedSets, 1.1);
   const normalizedReps = Math.min(RepsCompleted / expectedReps, 1.1);
   // Allow a maximum bonus of 10% if the user is significantly faster than the target.
-  const normalizedTime = Math.min(TimeTaken / totalExpectedTime, 1.1);
-  const timeScore = 1 - normalizedTime;  // a lower TimeTaken yields a higher (positive) timeScore
+  const timeScore = TimeTaken <= totalExpectedTime
+  ? 1
+  : Math.max(0, 1 - ((TimeTaken - totalExpectedTime)/totalExpectedTime));
 
   const value = (
     setWeight * normalizedSets +

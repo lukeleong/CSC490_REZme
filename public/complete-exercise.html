@@ -158,44 +158,6 @@
       </div>
 
       <div class="input-group">
-        <label for="painLevel">
-          Pain Level (0-10):
-          <span class="tooltip">?
-            <span class="tooltiptext">
-              <strong>0:</strong> No pain at all<br>
-              <strong>1–2:</strong> Very mild — barely noticeable<br>
-              <strong>3–4:</strong> Mild — feels uncomfortable but manageable<br>
-              <strong>5–6:</strong> Moderate — noticeable pain, may limit full motion<br>
-              <strong>7–8:</strong> Severe — painful enough to disrupt movement<br>
-              <strong>9–10:</strong> Intense or sharp pain — stop the exercise and seek help
-            </span>
-          </span>
-          <span id="painLevelDisplay">0</span>
-        </label>
-        <input type="range" id="painLevel" name="PainLevel" min="0" max="10" step="1" value="0"
-          oninput="document.getElementById('painLevelDisplay').innerText = this.value">
-      </div>
-
-      <div class="input-group">
-        <label for="mobilityLevel">
-          Post Mobility Level (0-10):
-          <span class="tooltip">?
-            <span class="tooltiptext">
-              <strong>0:</strong> Completely stiff or locked — no movement<br>
-              <strong>1–2:</strong> Barely able to move<br>
-              <strong>3–4:</strong> Limited range — movement feels very tight<br>
-              <strong>5–6:</strong> Moderate — can move but feel some restriction<br>
-              <strong>7–8:</strong> Good — mostly normal range, light tightness<br>
-              <strong>9–10:</strong> Full mobility — no restriction or stiffness
-            </span>
-          </span>
-          <span id="mobilityLevelDisplay">0</span>
-        </label>
-        <input type="range" id="mobilityLevel" name="PostMobilityLevel" min="0" max="10" step="1" value="0"
-          oninput="document.getElementById('mobilityLevelDisplay').innerText = this.value">
-      </div>
-
-      <div class="input-group">
         <label for="difficultyRating">
           Difficulty Rating (1-4):
           <span class="tooltip">?
@@ -279,7 +241,7 @@
         const result = await response.json();
         document.getElementById("message").innerText = result.message || "Exercise completed!";
 
-        // Delay of 2 seconds then redirect to recovery-plan.html
+        // Delay then redirect
         setTimeout(() => {
           window.location.href = "recovery-plan.html?planId=" + planId;
         }, 2000);

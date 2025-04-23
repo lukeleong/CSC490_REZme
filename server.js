@@ -195,7 +195,8 @@ app.post('/reset-password', (req, res) => {
 });
 
 // Sync database and start server
-sequelize.sync({ force: false })
+// force:true wipe and rebuild database
+sequelize.sync({ force: true })
   .then(() => console.log('Database synced successfully'))
   .catch((err) => console.error('Failed to sync database:', err));
 
@@ -204,4 +205,3 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Serve static files (Must be at the end)
 app.use(express.static(path.join(__dirname, 'public'))); 
-
