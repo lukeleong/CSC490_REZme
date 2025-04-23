@@ -172,6 +172,46 @@ h2 {
             transform: scale(1.05); /* Slightly enlarge on hover */
         }
 
+        /* Modal styling */
+        #confirmationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0,.2);
+        }
+
+        #deletionConfirmationPopup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 25px 20px;
@@ -321,15 +361,15 @@ h2 {
     </div>
 
     <!-- Confirmation Model for Delete Account -->
-    <div id="confirmationModel" class="hidden">
-        <div class="Model-content">
+    <div id="confirmationModal" class="hidden">
+        <div class="modal-content">
             <h2>Confirm User Account Deletion</h2>
             <p>Are you sure you want to delete this user account? This action cannot be undone.</p>
             <div class="input-group">
                 <label for="deleteConfirmPassword">Enter your admin password to confirm:</label>
                 <input type="password" id="deleteConfirmPassword" name="deleteConfirmPassword" required>
             </div>
-            <div class="Model-buttons">
+            <div class="modal-buttons" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;"></div>
                 <button id="cancelDeleteBtn" class="button">Cancel</button>
                 <button id="confirmDeleteBtn" class="button button-danger">Delete Permanently</button>
             </div>
@@ -743,14 +783,14 @@ h2 {
 
                 // Delete Account Modal Handling
                 document.getElementById('deleteAccountBtn').addEventListener('click', function () {
-                    const confirmationModel = document.getElementById('confirmationModel');
+                    const confirmationModel = document.getElementById('confirmationModal');
                     confirmationModel.classList.remove('hidden');
                     confirmationModel.style.display = 'flex';
                 });
 
                 // Cancel Delete Button
                 document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
-                    const confirmationModel = document.getElementById('confirmationModel');
+                    const confirmationModel = document.getElementById('confirmationModal');
                     confirmationModel.classList.add('hidden');
                     confirmationModel.style.display = 'none';
                 });
@@ -798,9 +838,9 @@ h2 {
                         const responseData = await response.json();
 
                         // Hide confirmation modal
-                        const confirmationModel = document.getElementById('confirmationModel');
-                        confirmationModel.classList.add('hidden');
-                        confirmationModel.style.display = 'none';
+                        const confirmationModal = document.getElementById('confirmationModal');
+                        confirmationModal.classList.add('hidden');
+                        confirmationModal.style.display = 'none';
 
                         // Show deletion confirmation popup
                         const deletionPopup = document.getElementById('deletionConfirmationPopup');
