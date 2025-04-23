@@ -288,22 +288,27 @@
       }
     }
 
-    async function populateMuscleGroups() {
-      try {
-        const res = await fetch("/api/exercises/muscle-groups");
-        const groups = await res.json();
-        const dropdown = document.getElementById("InjuryLocation");
+    function populateMuscleGroups() {
+      const muscleGroups = [
+        "ankle",
+        "lower back",
+        "upper back",
+        "shoulders",
+        "chest",
+        "arms",
+        "core",
+        "quads"
+      ];
 
-        dropdown.innerHTML = '<option value="">Select Location</option>';
-        groups.forEach(group => {
-          const option = document.createElement("option");
-          option.value = group;
-          option.textContent = group.charAt(0).toUpperCase() + group.slice(1);
-          dropdown.appendChild(option);
-        });
-      } catch (err) {
-        console.error("Failed to load muscle groups:", err);
-      }
+      const dropdown = document.getElementById("InjuryLocation");
+      dropdown.innerHTML = '<option value="">Select Location</option>';
+
+      muscleGroups.forEach(group => {
+        const option = document.createElement("option");
+        option.value = group;
+        option.textContent = group.charAt(0).toUpperCase() + group.slice(1);
+        dropdown.appendChild(option);
+      });
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -316,7 +321,6 @@
       }
       populateMuscleGroups();
 
-      // Set default date to today
       const today = new Date().toISOString().split("T")[0];
       document.getElementById("StartDate").value = today;
     });
