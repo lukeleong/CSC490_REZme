@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" href="images/logo.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recovery Plans Dashboard</title>
-    <!-- Using Segoe UI (common system font) as specified in target -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Optional: Add a similar sans-serif font if Segoe UI isn't universal -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons in later versions -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
@@ -19,28 +17,25 @@
             padding: 0;
         }
 
-        /* --- Core Theme Styles --- */
         :root {
-            --primary-green: #17a2b8; /* Darker green like buttons/icons */
-            --light-green-bg-start: #d1f0d9; /* Lightest green for bg */
-            --light-green-bg-end: #a8e0b0;   /* Slightly darker green for bg */
+            --primary-green: #17a2b8;
+            --light-green-bg-start: #d1f0d9;
+            --light-green-bg-end: #a8e0b0;
 
-            /* UPDATED Card Backgrounds for semi-transparency */
-            --card-bg: rgba(255, 255, 255, 0.6);  /* Semi-transparent white (Adjust opacity 0.7-0.85) */
-            --card-bg-hover: rgba(255, 255, 255, 0.8); /* Slightly less transparent on hover */
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --card-bg-hover: rgba(255, 255, 255, 0.8);
 
-            --text-dark: #343a40;           /* Dark text for headings */
-            --text-muted: #5f6368;          /* Muted text for paragraphs */
+            --text-dark: #343a40;
+            --text-muted: #5f6368;
 
-            /* Use subtle dark border like welcome page */
             --border-color-light: rgba(0, 0, 0, 0.08);
 
-            --status-active-green: #1770b8;  /* Brighter green for status/progress */
-            --status-completed-grey: #6c757d;/* Grey for completed status */
-            --logout-red: #17a2b8;           /* Red for logout */
-             --button-back-bg: #e0f2e2; /* From other pages */
-             --button-back-bg-hover: #cfe8d1; /* From other pages */
-             --separator-color: rgba(56, 142, 60, 0.3); /* From other pages */
+            --status-active-green: #1770b8;
+            --status-completed-grey: #6c757d;
+            --logout-red: #17a2b8;
+             --button-back-bg: #e0f2e2;
+             --button-back-bg-hover: #cfe8d1;
+             --separator-color: rgba(56, 142, 60, 0.3);
         }
 
         body {
@@ -50,12 +45,11 @@
 
             background-image: url('images/backgroundimage2.jpg');
 
-
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: var(--light-green-bg-start); /* Fallback */
+            background-color: var(--light-green-bg-start);
 
             padding: 50px 20px;
             min-height: 100vh;
@@ -66,14 +60,12 @@
         .container {
             max-width: 950px;
             margin: 20px auto;
-            /* No background on main container */
             padding: 30px 40px;
             border-radius: 12px;
             text-align: left;
-            position: relative; /* Added for potential future absolute elements */
+            position: relative;
         }
 
-        /* Header for Dashboard */
         .header {
             display: flex;
             justify-content: space-between;
@@ -82,7 +74,6 @@
             gap: 20px;
             margin-bottom: 40px;
             padding-bottom: 25px;
-            /* Subtle border for image background */
         }
 
         .divider {
@@ -93,7 +84,6 @@
             opacity: 0.3;
             margin: 24px auto;
             border-radius: 5px;
-
         }
 
         .divider-icon-vertical {
@@ -116,9 +106,9 @@
             background: #fff;
             border-radius: 50%;
             box-shadow: 0 2px 8px rgba(23,162,184,0.08);
-            padding: 10px 18px;
+            padding: 8px 14px;
             margin: 0 10px;
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #17a2b8;
             border: 3px solid #e9ecef;
             opacity: 0.95;
@@ -128,33 +118,28 @@
             filter: drop-shadow(0 1px 2px #c1e5eb);
         }
 
-
         h1 {
             text-align: center;
             color: var(--primary-green);
             font-weight: 700;
             margin-bottom: 5px;
-            font-size: 3.5rem;
+            font-size: 2.5rem;
             text-transform: none;
             letter-spacing: normal;
-             /* Optional subtle shadow for contrast */
-             /* text-shadow: 0 1px 2px rgba(0,0,0,0.1); */
-
         }
         h2 {
-            margin-bottom: 5px; /* Increase this value as needed */
+            margin-bottom: 5px;
             color: #2c3e50;
             font-weight: 900;
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             letter-spacing: 1px;
             text-transform: none;
             text-align: center;
         }
 
-        /* --- Button Styles --- */
         .button {
             display: inline-block;
-            padding: 10px 24px;
+            padding: 8px 20px;
             text-align: center;
             text-decoration: none;
             border-radius: 6px;
@@ -162,14 +147,13 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s ease-in-out;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             margin: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Slightly enhanced shadow for bg */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        /* PRIMARY BUTTON STYLE */
         .button.button-primary,
-        .plan .button /* Default button inside plan */ {
+        .plan .button {
             background-color: var(--primary-green);
             border-color: var(--primary-green);
             color: white;
@@ -182,13 +166,12 @@
             box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
         }
 
-        /* SECONDARY BUTTON STYLE (Example, not used by default in dashboard) */
         .button.button-secondary {
             background-color: transparent;
             border: 1.5px solid var(--primary-green);
             color: var(--primary-green);
             box-shadow: none;
-            text-decoration: none; /* Ensure no underline */
+            text-decoration: none;
         }
         .button.button-secondary:hover {
             background-color: rgba(56, 142, 60, 0.08);
@@ -197,7 +180,6 @@
             transform: translateY(-1px);
         }
 
-        /* LOGOUT BUTTON STYLE (Red Outline) */
         .button.logout-btn {
             background-color: transparent;
             border: 1.5px solid var(--logout-red);
@@ -211,11 +193,9 @@
             transform: translateY(-1px);
         }
 
-        /* BACK BUTTON STYLE (From other pages, for reference) */
         .back-button {
-             /* Not typically used on dashboard, but styles included for consistency */
              display: inline-block;
-             padding: 9px 20px;
+             padding: 7px 18px;
              text-align: center;
              text-decoration: none;
              border: 1.5px solid var(--primary-green);
@@ -223,63 +203,55 @@
              cursor: pointer;
              font-weight: 600;
              transition: all 0.2s ease-in-out;
-             font-size: 0.9rem;
+             font-size: 0.85rem;
              margin: 5px;
              background-color: var(--button-back-bg);
              box-shadow: none;
              border-radius: 8px;
-         }
+          }
         .back-button:hover {
              background-color: var(--button-back-bg-hover);
              color: #2e7d32;
              border-color: #2e7d32;
              transform: translateY(-1px);
-         }
+          }
 
-
-        /* --- Plan Card Styles (Updated to match Welcome Page cards) --- */
         .plan {
-            padding: 25px; /* Standard padding */
+            padding: 20px;
             margin: 20px 0;
-            border-radius: 12px; /* Match welcome page radius */
-            background: var(--card-bg); /* Use semi-transparent variable */
-            border: 1px solid var(--border-color-light); /* Use updated border variable */
-            backdrop-filter: blur(5px); /* Add blur effect (adjust px as needed) */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Match subtle shadow */
-            transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; /* Add border-color transition */
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color-light);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
             position: relative;
             overflow: hidden;
-             /* Ensure no thick top border from previous versions */
-             /* border-top: none; */
             opacity: 0.6;
-            text-align: center;
-
+            text-align: left;
         }
 
         .plan:hover {
-            transform: translateY(-5px); /* Match welcome page lift */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Match welcome page hover shadow */
-            background-color: var(--card-bg-hover); /* Use hover variable */
-             /* Optional: Adjust border on hover */
-             /* border-color: rgba(0, 0, 0, 0.12); */
-             opacity: 0.8;
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            background-color: var(--card-bg-hover);
+            opacity: 0.8;
         }
 
-        /* Ensure text inside card has good contrast */
         .plan h2 {
             color: var(--text-dark);
             font-size: 1.4rem;
             font-weight: 600;
             margin-bottom: 15px;
-            font-size: 2.5rem;
-
+            text-align: left;
         }
 
         .plan p {
-            margin: 8px 0;
-            color: var(--text-muted); /* Ensure this is dark enough */
+            margin: 6px 0;
+            color: var(--text-muted);
             font-weight: 400;
-            font-size: 1.8rem;
+            font-size: 1rem;
+            text-align: left;
         }
 
         .plan p strong {
@@ -287,12 +259,11 @@
             font-weight: 600;
         }
 
-        /* --- Status & Progress --- */
         .status-badge {
             display: inline-block;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             margin-left: 10px;
             color: white;
@@ -310,52 +281,59 @@
 
         .progress-bar {
             width: 100%;
-            height: 8px;
-            background: rgba(0, 0, 0, 0.08); /* Slightly darker track for contrast */
-            border-radius: 4px;
-            margin: 12px 0 8px 0;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 3px;
+            margin: 10px 0 6px 0;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
             background: var(--status-active-green);
-            border-radius: 4px;
+            border-radius: 3px;
             transition: width 0.6s ease-out;
         }
 
-        /* Greeting Style */
          #greeting {
              font-weight: 600;
-             color: var(--primary-green); /* Match H1 color */
-             font-size: 1.05rem;
-              /* Optional: Add subtle text shadow if needed for contrast */
-             /* text-shadow: 0 1px 2px rgba(0,0,0,0.1); */
-         }
+             color: var(--primary-green);
+             font-size: 1rem;
+          }
 
-         .assigned-exercises-title {
-            font-size: 2rem; /* Smaller than the h2 (1.4rem) */
-            font-weight: 900; /* Match the weight of other headings */
-            color: var(--primary-green); /* Match the primary color (#17a2b8) */
-            margin-bottom: 8px; /* Space between the title and the injury type */
-            text-transform: uppercase; /* Make it stand out */
-            letter-spacing: 0.5px; /* Slight letter spacing for a modern look */
+        .assigned-exercises-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--primary-green);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             color: #1770b8;
+            text-align: left;
+        }
+
+        .assigned-exercises-title i {
+            margin-right: 5px;
         }
 
         .card-icon {
-    color: #17a2b8;
-}
+             color: #17a2b8;
+        }
 
+        .plan .button {
+            margin-top: 15px;
+            display: inline-block;
+            text-align: center;
+            width: auto;
+        }
 
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
              body {
-                 padding: 40px 15px;
+                 padding: 30px 10px;
              }
              .header {
                 flex-direction: column;
-                align-items: center; /* Center items when stacked */
+                align-items: center;
                 text-align: center;
             }
              .header > div {
@@ -363,50 +341,74 @@
                  justify-content: center;
                  margin-bottom: 10px;
              }
-            .container {
-                padding: 25px 20px; /* Adjust container padding */
-            }
+             .container {
+                 padding: 20px 15px;
+             }
              h1 {
                  font-size: 2rem;
              }
+             h2 {
+                font-size: 2.5rem;
+             }
              .plan {
-                 padding: 20px; /* Adjust card padding */
+                 padding: 15px;
              }
              .plan h2 {
-                 font-size: 1.25rem;
+                 font-size: 1.2rem;
+                 text-align: center;
              }
              .plan p {
-                 font-size: 0.95rem;
+                 font-size: 0.9rem;
+                 text-align: center;
+             }
+             .assigned-exercises-title {
+                font-size: 1.1rem;
+                text-align: center;
+             }
+             .plan .button {
+                display: block;
+                width: 80%;
+                margin: 15px auto 0 auto;
+             }
+             .divider-icon {
+                font-size: 1.8rem;
+                padding: 6px 12px;
+             }
+             .status-badge {
+                font-size: 0.75rem;
+             }
+             .progress-bar {
+                height: 5px;
              }
         }
-
     </style>
 </head>
 <body>
-    <div class="container"><div class="header">
-        <div class="action-buttons">
-            <a href="/log-injury.html" class="button button-primary">Log New Injury</a>
-            <a href="/injuries.html" class="button button-primary">View All Injuries</a>
-            <a href="/exercise-list.html" class="button button-primary">View Exercise List</a>
+    <div class="container">
+        <div class="header">
+            <div class="action-buttons">
+                <a href="/log-injury.html" class="button button-primary">Log New Injury</a>
+                <a href="/injuries.html" class="button button-primary">View All Injuries</a>
+                <a href="/exercise-list.html" class="button button-primary">View Exercise List</a>
+                <a href="/profile.html" class="button button-primary">Profile</a>
+            </div>
+            <div class="user-info">
+                <div id="greeting"></div>
+                <button onclick="logout()" class="button logout-btn">Logout</button>
+            </div>
         </div>
-        <div class="user-info">
-            <div id="greeting"></div>
-            <button onclick="logout()" class="button logout-btn">Logout</button>
+
+        <div class="divider-icon-vertical">
+            <hr class="divider" style="margin-bottom: 10px;">
+            <span class="divider-icon">
+                <i class="fas fa-notes-medical"></i>
+            </span>
+            <h2>Your Recovery Plans</h2>
+            <hr class="divider" style="margin-top: 10px;">
         </div>
-    </div>
 
-
-    <div class="divider-icon-vertical">
-        <hr class="divider" style="margin-bottom: 10px;">
-        <span class="divider-icon">
-            <i class="fas fa-notes-medical"></i>
-        </span>
-        <h2>Your Recovery Plans</h2>
-        <hr class="divider" style="margin-top: 10px;">
-    </div>
-
-    <div id="plansContainer">
-        <p style="text-align: center; color: var(--text-muted);">Loading recovery plans...</p>
+        <div id="plansContainer">
+            <p style="text-align: center; color: var(--text-muted);">Loading recovery plans...</p>
         </div>
     </div>
 
@@ -437,8 +439,8 @@
 
                 const response = await fetch(`/users/${userId}`, { headers });
                  if (!response.ok) {
-                    if(response.status === 401) console.error("Unauthorized fetching user greeting.");
-                    throw new Error(`HTTP error fetching greeting! status: ${response.status}`);
+                     if(response.status === 401) console.error("Unauthorized fetching user greeting.");
+                     throw new Error(`HTTP error fetching greeting! status: ${response.status}`);
                  }
                 const user = await response.json();
                 greetingElement.innerText = user.FirstName ? `Greetings, ${user.FirstName}` : `Welcome!`;
@@ -456,17 +458,17 @@
 
             const greetingElement = document.getElementById("greeting");
             const userId = getUserIdFromToken();
-            const actionButtonsDiv = document.querySelector('.header > div:first-child'); // Reference action buttons div
+            const actionButtonsDiv = document.querySelector('.header > div:first-child');
 
             if (!userId) {
                 plansContainer.innerHTML = '<p style="text-align: center; color: var(--logout-red);">Please log in to view recovery plans.</p>';
                 if (greetingElement) greetingElement.style.display = 'none';
-                if (actionButtonsDiv) actionButtonsDiv.style.display = 'none'; // Hide action buttons
+                if (actionButtonsDiv) actionButtonsDiv.style.display = 'none';
                 return;
             }
 
             if (greetingElement) greetingElement.style.display = 'block';
-            if (actionButtonsDiv) actionButtonsDiv.style.display = 'flex'; // Ensure action buttons visible
+            if (actionButtonsDiv) actionButtonsDiv.style.display = 'flex';
             fetchUserGreeting(userId);
 
             try {
@@ -476,18 +478,17 @@
 
                 const response = await fetch(`/api/recovery-plans?user_id=${userId}`, { headers });
 
-                if (!response.ok) {
-                     if (response.status === 401) {
-                         console.error("Unauthorized fetching recovery plans.");
-                         plansContainer.innerHTML = '<p style="text-align: center; color: var(--logout-red);">Session expired. Please log in again.</p>';
-                         // logout(); // Optional: Force logout
-                         return;
-                     }
-                    throw new Error(`HTTP error fetching plans! status: ${response.status}`);
-                }
+                 if (!response.ok) {
+                      if (response.status === 401) {
+                          console.error("Unauthorized fetching recovery plans.");
+                          plansContainer.innerHTML = '<p style="text-align: center; color: var(--logout-red);">Session expired. Please log in again.</p>';
+                          return;
+                      }
+                     throw new Error(`HTTP error fetching plans! status: ${response.status}`);
+                 }
 
                 const plans = await response.json();
-                plansContainer.innerHTML = ""; // Clear loading message
+                plansContainer.innerHTML = "";
 
                 if (!plans || !Array.isArray(plans) || plans.length === 0) {
                     plansContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No recovery plans found.</p>';
@@ -505,9 +506,9 @@
 
                     planElement.innerHTML = `
                     <h3 class="assigned-exercises-title">
-  <i class="fas fa-folder-plus"></i>
- Recovery Injury Type
-</h3>
+                        <i class="fas fa-folder-plus"></i>
+                        Recovery Injury Type
+                    </h3>
                     <p><strong>Injury Name:</strong> ${injuryType}</p>
                     <p><strong>Start Date:</strong> ${startDate}</p>
                     <p><strong>Progress:</strong> ${progress}%
@@ -523,7 +524,6 @@
                         <button class="button" onclick="viewPlan(${plan.PlanId})">View Details</button>
                     `;
                     plansContainer.appendChild(planElement);
-
                 });
 
             } catch (error) {
@@ -543,5 +543,7 @@
 
         fetchRecoveryPlans();
     </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/aiAssistant.js"></script>
 </body>
 </html>
