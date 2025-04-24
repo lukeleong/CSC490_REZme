@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="icon" href="images/logo.png" type="image/png">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Log Injury - Recovery App</title>
@@ -672,57 +673,6 @@
       <button class="dashboard-btn" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
       <button class="view-btn" onclick="window.location.href='/injuries.html'">View Injuries</button>
     </div>
-
-    <!-- Main Form Container -->
-    <div class="container">
-        <h1><i class="fas fa-crutch"></i> Log Your Injury</h1>
-        <form id="injuryForm">
-            <input type="hidden" id="UserId" name="UserId" value="" />
-
-            <div class="input-group">
-                <label for="InjuryType">Injury Type:</label>
-                <input type="text" id="InjuryType" name="InjuryType" required />
-            </div>
-
-            <div class="input-group">
-                <label for="InjuryLocation">Injury Location:</label>
-                <select id="InjuryLocation" name="InjuryLocation" required>
-                    <option value="">Loading...</option>
-                    <!-- Options populated by JS -->
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="InjurySeverity">Injury Severity (1=Minor, 10=Severe):</label>
-                <input type="range" id="InjurySeverity" name="InjurySeverity" min="1" max="10" value="5" required
-                  oninput="updateLabel('severityValue', this.value)" />
-                <div class="range-value" id="severityValue">5</div>
-            </div>
-
-            <div class="input-group">
-                <label for="PainLevel">Current Pain Level (1=None, 10=Worst):</label>
-                <input type="range" id="PainLevel" name="PainLevel" min="1" max="10" value="5" required
-                  oninput="updateLabel('painValue', this.value)" />
-                <div class="range-value" id="painValue">5</div>
-            </div>
-
-            <div class="input-group">
-                <label for="MobilityLevel">Current Mobility Level (1=Immobile, 10=Full):</label>
-                <input type="range" id="MobilityLevel" name="MobilityLevel" min="1" max="10" value="5" required
-                  oninput="updateLabel('mobilityValue', this.value)" />
-                <div class="range-value" id="mobilityValue">5</div>
-            </div>
-
-            <div class="input-group">
-                <label for="StartDate">Date of Injury:</label>
-                <input type="date" id="StartDate" name="StartDate" required />
-            </div>
-
-            <button type="submit" class="button button-primary">Submit Injury</button>
-        </form>
-        <p id="message"></p> <!-- For error messages -->
-    </div>
-
     <!-- Success Popup -->
     <div id="popupOverlay">
         <div id="popupBox">

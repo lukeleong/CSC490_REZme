@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <link rel="icon" href="images/logo.png" type="image/png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recovery Plan</title>
@@ -11,20 +12,26 @@
       margin: 0;
       padding: 20px;
       background-color: #f4f4f4;
+      background-image: url('images/backgroundimage2.jpg'); 
+      background-size: cover;
+      background-position: center center;
     }
 
     .container {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
+    padding: 30px 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    text-align: center;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
-    h1 {
-      text-align: center;
-    }
+    h1, h2, h3 {
+    color: #17a2b8;
+  }
 
     .progress-bar {
       width: 100%;
@@ -58,17 +65,27 @@
     }
 
     .button {
-      display: inline-block;
-      padding: 10px;
-      margin-top: 10px;
-      margin-right: 10px;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-    }
+    display: inline-block;
+    padding: 12px 28px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin: 5px;
+    font-size: 1rem;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+  }
+
+  .button:hover {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    transform: translateY(-2px);
+  }
 
     #ratingModal {
       display: none;
@@ -220,7 +237,7 @@
     <div id="exercisesContainer">
       <p>Loading exercises...</p>
     </div>
-    <a href="dashboard.html" class="button" style="width: 100%; text-align: center">Back to Dashboard</a>
+    <a href="dashboard.html" class="button" style="width: 90%; text-align: center">Back to Dashboard</a>
   </div>
 
   <div id="ratingModal">
@@ -250,7 +267,7 @@
       const halfStar = rounded % 1 !== 0;
       const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
       return (
-        "★".repeat(fullStars) + (halfStar ? "⯪" : "") + "☆".repeat(emptyStars)
+        "★".repeat(fullStars) + (halfStar ? "★" : "") + "☆".repeat(emptyStars)
       );
     }
 
@@ -371,7 +388,16 @@
 
       <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
       <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-      ${ex.VideoGuide ? `<p><a href="${ex.VideoGuide}" target="_blank">Watch Guide</a></p>` : ""}
+      ${ex.VideoGuide ? `
+      <div style="margin: 15px 0;">
+        <iframe width="80%" height="315"
+          src="https://www.youtube.com/embed/${getYouTubeId(ex.VideoGuide)}"
+          title="Exercise video guide"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>` : ""}
       ${window.currentPlan?.IsActive
             ? `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>`
             : ""}
@@ -476,6 +502,13 @@
       }
     }
 
+    function getYouTubeId(url) {
+      const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
+      const match = url.match(regExp);
+      return match ? match[1] : null;
+    }
+
+
     function closeRatingModal() {
       document.getElementById("ratingModal").style.display = "none";
       document.getElementById("ratingModalContent").innerHTML = "";
@@ -494,4 +527,4 @@
   </script>
 </body>
 
-</html>
+</html> 

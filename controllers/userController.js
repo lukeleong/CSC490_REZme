@@ -535,17 +535,13 @@ exports.askHfAi = async (req, res) => {
   try {
     const hf_api_token = "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"; 
     const { question } = req.body;
-    const model_name = "mistralai/Mistral-7B-Instruct-v0.2"; 
+    const model_name = "google/flan-t5-large"; 
 
     if (!question) {
       return res.status(400).json({ error: 'Question is required.' });
     }
 
-    const prompt = `
-The following is a conversation with an AI fitness assistant that provides helpful, accurate, and safe advice about exercise, injuries, and recovery.
-
-Question: ${question}
-Answer:`;
+    const prompt = question;
 
     const api_url = `https://api-inference.huggingface.co/models/${model_name}`;
     const headers = {
@@ -556,10 +552,9 @@ Answer:`;
     const payload = {
       inputs: prompt,
       parameters: {
-        max_length: 150,
-        temperature: 0.7,
-        top_p: 0.9,
-        return_full_text: false
+        max_length: 200,
+        temperature: 0.4,
+        top_p: 0.90,
       }
     };
 
