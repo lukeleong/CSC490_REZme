@@ -22,16 +22,42 @@ exports.createRecoveryPlan = async (req, res) => {
 
     const targetMuscleGroup = injury.InjuryLocation.toLowerCase();
 
-    const matchingExercises = await Exercise.findAll({
-      where: {
-        Public: true,
-        TargetMuscleGroup: targetMuscleGroup,
-        Difficulty: difficulty,
-        Equipment: equipment
-      }
-    });
+    const equipmentGroupMap = {
+      "body weight": [
+        "body weight",
+        null,
+        "towel",
+        "wall",
+        "chair",
+        "step",
+        "platform"
+      ],
+      "resistance band": ["resistance band"],
+      "gym": ["dumbbells", "bench"]
+    };
 
-    if (!matchingExercises.length) {
+    const equipmentSelections = equipment.flatMap(type => equipmentGroupMap[type] || []);
+    equipmentSelections.push("body weight", null);
+
+    let selectedExercises = [];
+
+    // Try the current difficulty first, then fallback to easier levels until we hit 5
+    for (let d = difficulty; d >= 1 && selectedExercises.length < 5; d--) {
+      const matches = await Exercise.findAll({
+        where: {
+          Public: true,
+          TargetMuscleGroup: targetMuscleGroup,
+          Difficulty: d,
+          Equipment: equipmentSelections
+        }
+      });
+
+      const remainingSlots = 5 - selectedExercises.length;
+      const randomized = matches.sort(() => 0.5 - Math.random());
+      selectedExercises = selectedExercises.concat(randomized.slice(0, remainingSlots));
+    }
+
+    if (!selectedExercises.length) {
       return res.status(404).json({
         error: "No matching exercises found for the selected location, difficulty, and equipment."
       });
@@ -46,7 +72,7 @@ exports.createRecoveryPlan = async (req, res) => {
       IsActive: true
     });
 
-    await Promise.all(matchingExercises.map(ex =>
+    await Promise.all(selectedExercises.map(ex =>
       RecoveryPlanExercise.create({
         RecoveryPlanId: newPlan.PlanId,
         ExerciseId: ex.ExerciseId
