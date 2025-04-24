@@ -39,7 +39,7 @@
         h1 {
             text-align: center;
             color: #17a2b8;
-            
+            font-size: 2.5;
         }
 
         .input-group {
@@ -50,6 +50,7 @@
             margin-bottom: 5px;
             font-weight: bold;
             color: #17a2b8;
+            font-size: 1.5rem;
         }
         .input-group input {
             width: 100%;
@@ -59,6 +60,8 @@
             box-sizing: border-box;
             text-indent: 0;
             text-align: left;
+            font-size: 1.2rem;
+            color: rgba(1, 1, 1, 0.8);
         }
 
        
@@ -79,14 +82,12 @@
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 1rem;
         }
         .button:hover {
             background: #1770b8;
             transform: scale(1.02);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-        .button:hover i {
-            color: #d4edda;
         }
         .button i {
             margin-right: 8px;
@@ -101,10 +102,22 @@
             display: flex;
             justify-content: center;
         }
+        .divider {
+            margin-bottom: 30px !important;
+            width: 100%;
+            max-width: 460px;
+            border: none;
+            border-top: 6px solid #e9ecef;
+            opacity: 0.3;
+            margin: 24px auto;
+            border-radius: 5px;
+        }
 
     </style>
 </head>
 <body>
+    <hr class="divider">
+
     <div class="container">
         <h1><i class="fas fa-user"></i> Sign Up</h1>
         <form id="signupForm">
