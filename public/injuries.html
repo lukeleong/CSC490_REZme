@@ -77,9 +77,9 @@
 
         h1 {
             text-align: center;
-            color: #343a40;
+            color: lightgray;
             font-weight: 700;
-            font-size: 2.8rem; /* Reduced size */
+            font-size: 1.5rem; 
             margin-bottom: 10px;
             margin-top: 0;
             letter-spacing: normal;
@@ -114,19 +114,16 @@
 
         .button.button-secondary {
             background-color: transparent;
-            border-color: #1770b8;
-            color: #1770b8;
+            border-color: var(--primary-green);
+            color: var(--primary-green);
             box-shadow: none;
             text-decoration: none;
-            border-width: 2px;
-
         }
         .button.button-secondary:hover {
             background-color: rgba(56, 142, 60, 0.08);
             color: #2e7d32;
             border-color: #2e7d32;
             transform: translateY(-1px);
-            border-width: 2px;
         }
 
         .back-button {
@@ -136,20 +133,20 @@
             text-decoration: none;
             border-radius: 6px;
             border: 2px solid var(--primary-green) !important;
-            color: white;
+            color: var(--primary-green);
             cursor: pointer;
             font-weight: 700;
             transition: all 0.2s ease-in-out;
             font-size: 0.9rem; 
             margin: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-            background-color: #17a2b8; 
+            background-color: transparent; 
         }
 
         .button.button-secondary:hover, .back-button:hover {
-            background-color: #1770b8;
+            background-color: #17a2b8;
             color: white;
-            border-color: white !important;
+            border-color: #17a2b8;
             transform: translateY(-1px);
         }
 
@@ -177,7 +174,7 @@
         .injury-details {
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Adjusted spacing */
+            gap: 8px; 
         }
         @media (min-width: 576px) {
             .injury-details {
@@ -188,7 +185,7 @@
 
         .injury h2 {
             color: var(--text-dark);
-            font-size: 1.4rem; 
+            font-size: 1.5rem; 
             font-weight: 600;
             margin-bottom: 15px;
             grid-column: 1 / -1;
@@ -317,11 +314,9 @@
         }
         .button.orange:hover {
             background: #e87012;
-            border-color: #1770b8;
+            border-color: #e87012;
             transform: translateY(-1px);
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-            border-width: 2px;
-
         }
 
 
@@ -360,7 +355,7 @@
             width: 100%;
             max-width: 800px;
             border: none;
-            border-top: 12px solid #e9ecef;
+            border-top: 16px solid #e9ecef;
             opacity: 0.3;
             margin: 10px auto;
             border-radius: 5px;
