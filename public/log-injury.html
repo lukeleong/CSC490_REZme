@@ -233,8 +233,8 @@
         .input-group input[type="range"] {
             width: 100%;
             height: 16px; /* Thinner track */
-            background: #e9ecef; /* Light grey track */
-            border-radius: 3px;
+            background: rgba(8, 76, 224, 0.4); /* Light grey track */
+            border-radius: 5px;
             appearance: none;
             cursor: pointer;
             padding: 0; /* Remove default padding */
@@ -244,7 +244,7 @@
         }
 
         .input-group input[type="range"]:hover {
-            background: #d1d5db; /* Slightly darker track on hover */
+            background: rgba(8, 76, 224, 0.5); /* Light grey track */
         }
 
         .input-group input[type="range"]::-webkit-slider-thumb {
@@ -288,7 +288,7 @@
             text-align: right;
             font-weight: 600; /* Bolder value */
             margin-top: 4px; /* Space above value */
-            color: var(--text-dark); /* Darker text for value */
+            color: #1770b8; /* Darker text for value */
             font-size: 1.4rem;
         }
 
@@ -435,7 +435,7 @@
 
     .tooltip:hover .tooltiptext {
       visibility: visible;
-      opacity: 0.6;
+      opacity: 0.8;
     }
     .tooltip:focus .tooltiptext {
       visibility: visible;
@@ -521,7 +521,7 @@
             width: 100%;
             max-width: 700px;
             border: none;
-            border-top: 16px solid #e9ecef;
+            border-top: 8px solid #e9ecef;
             opacity: 0.3;
             margin: 24px auto;
             border-radius: 5px;
