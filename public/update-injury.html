@@ -35,6 +35,7 @@ background-color: var(--light-green-bg-start); /* Fallback */
     }
 
     .back-button {
+      font-size: 1.2rem;
   background: #17a2b8;
   color: white;
   border: none;
@@ -45,32 +46,37 @@ background-color: var(--light-green-bg-start); /* Fallback */
   margin-left: 380px;
   display: block;
   box-shadow: 0 2px 8px rgba(0,123,255,0.10);
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition: background 0.5s, color 0.5s, box-shadow 0.5s, transform 0.5s;
 }
 .back-button:hover,
 .back-button:focus {
   background: #1770b8;
   color: #e0f7fa;
   box-shadow: 0 4px 16px rgba(0,123,255,0.18);
-  transform: translateY(-2px) scale(1.03);
+  transform: translateY(-2px) scale(1.01);
   outline: none;
+  border: 3px solid rgb(255, 255, 255);
+  transition: all 0.2s ease-in-out;
 }
 
-    .container {
-  max-width: 600px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(23,112,184,0.10);
-  transition: box-shadow 0.3s, transform 0.3s, opacity 0.3s;
-  opacity: 0.6;
-}
-.container:hover, .container:focus-within {
-  box-shadow: 0 6px 32px rgba(23,112,184,0.18), 0 2px 8px rgba(23,162,184,0.10);
-  transform: translateY(-4px) scale(1.015);
-  opacity: 0.7;
-}
+.container {
+            max-width: 570px;
+            width: 100%;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.7); /* Semi-transparent white, 70% opacity */
+            padding: 30px 40px; /* Keep existing padding */
+            border-radius: 10px; /* Keep existing border radius */
+            border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle border like .useful-element */
+            backdrop-filter: blur(4px); /* Frosted glass effect */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Lighter shadow like .useful-element */
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; /* Updated transition */
+        }
+
+        .container:hover {
+            transform: translateY(-5px); /* More pronounced lift like .useful-element */
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly less transparent on hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Stronger shadow on hover */
+        }
 
     h1 {
       text-align: center;
@@ -108,12 +114,68 @@ background-color: var(--light-green-bg-start); /* Fallback */
 
 
 
-    .range-value {
-      text-align: right;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-    
+    /* Range Slider Styles */
+    .input-group input[type="range"] {
+            width: 100%;
+            height: 16px; /* Thinner track */
+            background: rgba(8, 76, 224, 0.3); /* Light grey track */
+            border-radius: 5px;
+            appearance: none;
+            cursor: pointer;
+            padding: 0; /* Remove default padding */
+            border: none; /* Remove default border */
+            margin-top: 8px; /* Space above slider */
+            transition: background 0.2s ease; /* Added for track hover effect */
+        }
+
+        .input-group input[type="range"]:hover {
+            background: rgba(8, 76, 224, 0.5); /* Light grey track */
+        }
+
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 30px; /* Thumb size */
+            height: 30px;
+            background: var(--primary-green); /* Green thumb */
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease; /* Added for thumb hover effects */
+        }
+
+        .input-group input[type="range"]:hover::-webkit-slider-thumb {
+            width: 40px; /* Slightly larger thumb */
+            height: 40px;
+            background: #17a2b8; /* Darker green */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+        }
+
+        /* Firefox Thumb */
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease; /* Added for thumb hover effects */
+        }
+
+        .input-group input[type="range"]:hover::-moz-range-thumb {
+            width: 20px; /* Slightly larger thumb */
+            height: 20px;
+            background: #2e7d32; /* Darker green */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+        }
+        .range-value {
+            text-align: right;
+            font-weight: 600; /* Bolder value */
+            margin-top: 4px; /* Space above value */
+            color: #1770b8; /* Darker text for value */
+            font-size: 1.4rem;
+        }
 
     .button {
   display: block;
@@ -135,7 +197,6 @@ background-color: var(--light-green-bg-start); /* Fallback */
 .button:focus {
   background: #0056b3;
   color: #e0f7fa;
-  box-shadow: 0 4px 16px rgba(0,123,255,0.18);
   transform: translateY(-2px) scale(1.03);
   outline: none;
 }
@@ -224,7 +285,7 @@ background-color: var(--light-green-bg-start); /* Fallback */
             width: 100%;
             max-width: 650px;
             border: none;
-            border-top: 16px solid #e9ecef;
+            border-top: 8px solid #e9ecef;
             opacity: 0.3;
             margin: 24px auto;
             border-radius: 5px;
