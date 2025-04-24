@@ -24,7 +24,7 @@ const seedUsers = async () => {
         RegistrationDate: now,
         LastLogin: now,
         ProfilePicture: null,
-        IsAdmin: 0,
+        IsAdmin: 1,
         googleId: null,
         createdAt: now,
         updatedAt: now

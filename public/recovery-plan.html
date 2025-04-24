@@ -7,31 +7,85 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recovery Plan</title>
   <style>
+    /* card container */
+    .exercise {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #fff;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    /* header row: title + toggle */
+    .exercise .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      cursor: pointer;
+    }
+
+    /* hidden body */
+    .exercise .card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      padding: 0 15px;
+    }
+
+    /* when expanded, show it */
+    .exercise.expanded .card-body {
+      max-height: 800px;
+      padding: 15px;
+    }
+
+    .toggle-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
       background-color: #f4f4f4;
-      background-image: url('images/backgroundimage2.jpg'); 
+      background-image: url('images/backgroundimage2.jpg');
       background-size: cover;
       background-position: center center;
     }
 
     .container {
-    max-width: 800px;
-    margin: auto;
-    background: rgba(255, 255, 255, 0.7); /* White with 70% opacity */
-    padding: 30px 25px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    text-align: center;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      max-width: 800px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.7);
+      max-width: 800px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 30px 25px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      text-align: center;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
-    h1, h2, h3 {
-    color: #17a2b8;
-  }
+    .top-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #17a2b8;
+    }
 
     .progress-bar {
       width: 100%;
@@ -65,27 +119,27 @@
     }
 
     .button {
-    display: inline-block;
-    padding: 12px 28px;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    margin: 5px;
-    font-size: 1rem;
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-    color: white;
-  }
+      display: inline-block;
+      padding: 12px 28px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin: 5px;
+      font-size: 1rem;
+      background-color: #17a2b8;
+      border-color: #17a2b8;
+      color: white;
+    }
 
-  .button:hover {
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-    transform: translateY(-2px);
-  }
+    .button:hover {
+      background-color: #17a2b8;
+      border-color: #17a2b8;
+      transform: translateY(-2px);
+    }
 
     #ratingModal {
       display: none;
@@ -174,7 +228,7 @@
       top: 50%;
       /* center vertically */
       transform: translate(-50%, -50%);
-      width: 14px;
+      width: 12px;
       /* make it a circle */
       height: 14px;
       background: #333;
@@ -217,6 +271,7 @@
 </head>
 
 <body>
+  <a href="dashboard.html" class="button top-button">Back to Dashboard</a>
   <div class="container">
     <h1 id="recoveryTitle">Recovery Plan</h1>
     <div id="planDetails">
@@ -308,14 +363,21 @@
     }
 
     async function fetchExercises(planId) {
-      // 1) load the assigned exercises
+      const expandedIds = Array.from(
+        document.querySelectorAll('.exercise.expanded')
+      ).map(card => card.dataset.exerciseId);
+
       const res = await fetch(`/api/recovery-plans/${planId}/exercises`);
       const exercises = await res.json();
       const container = document.getElementById("exercisesContainer");
-      container.innerHTML = "";  // clear the “Loading...” message
+      container.innerHTML = "";
+
+      if (!exercises.length) {
+        container.innerHTML = "<p>No exercises found for this recovery plan.</p>";
+        return;
+      }
 
       for (const ex of exercises) {
-        // 2) fetch all completions & ratings in parallel
         const [completionsRes, ratingsRes] = await Promise.all([
           fetch(`/api/exercise-completions`),
           fetch(`/api/exercise-ratings/${ex.ExerciseId}`)
@@ -327,7 +389,6 @@
           ? (ratings.reduce((sum, r) => sum + r.Rating, 0) / ratings.length).toFixed(1)
           : "No ratings";
 
-        // 3) compute current progress (max of ProgressValue)
         const thisComps = completions.filter(c =>
           c.ExerciseId === ex.ExerciseId && c.PlanId == planId
         );
@@ -336,89 +397,96 @@
           0
         );
 
-        // 4) pick out the first record that crosses each threshold
         const thresholds = [25, 50, 75];
         const thresholdRecords = {};
         thresholds.forEach(th => {
           thresholdRecords[th] = thisComps.find(c => (c.ProgressValue || 0) >= th) || null;
         });
 
-        // 5) build the card
-        const div = document.createElement("div");
-        div.className = "exercise";
-        div.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h3 style="margin:0">
-          ${ex.ExerciseName}
+        const card = document.createElement("div");
+        card.className = "exercise";
+        card.dataset.exerciseId = ex.ExerciseId;
+        card.innerHTML = `
+      <div class="card-header">
+        <div style="display:flex;align-items:center;width:100%">
+          <h3 style="margin:0">${ex.ExerciseName}</h3>
           <a
             href="exercise-rating.html?exerciseId=${ex.ExerciseId}"
             class="star-link"
-            title="${ratings.length ? `${avgRating}/5` : 'No ratings yet'}"
-          >
-  ${getStarHTML(avgRating)}
-</a>
-        </h3>
-        <div style="font-weight:bold">${progress}%</div>
-      </div>
-
-      <div class="exercise-score-bar">
-        <div class="bar-container">
-          <div class="bar-fill" style="width:${progress}%;"></div>
-          ${thresholds.map(th => `
-            <div
-              class="marker tooltip"
-              style="left:${th}%;"
-              onclick="window.location.href='exercise-completions.html?planId=${planId}&exerciseId=${ex.ExerciseId}'"
-            >
-              <span class="tooltiptext">
-                ${thresholdRecords[th]
-            ? `Date: ${new Date(thresholdRecords[th].createdAt).toLocaleString()}<br/>
-                     Sets: ${thresholdRecords[th].SetsCompleted}<br/>
-                     Reps: ${thresholdRecords[th].RepsCompleted}<br/>
-                     Time: ${thresholdRecords[th].TimeTaken}s<br/>
-                     Difficulty: ${thresholdRecords[th].DifficultyRating}<br/>
-                     Progress: ${thresholdRecords[th].ProgressValue}%`
-            : `${th}% not yet reached`
-          }
-              </span>
-            </div>
-          `).join("")}
+            title="${ratings.length ? `${avgRating}/5` : "No ratings yet"}"
+            style="margin-left:8px"
+          >${getStarHTML(avgRating)}</a>
+          <div style="margin-left:auto;font-weight:bold">${progress}%</div>
         </div>
+        <button class="toggle-btn">▼</button>
       </div>
-
-      <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
-      <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
-      ${ex.VideoGuide ? `
-      <div style="margin: 15px 0;">
-        <iframe width="80%" height="315"
-          src="https://www.youtube.com/embed/${getYouTubeId(ex.VideoGuide)}"
-          title="Exercise video guide"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-      </div>` : ""}
-      ${window.currentPlan?.IsActive
+      <div class="card-body">
+        <div class="exercise-score-bar">
+          <div class="bar-container">
+            <div class="bar-fill" style="width:${progress}%;"></div>
+            ${thresholds.map(th => `
+              <div
+                class="marker tooltip"
+                style="left:${th}%;"
+                onclick="window.location.href='exercise-completions.html?planId=${planId}&exerciseId=${ex.ExerciseId}'"
+              >
+                <span class="tooltiptext">
+                  ${thresholdRecords[th]
+            ? `Date: ${new Date(thresholdRecords[th].createdAt).toLocaleDateString()}<br/>
+                       Sets: ${thresholdRecords[th].SetsCompleted}<br/>
+                       Reps: ${thresholdRecords[th].RepsCompleted}<br/>
+                       Time: ${thresholdRecords[th].TimeTaken}s<br/>
+                       Difficulty: ${thresholdRecords[th].DifficultyRating}<br/>
+                       Progress: ${thresholdRecords[th].ProgressValue}%`
+            : 'Progress not yet reached'}
+                </span>
+              </div>`
+        ).join("")}
+          </div>
+        </div>
+        <p><strong>Target:</strong> ${ex.TargetMuscleGroup}</p>
+        <p><strong>Equipment:</strong> ${ex.Equipment || "N/A"}</p>
+        ${ex.VideoGuide ? `
+          <div style="margin:15px 0">
+            <iframe
+              width="80%" height="315"
+              src="https://www.youtube.com/embed/${getYouTubeId(ex.VideoGuide)}"
+              frameborder="0" allowfullscreen
+            ></iframe>
+          </div>` : ""}
+        ${window.currentPlan?.IsActive
             ? `<a class="button" href="complete-exercise.html?planId=${planId}&exerciseId=${ex.ExerciseId}">Complete Exercise</a>`
             : ""}
-      <a class="button" href="exercise-completions.html?planId=${planId}&exerciseId=${ex.ExerciseId}">
-        View Completions
-      </a>
-      <button class="button rate-button" style="${userRating ? 'background-color:#6c757d;' : ''}"
-        data-id="${ex.ExerciseId}" data-name="${ex.ExerciseName}">
-        ${userRating ? 'Rerate' : 'Rate'}
-      </button>
+        <a class="button" href="exercise-completions.html?planId=${planId}&exerciseId=${ex.ExerciseId}">
+          View Completions
+        </a>
+        <button class="button rate-button" data-id="${ex.ExerciseId}" data-name="${ex.ExerciseName}">
+          ${userRating ? "Rerate" : "Rate"}
+        </button>
+      </div>
     `;
-        container.appendChild(div);
+
+        if (expandedIds.includes(String(ex.ExerciseId))) {
+          card.classList.add("expanded");
+          card.querySelector(".toggle-btn").textContent = "▲";
+        }
+
+        container.appendChild(card);
+
+        card.addEventListener("click", e => {
+          if (e.target.closest("a") || e.target.closest("button.rate-button")) return;
+          const expanded = card.classList.toggle("expanded");
+          card.querySelector(".toggle-btn").textContent = expanded ? "▲" : "▼";
+        });
       }
 
-      // reattach your rate-button handlers
-      document.querySelectorAll(".rate-button").forEach(btn => {
+      document.querySelectorAll(".rate-button").forEach(btn =>
         btn.addEventListener("click", () =>
           openRatingModal(btn.dataset.id, btn.dataset.name)
-        );
-      });
+        )
+      );
     }
+
     async function openRatingModal(exerciseId, exerciseName) {
       const ratingModalContent =
         document.getElementById("ratingModalContent");
@@ -527,4 +595,4 @@
   </script>
 </body>
 
-</html> 
+</html>

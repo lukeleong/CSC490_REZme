@@ -6,7 +6,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Your Injuries - Recovery App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -37,6 +39,57 @@
             --logout-red: #dc3545;
             --button-back-bg: #e0f2e2;
             --button-back-bg-hover: #cfe8d1;
+        }
+
+        /* journal icon button in top-right of each .injury */
+        .journal-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .journal-btn:hover {
+            color: var(--secondary-green);
+        }
+
+        /* completed injuries accordion */
+        .completed-toggle-injury {
+            width: 100%;
+            cursor: pointer;
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 20px 0 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: background 0.3s ease;
+        }
+
+        .completed-toggle-injury:hover {
+            background: var(--card-bg-hover);
+        }
+
+        #completedInjuriesContainer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        #completedInjuriesContainer.expanded {
+            max-height: 2000px;
+        }
+
+        .toggle-arrow {
+            transition: transform 0.3s ease;
         }
 
         body {
@@ -79,7 +132,7 @@
             text-align: center;
             color: lightgray;
             font-weight: 700;
-            font-size: 1.5rem; 
+            font-size: 1.5rem;
             margin-bottom: 10px;
             margin-top: 0;
             letter-spacing: normal;
@@ -105,6 +158,7 @@
             border-color: var(--primary-green);
             color: white;
         }
+
         .button.button-primary:hover {
             background-color: #1770b8;
             border-color: #1770b8;
@@ -119,6 +173,7 @@
             box-shadow: none;
             text-decoration: none;
         }
+
         .button.button-secondary:hover {
             background-color: rgba(56, 142, 60, 0.08);
             color: #2e7d32;
@@ -128,7 +183,7 @@
 
         .back-button {
             display: inline-block;
-            padding: 8px 18px; 
+            padding: 8px 18px;
             text-align: center;
             text-decoration: none;
             border-radius: 6px;
@@ -137,13 +192,14 @@
             cursor: pointer;
             font-weight: 700;
             transition: all 0.2s ease-in-out;
-            font-size: 0.9rem; 
+            font-size: 0.9rem;
             margin: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-            background-color: transparent; 
+            background-color: transparent;
         }
 
-        .button.button-secondary:hover, .back-button:hover {
+        .button.button-secondary:hover,
+        .back-button:hover {
             background-color: #17a2b8;
             color: white;
             border-color: #17a2b8;
@@ -151,8 +207,8 @@
         }
 
         .injury {
-            padding: 20px 25px; 
-            margin: 15px 0; 
+            padding: 20px 25px;
+            margin: 15px 0;
             border-radius: 12px;
             background: var(--card-bg);
             border: 1px solid var(--border-color-light);
@@ -174,18 +230,19 @@
         .injury-details {
             display: flex;
             flex-direction: column;
-            gap: 8px; 
+            gap: 8px;
         }
+
         @media (min-width: 576px) {
             .injury-details {
-                 grid-template-columns: repeat(2, 1fr);
-                 display: grid; 
+                grid-template-columns: repeat(2, 1fr);
+                display: grid;
             }
         }
 
         .injury h2 {
             color: var(--text-dark);
-            font-size: 1.5rem; 
+            font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 15px;
             grid-column: 1 / -1;
@@ -196,8 +253,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 0; 
-            font-size: 0.95rem; 
+            margin-bottom: 0;
+            font-size: 0.95rem;
             color: var(--text-muted);
             white-space: nowrap;
             overflow: hidden;
@@ -205,10 +262,10 @@
         }
 
         .injury .info-item i.icon {
-            margin-right: 10px; 
-            font-size: 1.2rem; 
+            margin-right: 10px;
+            font-size: 1.2rem;
             color: var(--primary-green);
-            width: 16px; 
+            width: 16px;
             text-align: center;
             flex-shrink: 0;
         }
@@ -219,89 +276,104 @@
             margin-right: 4px;
             flex-shrink: 0;
         }
+
         .injury .info-item span.value {
-             white-space: normal;
-             overflow: visible;
-             text-overflow: clip;
-             display: inline;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            display: inline;
         }
 
         .injury-actions {
             text-align: right;
-            margin-top: 15px; 
+            margin-top: 15px;
         }
-         .injury-actions .button {
-             padding: 6px 16px; 
-             font-size: 0.85rem; 
-          }
+
+        .injury-actions .button {
+            padding: 6px 16px;
+            font-size: 0.85rem;
+        }
 
         #injuryContainer p {
             text-align: center;
             padding: 20px;
-            font-size: 1.2rem; 
+            font-size: 1.2rem;
             color: var(--text-muted);
             background: rgba(255, 255, 255, 0.6);
             border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-         #injuryContainer p.error-message {
-             color: var(--logout-red);
-             font-weight: 500;
-             background: rgba(255, 224, 224, 0.7);
-          }
+
+        #injuryContainer p.error-message {
+            color: var(--logout-red);
+            font-weight: 500;
+            background: rgba(255, 224, 224, 0.7);
+        }
 
         @media (max-width: 768px) {
-             body {
-                 padding: 30px 15px;
-             }
-             .container {
-                 padding: 25px 20px;
-                 margin-top: 50px;
-             }
-             .back-button {
-                 top: 10px;
-                 left: 15px;
-                 padding: 7px 15px;
-                 font-size: 0.85rem;
-             }
-             hr.title-separator {
-                 margin-top: 15px;
-                 margin-bottom: 15px;
-             }
-              h1 {
-                 font-size: 2.2rem;
-                 margin-bottom: 20px;
-                 max-width: 90%;
-                 margin-left: auto;
-                 margin-right: auto;
-              }
-             .injury {
-                 padding: 15px 18px;
-                 border-radius: 10px;
-             }
-             .injury h2 {
-                 font-size: 1.1rem; 
-             }
-             .injury .info-item {
-                 font-size: 0.9rem;
-             }
-             .injury .info-item i.icon {
-                 font-size: 1rem; 
-                 width: 14px; 
-             }
+            body {
+                padding: 30px 15px;
+            }
+
+            .container {
+                padding: 25px 20px;
+                margin-top: 50px;
+            }
+
+            .back-button {
+                top: 10px;
+                left: 15px;
+                padding: 7px 15px;
+                font-size: 0.85rem;
+            }
+
+            hr.title-separator {
+                margin-top: 15px;
+                margin-bottom: 15px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 20px;
+                max-width: 90%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .injury {
+                padding: 15px 18px;
+                border-radius: 10px;
+            }
+
+            .injury h2 {
+                font-size: 1.1rem;
+            }
+
+            .injury .info-item {
+                font-size: 0.9rem;
+            }
+
+            .injury .info-item i.icon {
+                font-size: 1rem;
+                width: 14px;
+            }
         }
+
         @media (max-width: 575px) {
             .injury-details {
-                 grid-template-columns: 1fr;
-                 display: flex;
-                 flex-direction: column;
+                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
             }
-             .injury .info-item {
-                 white-space: normal;
-             }
+
+            .injury .info-item {
+                white-space: normal;
+            }
+
             .injury-actions {
-                 text-align: center;
+                text-align: center;
             }
+
             .injury .button-group {
                 justify-content: center;
             }
@@ -312,6 +384,7 @@
             border-color: #fd7e14;
             color: white;
         }
+
         .button.orange:hover {
             background: #e87012;
             border-color: #e87012;
@@ -325,30 +398,31 @@
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
-            justify-content: flex-end; 
+            justify-content: flex-end;
         }
 
         .dashboard-icon-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 60px; 
-            height: 60px; 
+            width: 60px;
+            height: 60px;
             background: #fff;
             border-radius: 50%;
             margin: 0 auto 8px auto;
-            box-shadow: 0 2px 8px rgba(23,162,184,0.08);
-            border: 3px solid #e9ecef; 
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.08);
+            border: 3px solid #e9ecef;
             position: relative;
             top: 12px;
             z-index: 2;
         }
+
         .dashboard-icon-container i {
             color: #17a2b8;
-            font-size: 1.8rem; 
+            font-size: 1.8rem;
             filter: drop-shadow(0 1px 2px #c1e5eb);
-            margin: 0; 
-            top: 0; 
+            margin: 0;
+            top: 0;
         }
 
         .divider {
@@ -360,7 +434,6 @@
             margin: 10px auto;
             border-radius: 5px;
         }
-
     </style>
 </head>
 
@@ -423,94 +496,105 @@
         }
 
         async function fetchInjuries() {
-            const container = document.getElementById("injuryContainer");
-            const userId = getUserIdFromToken();
+    const container = document.getElementById("injuryContainer");
+    container.innerHTML = '<p>Loading injuries...</p>';
 
-            if (!userId) {
-                container.innerHTML = '<p class="error-message">Please log in to view injuries.</p>';
-                return;
-            }
+    const userId = getUserIdFromToken();
+    if (!userId) {
+      container.innerHTML = '<p class="error-message">Please log in to view injuries.</p>';
+      return;
+    }
 
-            const headers = { 'Content-Type': 'application/json' };
-            const token = localStorage.getItem("token");
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
+    const headers = { 'Content-Type': 'application/json' };
+    const token = localStorage.getItem("token");
+    if (token) headers.Authorization = `Bearer ${token}`;
 
-            try {
-                const response = await fetch(`/api/injuries?user_id=${userId}`, { headers });
+    // fetch injuries & plans
+    const [injuriesRes, plans] = await Promise.all([
+      fetch(`/api/injuries?user_id=${userId}`, { headers }),
+      fetchAllRecoveryPlans(userId, headers)
+    ]);
+    const injuries = (await injuriesRes.json()) || [];
 
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        container.innerHTML = '<p class="error-message">Session expired. Please log in again.</p>';
-                    } else {
-                        throw new Error(`HTTP error fetching injuries! status: ${response.status}`);
-                    }
-                    return;
-                }
+    container.innerHTML = "";
+    // split active vs completed
+    const active = [], completed = [];
+    injuries.forEach(injury => {
+      const plan = plans.find(p => p.InjuryId === injury.InjuryId);
+      if (plan && !plan.IsActive) completed.push({ injury, plan });
+      else active.push({ injury, plan });
+    });
 
-                const injuries = await response.json();
-                container.innerHTML = "";
+    // render active injuries
+    active.forEach(({ injury, plan }) => container.appendChild(renderInjuryCard(injury, plan)));
 
-                if (!injuries || !Array.isArray(injuries) || injuries.length === 0) {
-                    container.innerHTML = "<p>No injuries logged yet.</p>";
-                    return;
-                }
+    // render completed behind a toggle
+    if (completed.length) {
+      const toggle = document.createElement("div");
+      toggle.className = "completed-toggle-injury";
+      toggle.innerHTML = `
+        <span>Completed Injuries (${completed.length})</span>
+        <span class="toggle-arrow">▼</span>
+      `;
+      container.appendChild(toggle);
 
-                const allPlans = await fetchAllRecoveryPlans(userId, headers);
+      const compContainer = document.createElement("div");
+      compContainer.id = "completedInjuriesContainer";
+      container.appendChild(compContainer);
 
-                for (const injury of injuries) {
-                    const existingPlan = allPlans.find(plan => plan.InjuryId === injury.InjuryId);
-                    const div = document.createElement("div");
-                    div.className = "injury";
-                    const formattedDate = injury.StartDate ? new Date(injury.StartDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+      completed.forEach(({ injury, plan }) =>
+        compContainer.appendChild(renderInjuryCard(injury, plan))
+      );
 
-                    div.innerHTML = `
-                        <h2><strong>Injury Name: </strong>${injury.InjuryType || 'Unnamed Injury'}</h2>
-                        <div class="injury-details">
-                             <div class="info-item">
-                                 <i class="icon fas fa-map-marker-alt"></i>
-                                 <p><strong>Location:</strong> <span class="value">${injury.InjuryLocation || 'N/A'}</span></p>
-                             </div>
-                            <div class="info-item">
-                                <i class="icon fas fa-exclamation-triangle"></i>
-                                <p><strong>Severity:</strong> <span class="value">${injury.InjurySeverity || 'N/A'} / 10</span></p>
-                            </div>
-                            <div class="info-item">
-                                <i class="icon fas fa-head-side-virus"></i>
-                                <p><strong>Pain Level:</strong> <span class="value">${injury.PainLevel || 'N/A'} / 10</span></p>
-                            </div>
-                             <div class="info-item">
-                                 <i class="icon fas fa-person-walking"></i>
-                                 <p><strong>Mobility Level:</strong> <span class="value">${injury.MobilityLevel || 'N/A'} / 10</span></p>
-                             </div>
-                            <div class="info-item">
-                                <i class="icon fas fa-calendar-alt"></i>
-                                <p><strong>Date Logged:</strong> <span class="value">${formattedDate}</span></p>
-                            </div>
-                        </div>
-                            <div class="button-group">
-                                ${existingPlan
-                                ? `<button class="button button-primary" onclick="goToRecoveryPlan(${existingPlan.PlanId})">View Plan</button>`
-                                : `<button class="button button-secondary" onclick="goToPlanMaker(${injury.InjuryId})">Create Plan</button>`
-                            }
-                            <button class="button orange"
-                                data-injury-id="${injury.InjuryId}"
-                                data-injury='${JSON.stringify(injury).replace(/'/g, "&apos;")}'
-                                onclick="goToUpdateInjury(this)">
-                                Update Injury
-                            </button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                }
-            } catch (error) {
-                console.error("Failed to fetch injuries:", error);
-                container.innerHTML = '<p class="error-message">Error loading injuries. Please try refreshing the page.</p>';
-            }
+      toggle.addEventListener("click", () => {
+        const open = compContainer.classList.toggle("expanded");
+        toggle.querySelector(".toggle-arrow").textContent = open ? "▲" : "▼";
+      });
+    }
+  }
+
+  // factor out your existing card-building into a helper:
+  function renderInjuryCard(injury, existingPlan) {
+    const div = document.createElement("div");
+    div.className = "injury";
+    const date = injury.StartDate
+      ? new Date(injury.StartDate).toLocaleDateString('en-US', { year:'numeric',month:'short',day:'numeric' })
+      : 'N/A';
+    div.innerHTML = `
+      <a href="/injury-journal.html?injury_id=${injury.InjuryId}"
+         class="journal-btn" title="View Journal">
+        <i class="fas fa-book-medical"></i>
+      </a>
+      <h2><strong>Injury Name:</strong> ${injury.InjuryType || 'Unnamed'}</h2>
+      <div class="injury-details">
+        <div class="info-item"><i class="icon fas fa-map-marker-alt"></i>
+          <strong>Location:</strong> <span class="value">${injury.InjuryLocation || 'N/A'}</span>
+        </div>
+        <div class="info-item"><i class="icon fas fa-exclamation-triangle"></i>
+          <strong>Severity:</strong> <span class="value">${injury.InjurySeverity || 'N/A'}</span>
+        </div>
+        <div class="info-item"><i class="icon fas fa-calendar-alt"></i>
+          <strong>Date Logged:</strong> <span class="value">${date}</span>
+        </div>
+      </div>
+      <div class="button-group">
+        ${
+          existingPlan
+            ? `<button class="button button-primary" onclick="goToRecoveryPlan(${existingPlan.PlanId})">View Plan</button>`
+            : `<button class="button button-secondary" onclick="goToPlanMaker(${injury.InjuryId})">Create Plan</button>`
         }
+        <button class="button orange"
+                data-injury-id="${injury.InjuryId}"
+                data-injury='${JSON.stringify(injury).replace(/'/g,"&apos;")}'
+                onclick="goToUpdateInjury(this)">
+          Update Injury
+        </button>
+      </div>
+    `;
+    return div;
+  }
 
-        fetchInjuries();
+  fetchInjuries();
     </script>
 </body>
 
