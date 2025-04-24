@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="icon" href="images/logo.png" type="image/png">
     <meta charset="UTF-8">
@@ -8,7 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         * {
@@ -33,9 +36,41 @@
             --status-active-green: #1770b8;
             --status-completed-grey: #6c757d;
             --logout-red: #17a2b8;
-             --button-back-bg: #e0f2e2;
-             --button-back-bg-hover: #cfe8d1;
-             --separator-color: rgba(56, 142, 60, 0.3);
+            --button-back-bg: #e0f2e2;
+            --button-back-bg-hover: #cfe8d1;
+            --separator-color: rgba(56, 142, 60, 0.3);
+        }
+
+        /* make the header full-width and pointer obvious */
+        .completed-toggle {
+            width: 100%;
+            cursor: pointer;
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 20px 0 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            box-sizing: border-box;
+        }
+
+        /* smooth slide-down via max-height */
+        #completedContainer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        /* when expanded, allow it to grow */
+        #completedContainer.expanded {
+            max-height: 2000px;
+            /* or whatever comfortably fits your content */
+        }
+
+        .toggle-arrow {
+            transition: transform 0.3s ease;
         }
 
         body {
@@ -93,19 +128,21 @@
             justify-content: center;
             margin: 32px 0 24px 0;
         }
+
         .divider-icon-vertical .divider {
             width: 870px;
             max-width: 100vw;
             margin: 0;
             border-radius: 5px;
         }
+
         .divider-icon {
             display: flex;
             align-items: center;
             justify-content: center;
             background: #fff;
             border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(23,162,184,0.08);
+            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.08);
             padding: 8px 14px;
             margin: 0 10px;
             font-size: 2rem;
@@ -113,6 +150,7 @@
             border: 3px solid #e9ecef;
             opacity: 0.95;
         }
+
         .divider-icon i {
             color: #17a2b8;
             filter: drop-shadow(0 1px 2px #c1e5eb);
@@ -127,6 +165,7 @@
             text-transform: none;
             letter-spacing: normal;
         }
+
         h2 {
             margin-bottom: 5px;
             color: lightgray;
@@ -158,6 +197,7 @@
             border-color: var(--primary-green);
             color: white;
         }
+
         .button.button-primary:hover,
         .plan .button:hover {
             background-color: #1770b8;
@@ -173,6 +213,7 @@
             box-shadow: none;
             text-decoration: none;
         }
+
         .button.button-secondary:hover {
             background-color: rgba(56, 142, 60, 0.08);
             color: #2e7d32;
@@ -186,6 +227,7 @@
             color: white;
             box-shadow: none;
         }
+
         .button.logout-btn:hover {
             background-color: rgba(220, 53, 69, 0.08);
             color: #17a2b8;
@@ -194,27 +236,28 @@
         }
 
         .back-button {
-             display: inline-block;
-             padding: 7px 18px;
-             text-align: center;
-             text-decoration: none;
-             border: 1.5px solid var(--primary-green);
-             color: var(--primary-green);
-             cursor: pointer;
-             font-weight: 600;
-             transition: all 0.2s ease-in-out;
-             font-size: 0.85rem;
-             margin: 5px;
-             background-color: var(--button-back-bg);
-             box-shadow: none;
-             border-radius: 8px;
-          }
+            display: inline-block;
+            padding: 7px 18px;
+            text-align: center;
+            text-decoration: none;
+            border: 1.5px solid var(--primary-green);
+            color: var(--primary-green);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.85rem;
+            margin: 5px;
+            background-color: var(--button-back-bg);
+            box-shadow: none;
+            border-radius: 8px;
+        }
+
         .back-button:hover {
-             background-color: var(--button-back-bg-hover);
-             color: #2e7d32;
-             border-color: #2e7d32;
-             transform: translateY(-1px);
-          }
+            background-color: var(--button-back-bg-hover);
+            color: #2e7d32;
+            border-color: #2e7d32;
+            transform: translateY(-1px);
+        }
 
         .plan {
             padding: 20px;
@@ -295,11 +338,11 @@
             transition: width 0.6s ease-out;
         }
 
-         #greeting {
-             font-weight: 600;
-             color: var(--primary-green);
-             font-size: 1rem;
-          }
+        #greeting {
+            font-weight: 600;
+            color: var(--primary-green);
+            font-size: 1rem;
+        }
 
         .assigned-exercises-title {
             font-size: 1.2rem;
@@ -317,7 +360,7 @@
         }
 
         .card-icon {
-             color: #17a2b8;
+            color: #17a2b8;
         }
 
         .plan .button {
@@ -328,61 +371,75 @@
         }
 
         @media (max-width: 768px) {
-             body {
-                 padding: 30px 10px;
-             }
-             .header {
+            body {
+                padding: 30px 10px;
+            }
+
+            .header {
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
             }
-             .header > div {
-                 width: 100%;
-                 justify-content: center;
-                 margin-bottom: 10px;
-             }
-             .container {
-                 padding: 20px 15px;
-             }
-             h1 {
-                 font-size: 2rem;
-             }
-             h2 {
+
+            .header>div {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
                 font-size: 2.5rem;
-             }
-             .plan {
-                 padding: 15px;
-             }
-             .plan h2 {
-                 font-size: 1.2rem;
-                 text-align: center;
-             }
-             .plan p {
-                 font-size: 0.9rem;
-                 text-align: center;
-             }
-             .assigned-exercises-title {
+            }
+
+            .plan {
+                padding: 15px;
+            }
+
+            .plan h2 {
+                font-size: 1.2rem;
+                text-align: center;
+            }
+
+            .plan p {
+                font-size: 0.9rem;
+                text-align: center;
+            }
+
+            .assigned-exercises-title {
                 font-size: 1.1rem;
                 text-align: center;
-             }
-             .plan .button {
+            }
+
+            .plan .button {
                 display: block;
                 width: 80%;
                 margin: 15px auto 0 auto;
-             }
-             .divider-icon {
+            }
+
+            .divider-icon {
                 font-size: 1.8rem;
                 padding: 6px 12px;
-             }
-             .status-badge {
+            }
+
+            .status-badge {
                 font-size: 0.75rem;
-             }
-             .progress-bar {
+            }
+
+            .progress-bar {
                 height: 5px;
-             }
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -419,7 +476,7 @@
             try {
                 const base64Url = token.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
                     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
                 }).join(''));
                 const payload = JSON.parse(jsonPayload);
@@ -433,103 +490,112 @@
         async function fetchUserGreeting(userId) {
             const greetingElement = document.getElementById("greeting");
             try {
-                 const headers = { 'Content-Type': 'application/json' };
-                 const token = localStorage.getItem("token");
-                 if (token) { headers['Authorization'] = `Bearer ${token}`; }
+                const headers = { 'Content-Type': 'application/json' };
+                const token = localStorage.getItem("token");
+                if (token) { headers['Authorization'] = `Bearer ${token}`; }
 
                 const response = await fetch(`/users/${userId}`, { headers });
-                 if (!response.ok) {
-                     if(response.status === 401) console.error("Unauthorized fetching user greeting.");
-                     throw new Error(`HTTP error fetching greeting! status: ${response.status}`);
-                 }
+                if (!response.ok) {
+                    if (response.status === 401) console.error("Unauthorized fetching user greeting.");
+                    throw new Error(`HTTP error fetching greeting! status: ${response.status}`);
+                }
                 const user = await response.json();
                 greetingElement.innerText = user.FirstName ? `Greetings, ${user.FirstName}` : `Welcome!`;
                 greetingElement.style.display = 'block';
             } catch (error) {
                 console.error("Failed to fetch user greeting:", error);
-                 greetingElement.innerText = `Welcome!`;
-                 greetingElement.style.display = 'block';
+                greetingElement.innerText = `Welcome!`;
+                greetingElement.style.display = 'block';
             }
         }
 
         async function fetchRecoveryPlans() {
             const plansContainer = document.getElementById("plansContainer");
-            plansContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted);">Loading recovery plans...</p>`;
+            plansContainer.innerHTML = `<p style="text-align:center;color:var(--text-muted)">Loading recovery plans...</p>`;
 
-            const greetingElement = document.getElementById("greeting");
             const userId = getUserIdFromToken();
-            const actionButtonsDiv = document.querySelector('.header > div:first-child');
-
             if (!userId) {
-                plansContainer.innerHTML = '<p style="text-align: center; color: var(--logout-red);">Please log in to view recovery plans.</p>';
-                if (greetingElement) greetingElement.style.display = 'none';
-                if (actionButtonsDiv) actionButtonsDiv.style.display = 'none';
+                plansContainer.innerHTML = `<p style="text-align:center;color:var(--logout-red)">Please log in to view recovery plans.</p>`;
                 return;
             }
 
-            if (greetingElement) greetingElement.style.display = 'block';
-            if (actionButtonsDiv) actionButtonsDiv.style.display = 'flex';
-            fetchUserGreeting(userId);
+            // fetch
+            const headers = { 'Content-Type': 'application/json' };
+            const token = localStorage.getItem("token");
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            const res = await fetch(`/api/recovery-plans?user_id=${userId}`, { headers });
+            const plans = await res.json();
 
-            try {
-                const headers = { 'Content-Type': 'application/json' };
-                const token = localStorage.getItem("token");
-                if (token) { headers['Authorization'] = `Bearer ${token}`; }
+            plansContainer.innerHTML = "";
 
-                const response = await fetch(`/api/recovery-plans?user_id=${userId}`, { headers });
+            // split active vs completed
+            const activePlans = plans.filter(p => p.IsActive);
+            const completedPlans = plans.filter(p => !p.IsActive);
 
-                 if (!response.ok) {
-                      if (response.status === 401) {
-                          console.error("Unauthorized fetching recovery plans.");
-                          plansContainer.innerHTML = '<p style="text-align: center; color: var(--logout-red);">Session expired. Please log in again.</p>';
-                          return;
-                      }
-                     throw new Error(`HTTP error fetching plans! status: ${response.status}`);
-                 }
+            // render active plans
+            activePlans.forEach(plan => {
+                const planEl = renderPlanCard(plan);
+                plansContainer.appendChild(planEl);
+            });
 
-                const plans = await response.json();
-                plansContainer.innerHTML = "";
+            if (completedPlans.length) {
+                // toggle header
+                const toggle = document.createElement("div");
+                toggle.className = "completed-toggle";
+                toggle.innerHTML = `
+      <span>Completed Plans (${completedPlans.length})</span>
+      <span class="toggle-arrow">▼</span>
+    `;
+                plansContainer.appendChild(toggle);
 
-                if (!plans || !Array.isArray(plans) || plans.length === 0) {
-                    plansContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No recovery plans found.</p>';
-                    return;
-                }
+                // container for completed
+                const compContainer = document.createElement("div");
+                compContainer.id = "completedContainer";
+                plansContainer.appendChild(compContainer);
 
-                plans.forEach(plan => {
-                    const planElement = document.createElement("div");
-                    planElement.classList.add("plan");
-
-                    const injuryType = plan.Injury?.InjuryType || `Recovery Plan #${plan.PlanId}`;
-                    const startDate = plan.StartDate ? new Date(plan.StartDate).toDateString() : 'N/A';
-                    const progress = (plan.ProgressStatus !== null && plan.ProgressStatus !== undefined) ? parseInt(plan.ProgressStatus, 10) : 0;
-                    const isActive = plan.IsActive === true;
-
-                    planElement.innerHTML = `
-                    <h3 class="assigned-exercises-title">
-                        <i class="fas fa-folder-plus"></i>
-                        Recovery Injury Type
-                    </h3>
-                    <p><strong>Injury Name:</strong> ${injuryType}</p>
-                    <p><strong>Start Date:</strong> ${startDate}</p>
-                    <p><strong>Progress:</strong> ${progress}%
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${progress}%"></div>
-                            </div>
-                        </p>
-                        <p><strong>Status:</strong>
-                            <span class="status-badge ${isActive ? 'status-active' : 'status-completed'}">
-                                ${isActive ? "Active" : "Completed"}
-                            </span>
-                        </p>
-                        <button class="button" onclick="viewPlan(${plan.PlanId})">View Details</button>
-                    `;
-                    plansContainer.appendChild(planElement);
+                completedPlans.forEach(plan => {
+                    const planEl = renderPlanCard(plan);
+                    compContainer.appendChild(planEl);
                 });
 
-            } catch (error) {
-                console.error("Error fetching or rendering recovery plans:", error);
-                plansContainer.innerHTML = '<p style="text-align: center; color: var(--logout-red);">Failed to load recovery plans. Please try again later.</p>';
+                // click to expand/collapse
+                toggle.addEventListener("click", () => {
+                    // toggle our "expanded" class
+                    const isNowOpen = compContainer.classList.toggle("expanded");
+                    // flip the arrow
+                    toggle.querySelector(".toggle-arrow").textContent = isNowOpen ? "▲" : "▼";
+                });
             }
+        }
+
+        // helper to build each .plan div (same as you had before)
+        function renderPlanCard(plan) {
+            const el = document.createElement("div");
+            el.className = "plan";
+            const injuryType = plan.Injury?.InjuryType || `Plan #${plan.PlanId}`;
+            const startDate = plan.StartDate ? new Date(plan.StartDate).toDateString() : 'N/A';
+            const progress = parseInt(plan.ProgressStatus) || 0;
+            const isActive = plan.IsActive;
+            el.innerHTML = `
+    <h3 class="assigned-exercises-title">
+      <i class="fas fa-folder-plus"></i>
+      Recovery Injury Type
+    </h3>
+    <p><strong>Injury Name:</strong> ${injuryType}</p>
+    <p><strong>Start Date:</strong> ${startDate}</p>
+    <p><strong>Progress:</strong> ${progress}% 
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${progress}%"></div>
+      </div>
+    </p>
+    <p><strong>Status:</strong>
+      <span class="status-badge ${isActive ? 'status-active' : 'status-completed'}">
+        ${isActive ? 'Active' : 'Completed'}
+      </span>
+    </p>
+    <button class="button" onclick="viewPlan(${plan.PlanId})">View Details</button>
+  `;
+            return el;
         }
 
         function viewPlan(planId) {
@@ -546,4 +612,5 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="js/aiAssistant.js"></script>
 </body>
+
 </html>

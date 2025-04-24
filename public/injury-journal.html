@@ -2,31 +2,121 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" href="images/logo.png" type="image/png">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Injury Journal</title>
     <style>
+        /* page & container */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
+            background-color: #f4f4f4;
+            background-image: url('images/backgroundimage2.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+
+        :root {
+            --primary-green: #17a2b8;
+            --primary-hover: #1770b8;
+        }
+
+        /* Base button, same across pages */
+        .button {
+            display: inline-block;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Primary (solid) */
+        .button.button-primary {
+            background-color: var(--primary-green);
+            border: 1px solid var(--primary-green);
+            color: white;
+        }
+
+        .button.button-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Secondary (outline) */
+        .button.button-secondary {
+            background: transparent;
+            border: 1px solid var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        .button.button-secondary:hover {
+            background-color: var(--primary-green);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .container {
             max-width: 800px;
             margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.7);
+            padding: 30px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            position: relative;
         }
 
-        h1 {
+        h1,
+        h2 {
+            color: #17a2b8;
+            margin-bottom: 16px;
             text-align: center;
         }
 
+        .button {
+            display: inline-block;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 500;
+            background-color: #17a2b8;
+            border: 2px solid #17a2b8;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 5px 5px 20px 0;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* back buttons container */
+        .back-buttons {
+            text-align: right;
+        }
+
+        /* summary */
+        .injury-summary {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* inputs & labels */
         .input-group {
             margin: 15px 0;
         }
@@ -35,9 +125,9 @@
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #1770b8;
         }
 
-        .input-group input,
         .input-group textarea {
             width: 100%;
             padding: 8px;
@@ -46,230 +136,238 @@
             box-sizing: border-box;
         }
 
-        .button {
-            background: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .journal-entry {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #fff;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        #feedback {
-            margin: 15px 0;
-            padding: 10px;
-        }
-
-        .range-display {
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        .injury-summary {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        /* slider track */
+        .input-group input[type="range"] {
+            width: 100%;
+            height: 16px;
             background: #e9ecef;
+            border-radius: 3px;
+            appearance: none;
+            cursor: pointer;
+            border: none;
+            margin-top: 8px;
+            transition: background 0.2s ease;
+        }
+
+        .input-group input[type="range"]:hover {
+            background: #d1d5db;
+        }
+
+        /* Webkit thumb */
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            background: #17a2b8;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .input-group input[type="range"]:hover::-webkit-slider-thumb {
+            width: 40px;
+            height: 40px;
+            background: #138496;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Firefox thumb */
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            background: #17a2b8;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .input-group input[type="range"]:hover::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            background: #138496;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* slider value */
+        .range-value {
+            text-align: right;
+            font-weight: 600;
+            color: #343a40;
+            font-size: 1.4rem;
+            margin-top: 4px;
+        }
+
+        /* journal entries */
+        .journal-entry {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <a href="dashboard.html" class="button" style="margin-bottom: 20px; display: inline-block;">Back to
-            Dashboard</a>
+        <div class="back-buttons">
+            <a href="dashboard.html" class="button button-primary">Dashboard</a>
+            <a href="injuries.html" class="button button-primary">Injuries</a>
+        </div>
         <h1>Injury Journal</h1>
 
-        <!-- Injury summary and hidden input -->
         <div id="injurySummary" class="injury-summary">
-            <p>Loading injury details...</p>
+            <p>Loading injury details…</p>
         </div>
-        <!-- Hidden input to store injuryId -->
-        <input type="hidden" id="injuryId" name="injuryId" />
+        <input type="hidden" id="injuryId" />
 
         <form id="journalForm">
             <div class="input-group">
-                <label for="painLevel">Pain Level (1-10)</label>
+                <label for="painLevel">Pain Level (1–10)</label>
                 <input type="range" id="painLevel" name="painLevel" min="1" max="10" value="5"
-                    oninput="document.getElementById('painDisplay').innerText = this.value" />
-                <span id="painDisplay" class="range-display">5</span>
+                    oninput="updateLabel('painValue', this.value)" />
+                <div class="range-value" id="painValue">5</div>
             </div>
             <div class="input-group">
-                <label for="mobilityLevel">Mobility Level (1-10)</label>
+                <label for="mobilityLevel">Mobility Level (1–10)</label>
                 <input type="range" id="mobilityLevel" name="mobilityLevel" min="1" max="10" value="5"
-                    oninput="document.getElementById('mobilityDisplay').innerText = this.value" />
-                <span id="mobilityDisplay" class="range-display">5</span>
+                    oninput="updateLabel('mobilityValue', this.value)" />
+                <div class="range-value" id="mobilityValue">5</div>
             </div>
             <div class="input-group">
                 <label for="progressNotes">Journal / Progress Notes</label>
                 <textarea id="progressNotes" name="progressNotes" rows="5"
                     placeholder="How are you feeling? Any observations?"></textarea>
             </div>
-            <button type="submit" class="button">Submit Journal Entry</button>
+            <button type="submit" class="button button-primary">Submit Journal Entry</button>
         </form>
 
         <div id="feedback"></div>
 
         <h2>Your Journal Entries</h2>
         <div id="journalEntries">
-            <p>Loading journal entries...</p>
+            <p>Loading journal entries…</p>
         </div>
     </div>
 
     <script>
-        // Helper: get user id from token stored in localStorage
+        function updateLabel(id, value) {
+            document.getElementById(id).innerText = value;
+        }
         function getUserIdFromToken() {
             const token = localStorage.getItem("token");
             if (!token) return null;
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                return payload.id || payload.UserId || payload.user_id;
-            } catch (err) {
-                console.error("Failed to decode token:", err);
-                return null;
-            }
+                const p = JSON.parse(atob(token.split('.')[1]));
+                return p.id || p.user_id || p.UserId;
+            } catch { return null; }
+        }
+        function getQueryParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
         }
 
-        // Helper: get query parameter from URL
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        // Fetch injury details for the given injury id and populate the summary and hidden input
         async function fetchInjuryDetail() {
             const injuryId = getQueryParam("injury_id");
             const userId = getUserIdFromToken();
             if (!injuryId || !userId) {
-                document.getElementById("injurySummary").innerHTML = "<p>Error: Injury not specified or user not logged in.</p>";
+                document.getElementById("injurySummary").innerHTML =
+                    "<p>Error: Injury not specified or not logged in.</p>";
+                document.getElementById("journalForm").style.display = "none";
                 return;
             }
-
+            const token = localStorage.getItem("token");
+            const headers = { "Content-Type": "application/json" };
+            if (token) headers["Authorization"] = `Bearer ${token}`;
             try {
-                const response = await fetch(`/api/injuries/${injuryId}`);
-                if (!response.ok) throw new Error("Could not fetch injury details.");
-                const injury = await response.json();
-
+                const res = await fetch(`/api/injuries/${injuryId}`, { headers });
+                if (!res.ok) throw new Error("Failed to fetch injury");
+                const injury = await res.json();
                 document.getElementById("injurySummary").innerHTML = `
-      <p><strong>Injury Type:</strong> ${injury.InjuryType}</p>
-      <p><strong>Location:</strong> ${injury.InjuryLocation}</p>
-      <p><strong>Severity:</strong> ${injury.InjurySeverity}</p>
-    `;
+          <p><strong>Type:</strong> ${injury.InjuryType}</p>
+          <p><strong>Location:</strong> ${injury.InjuryLocation}</p>
+          <p><strong>Severity:</strong> ${injury.InjurySeverity}</p>
+        `;
                 document.getElementById("injuryId").value = injury.InjuryId;
-
-                // Check recovery plan status for this injury
-                const planResponse = await fetch(`/api/recovery-plans?user_id=${userId}`);
-                const plans = await planResponse.json();
-                const matchedPlan = plans.find(plan => plan.InjuryId === injury.InjuryId);
-
-                if (matchedPlan && !matchedPlan.IsActive) {
-                    // Disable journal form and provide feedback to the user
+                const plansRes = await fetch(`/api/recovery-plans?user_id=${userId}`, { headers });
+                const plans = await plansRes.json();
+                const plan = plans.find(p => p.InjuryId === injury.InjuryId);
+                if (plan && !plan.IsActive) {
                     document.getElementById("journalForm").style.display = "none";
-                    document.getElementById("feedback").innerHTML = `<p style="color: red;">This injury is marked as complete. You cannot add more journal entries.</p>`;
+                    document.getElementById("feedback").innerHTML =
+                        `<p style="color:red;">This injury is complete; journal closed.</p>`;
                 }
-
-            } catch (error) {
-                console.error("Error loading injury:", error);
-                document.getElementById("injurySummary").innerHTML = "<p>Error loading injury details.</p>";
+            } catch (err) {
+                console.error(err);
+                document.getElementById("injurySummary").innerHTML =
+                    "<p>Error loading injury details.</p>";
+                document.getElementById("journalForm").style.display = "none";
             }
         }
 
-
-        // Fetch journal entries for the user filtered by this injury
         async function fetchJournalEntries() {
             const userId = getUserIdFromToken();
             const injuryId = getQueryParam("injury_id");
             if (!userId || !injuryId) return;
+            const token = localStorage.getItem("token");
+            const headers = { "Content-Type": "application/json" };
+            if (token) headers["Authorization"] = `Bearer ${token}`;
             try {
-                // Assuming your endpoint supports filtering by user_id,
-                // you could also fetch all entries and then filter client-side.
-                const response = await fetch(`/api/progress?user_id=${userId}`);
-                const entries = await response.json();
-                const container = document.getElementById('journalEntries');
+                const res = await fetch(`/api/progress?user_id=${userId}`, { headers });
+                const entries = await res.json();
+                const container = document.getElementById("journalEntries");
+                const filtered = entries.filter(e => e.InjuryId == injuryId);
                 container.innerHTML = "";
-                const filteredEntries = entries.filter(entry => entry.InjuryId == injuryId);
-                if (!filteredEntries.length) {
-                    container.innerHTML = "<p>No journal entries found for this injury.</p>";
+                if (!filtered.length) {
+                    container.innerHTML = "<p>No journal entries yet.</p>";
                     return;
                 }
-                filteredEntries.forEach(entry => {
-                    const div = document.createElement('div');
+                filtered.forEach(e => {
+                    const div = document.createElement("div");
                     div.className = "journal-entry";
                     div.innerHTML = `
-              <p><strong>Pain Level:</strong> ${entry.PainLevel}</p>
-              <p><strong>Mobility Level:</strong> ${entry.MobilityLevel}</p>
-              <p><strong>Notes:</strong> ${entry.ProgressNotes || "None"}</p>
-              <p><em>Recorded on: ${new Date(entry.RecordedAt).toLocaleString()}</em></p>
-            `;
+            <p><strong>Pain Level:</strong> ${e.PainLevel}</p>
+            <p><strong>Mobility:</strong> ${e.MobilityLevel}</p>
+            <p><strong>Notes:</strong> ${e.ProgressNotes || "None"}</p>
+            <p><em>On: ${new Date(e.RecordedAt).toLocaleString()}</em></p>
+          `;
                     container.appendChild(div);
                 });
-            } catch (err) {
-                console.error("Error loading journal entries:", err);
-            }
+            } catch (err) { console.error(err); }
         }
 
-        // Handle form submission to record a new journal entry
-        document.getElementById('journalForm').addEventListener('submit', async function (e) {
+        document.getElementById("journalForm").addEventListener("submit", async e => {
             e.preventDefault();
             const userId = getUserIdFromToken();
-            const injuryId = document.getElementById('injuryId').value;
-            const painLevel = document.getElementById('painLevel').value;
-            const mobilityLevel = document.getElementById('mobilityLevel').value;
-            const progressNotes = document.getElementById('progressNotes').value;
-
-            if (!injuryId) {
-                document.getElementById('feedback').textContent = "Injury not set.";
-                document.getElementById('feedback').style.color = "red";
-                return;
-            }
-
+            const injuryId = document.getElementById("injuryId").value;
+            const painLevel = +document.getElementById("painLevel").value;
+            const mobilityLevel = +document.getElementById("mobilityLevel").value;
+            const notes = document.getElementById("progressNotes").value;
+            const token = localStorage.getItem("token");
+            const headers = { "Content-Type": "application/json" };
+            if (token) headers["Authorization"] = `Bearer ${token}`;
             const payload = {
-                UserId: userId,
-                InjuryId: injuryId,
-                PainLevel: painLevel,
-                MobilityLevel: mobilityLevel,
-                ProgressNotes: progressNotes
+                UserId: userId, InjuryId: injuryId, PainLevel: painLevel,
+                MobilityLevel: mobilityLevel, ProgressNotes: notes
             };
-
-            const feedbackEl = document.getElementById('feedback');
-            feedbackEl.textContent = "Submitting your journal entry...";
-            feedbackEl.style.color = "black";
-
             try {
-                const res = await fetch('/api/progress', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!res.ok) {
-                    const errData = await res.json();
-                    throw new Error(errData.error || "Failed to submit journal entry.");
-                }
-                feedbackEl.textContent = "Journal entry submitted successfully!";
-                feedbackEl.style.color = "green";
-                document.getElementById('journalForm').reset();
-                // Reset slider display values
-                document.getElementById('painDisplay').innerText = "5";
-                document.getElementById('mobilityDisplay').innerText = "5";
+                const res = await fetch("/api/progress", { method: "POST", headers, body: JSON.stringify(payload) });
+                if (!res.ok) throw new Error("Submit failed");
+                document.getElementById("feedback").innerText = "Submitted!";
                 fetchJournalEntries();
-            } catch (error) {
-                feedbackEl.textContent = "Error: " + error.message;
-                feedbackEl.style.color = "red";
+                e.target.reset();
+                updateLabel("painValue", "5");
+                updateLabel("mobilityValue", "5");
+            } catch (err) {
+                document.getElementById("feedback").innerText = "Error: " + err.message;
+                document.getElementById("feedback").style.color = "red";
             }
         });
 
-        // On load, fetch the injury details and journal entries
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener("DOMContentLoaded", () => {
             fetchInjuryDetail();
             fetchJournalEntries();
         });

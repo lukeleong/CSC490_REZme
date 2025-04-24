@@ -378,7 +378,7 @@
         // Delay then redirect
         setTimeout(() => {
           window.location.href = "recovery-plan.html?planId=" + planId;
-        }, 2000);
+        }, 1500);
       } catch (error) {
         console.error("Error logging exercise completion:", error);
         document.getElementById("message").innerText = "An error occurred. Please try again.";
