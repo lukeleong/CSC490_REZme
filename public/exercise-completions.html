@@ -1,17 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" href="images/logo.png" type="image/png">
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Exercise Completions</title>
   <style>
-    body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f4f4f4 }
-    .container { max-width:800px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1) }
-    h1 { margin-bottom:10px }
-    table { width:100%; border-collapse:collapse; margin-bottom:20px }
-    th, td { border:1px solid #ddd; padding:8px; text-align:left }
-    th { background:#f4f4f4 }
-    .button { display:inline-block; padding:10px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #e8f1f5;
+    background-image: url('images/backgroundimage2.jpg');
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+  }
+
+  h1 {
+    margin-bottom: 25px;
+    color: #007b8f;
+    text-align: center;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+  }
+
+  th, td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  th {
+    background-color: #f1f9fb;
+    color: #007b8f;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #cce8f1;
+  }
+
+  tr:hover td {
+    background-color: #f9f9f9;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+
+  .button:hover {
+    background: #0056b3;
+  }
+
   </style>
 </head>
 <body>

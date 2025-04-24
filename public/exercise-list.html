@@ -7,182 +7,228 @@
   <title>Exercise List</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e8f1f5;
+    background-image: url('images/backgroundimage2.jpg');
+    background-size: cover;
+    background-position: center center;
+    margin: 0;
+    padding: 20px;
+  }
 
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+  .container {
+    max-width: 960px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 16px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #007b8f;
+  }
 
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
 
-    .controls a.button {
-      padding: 8px 12px;
-      background: #007bff;
-      color: white;
-      border-radius: 5px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-    }
+  .controls a.button {
+    padding: 10px 16px;
+    background: #17a2b8;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
 
-    .controls select {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+  .controls a.button:hover {
+    background: #138496;
+  }
 
-    #exercisesContainer {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
+  .controls select {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #fdfdfd;
+    font-size: 1rem;
+    cursor: pointer;
+  }
 
-    .exercise {
-      flex: 1 0 300px;
-      /* Grow and shrink with a base width of 300px */
-      box-sizing: border-box;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      background: #f9f9f9;
-      padding: 15px;
-    }
+  #exercisesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
 
+  .exercise {
+    flex: 1 0 300px;
+    background: #fdfdfd;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
 
-    .exercise h3 {
-      margin: 0 0 5px 0;
-    }
+  .exercise:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
 
-    .exercise p {
-      margin: 4px 0;
-    }
+  .exercise h3 {
+    margin-top: 0;
+    color: #007b8f;
+  }
 
-    /* Floating Suggest Button */
-    #suggestButton {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 12px 20px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      z-index: 1000;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
+  .exercise p {
+    margin: 6px 0;
+    color: #555;
+  }
 
-    /* Modal Styles */
-    #suggestModal {
-      display: none;
-      /* Hidden by default */
-      position: fixed;
-      z-index: 1001;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-      /* Flexbox centering for the modal content */
-      align-items: center;
-      justify-content: center;
-    }
+  .exercise .button {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 8px 14px;
+    background: #007bff;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
 
-    #suggestModalContent {
-      background: #fff;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 400px;
-      border-radius: 8px;
-    }
+  .exercise .button:hover {
+    background: #0056b3;
+  }
 
-    #suggestModalContent h2 {
-      margin-top: 0;
-    }
+  /* Floating Suggest Button */
+  #suggestButton {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 14px 20px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s;
+  }
 
-    .input-group {
-      margin: 10px 0;
-    }
+  #suggestButton:hover {
+    background-color: #218838;
+  }
 
-    .input-group label {
-      display: block;
-      margin-bottom: 5px;
-    }
+  /* Modal Styles */
+  #suggestModal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+  }
 
-    .input-group input,
-    .input-group textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
+  #suggestModalContent {
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 460px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  }
 
-    .modal-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
+  #suggestModalContent h2 {
+    margin-top: 0;
+    color: #007b8f;
+  }
 
-    .modal-buttons button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+  .input-group {
+    margin: 15px 0;
+  }
 
-    .modal-buttons .submit-btn {
-      background-color: #007bff;
-      color: #fff;
-    }
+  .input-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
 
-    .modal-buttons .cancel-btn {
-      background-color: #ccc;
-    }
+  .input-group input,
+  .input-group textarea,
+  .input-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
 
-    .feedback {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      display: none;
-      font-size: 14px;
-    }
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
 
-    .feedback.success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
+  .modal-buttons button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+  }
 
-    .feedback.error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
+  .modal-buttons .submit-btn {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .modal-buttons .submit-btn:hover {
+    background-color: #0056b3;
+  }
+
+  .modal-buttons .cancel-btn {
+    background-color: #ccc;
+    color: #333;
+  }
+
+  .feedback {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+    font-size: 0.95rem;
+  }
+
+  .feedback.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .feedback.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
   </style>
 </head>
 
@@ -190,9 +236,6 @@
   <div class="container">
     <div class="controls">
       <a href="dashboard.html" class="button">Back to Dashboard</a>
-      <a href="exercise-management.html" class="button" id="exerciseManagementButton">
-        Manage Exercises
-      </a>
       <select id="sortOptions">
         <option value="name">Sort by Name</option>
         <option value="muscle">Sort by Target Muscle Group</option>
