@@ -5,6 +5,7 @@
   <link rel="icon" href="images/logo.png" type="image/png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <title>Recovery Plan</title>
   <style>
     /* card container */
@@ -61,16 +62,18 @@
       position: relative;
       max-width: 800px;
       margin: auto;
-      background: rgba(255, 255, 255, 0.7);
-      max-width: 800px;
-      margin: auto;
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.6);
       padding: 30px 25px;
       border-radius: 12px;
-      border: 1px solid rgba(0, 0, 0, 0.08);
       text-align: center;
       backdrop-filter: blur(4px);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .container:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.10);
+      transform: translateY(-3px) scale(1.01);
+      background: rgba(255, 255, 255, 0.7);
+      transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
     }
 
     .top-button {
@@ -80,11 +83,32 @@
       padding: 8px 16px;
       font-size: 0.9rem;
     }
+    .top-button:hover {
+      background-color: #1770b8 !important;
+      color: white;
+      border: 3px solid white !important;
+    } 
+
+
 
     h1,
     h2,
     h3 {
       color: #17a2b8;
+    }
+    h1 {
+      font-size: 3rem;
+    }
+    h2 {
+      font-size: 2.5rem;
+      line-height: 0.6;
+    }
+    h3{
+      font-size: 1.5rem;
+    }
+    p {
+      font-size: 1.5rem;
+      line-height: 0.6;
     }
 
     .progress-bar {
@@ -129,15 +153,15 @@
       font-weight: 500;
       transition: all 0.3s ease;
       margin: 5px;
-      font-size: 1rem;
+      font-size: 1.2rem;
       background-color: #17a2b8;
       border-color: #17a2b8;
       color: white;
     }
 
     .button:hover {
-      background-color: #17a2b8;
-      border-color: #17a2b8;
+      background-color: #1770b8;
+border: 3px solid white;
       transform: translateY(-2px);
     }
 
@@ -267,15 +291,39 @@
       visibility: visible;
       opacity: 1;
     }
-  </style>
+
+    .button-cancel-rating {
+      background-color: #c09c41;
+      color: #000;
+      border: 2px solid #000;
+      transform: translateY(-2px);
+      transition: all 0.3s ease;
+      padding: 12px 28px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      border-color: #000;
+    }
+
+    .button-cancel-rating:hover {
+      background-color: #b9830c;
+      color: #fff;
+      border: 2px solid #fff;
+      transform: translateY(-2px);
+      transition: all 0.3s ease;
+      border-color: white;
+    }
+
+ </style>
 </head>
 
 <body>
   <a href="dashboard.html" class="button top-button">Back to Dashboard</a>
+  
   <div class="container">
     <h1 id="recoveryTitle">Recovery Plan</h1>
     <div id="planDetails">
-      <h2>Plan Details</h2>
+      <h2><i class="fas fa-clipboard-list"></i> Plan Details</h2>
       <p><strong>Injury:</strong> <span id="injuryType">Loading...</span></p>
       <p>
         <strong>Start Date:</strong> <span id="startDate">Loading...</span>
@@ -491,7 +539,7 @@
       const ratingModalContent =
         document.getElementById("ratingModalContent");
       ratingModalContent.innerHTML = `
-        <h3>Rate Exercise: ${exerciseName}</h3>
+        <h3><i class="fas fa-star"></i> Rate Exercise: ${exerciseName}</h3>
         <form id="ratingForm">
           <input type="hidden" id="ratingExerciseId" value="${exerciseId}">
           <div class="input-group">
@@ -505,7 +553,7 @@
             <textarea id="ratingComment" rows="3"></textarea>
           </div>
           <button type="submit" class="button">Submit Rating</button>
-          <button type="button" class="button" style="background:#ccc;" onclick="closeRatingModal()">Cancel</button>
+          <button type="button" class="button-cancel-rating" onclick="closeRatingModal()">Cancel</button>
         </form>
       `;
 
